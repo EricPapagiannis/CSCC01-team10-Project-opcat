@@ -55,5 +55,9 @@ line = file.readline().split(',')
 print(line)
 print(_name, _mass, _radius, _oP)
 print(line[_radius], line[_mass], line[_oP])
-planet = Planet.Builder(line[_name]).radius(line[_radius]).mass(line[_mass]).orbitalPeriod(line[_oP]).compile()
+planet = Planet.Builder(line[_name])\
+    .radius(line[_radius])\
+    .mass(line[_mass])\
+    .orbitalPeriod(line[_oP])\
+    .compile()
 print(planet)
