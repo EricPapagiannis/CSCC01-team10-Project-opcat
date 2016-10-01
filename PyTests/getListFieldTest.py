@@ -40,7 +40,7 @@ class Planet:
         
 def buildPlanet(line):
     _data_field = dict();
-    _name;
+    _name = 0;
     _wanted = ["mass", "radius", "orbital_period"]
     for i in _wanted:
         temp = " ".join(i.split("_"));
@@ -58,5 +58,8 @@ file = open("exoplanet.eu_catalog-2.csv", "r")
 lines = getDiff()
 heads = file.readline().split(',')
 print(heads)
-line = file.readline().split(',')
-print(buildPlanet(line));
+line = file.readline()
+while(line):
+    line = line.split(',');
+    print(buildPlanet(line));
+    line = file.readline();
