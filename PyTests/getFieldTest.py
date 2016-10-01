@@ -1,5 +1,7 @@
 from testDiff import getDiff
 
+# ************ CHANGES MADE ***************
+
 class Planet:
     def __init__(self):
         self.name = None;
