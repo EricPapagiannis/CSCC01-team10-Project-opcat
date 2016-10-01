@@ -14,7 +14,7 @@ class Planet:
         
     class Builder:
         def __init__(self, name):
-            self._data = dict();
+            self._data = {"name": name};
             
         def addVal(self, name, val):
             val = self._fixVal(val);
@@ -37,22 +37,26 @@ class Planet:
                 temp = "N/A";
             return temp;
         
+        
+def buildPlanet(line):
+    _data_field = dict();
+    _name;
+    _wanted = ["mass", "radius", "orbital_period"]
+    for i in _wanted:
+        temp = " ".join(i.split("_"));
+        _data_field[temp] = heads.index(i);
+    
+    planetBuilder = Planet.Builder(line[_name]);
+    
+    for i in _data_field:
+        planetBuilder.addVal(i, line[_data_field[i]]);
+        
+    planet = planetBuilder.compile();    
+    return planet;
 
 file = open("exoplanet.eu_catalog-2.csv", "r")
 lines = getDiff()
 heads = file.readline().split(',')
 print(heads)
-_name = 0
-_mass = 1
-_radius = heads.index("radius")
-_oP = heads.index("orbital_period")
 line = file.readline().split(',')
-print(line)
-print(_name, _mass, _radius, _oP)
-print(line[_radius], line[_mass], line[_oP])
-planet = Planet.Builder(line[_name])\
-    .addVal("radius", line[_radius])\
-    .addVal("mass", line[_mass])\
-    .addVal("Orbital Period", line[_oP])\
-    .compile()
-print(planet)
+print(buildPlanet(line));
