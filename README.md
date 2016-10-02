@@ -1,7 +1,4 @@
 # team10-Project
 
-Jerry cheng
-
-Ablion the pricip
-
-Vasili the kniggit
+Deliverables Folder:
+  - contains Deliverable 1 and 2
