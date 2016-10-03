@@ -1,8 +1,6 @@
-from subprocess import Popen
-from subprocess import PIPE
 from subprocess import call
 
-
+# 'static' vars
 files = [];
 direc = "gittut";
 
@@ -14,12 +12,23 @@ def initGit():
     call(["git", "push", "--set-upstream", "origin", "master"], cwd=link);
     return link;
     
+def saveDirName(direc):
+    file = open('dirname', 'w');
+    file.write(direc);
+    file.close();
 
+def getDirName():
+    try:
+        file = open('dirname', 'r');
+        return file.read();
+    except IOError:
+        return None;
 
 # check for local github repo
-out = Popen(["cd", "gittut"], stderr=PIPE);
-if("" != out.stderr.read()):
-    direct = initGit();
+direc = getDirName();
+if(direc == None):
+    direc = initGit();
+    saveDirName(direc);
 
 # updating github repo
 call(["git", "pull"], cwd='gittut');
