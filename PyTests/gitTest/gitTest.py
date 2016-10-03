@@ -31,9 +31,9 @@ if(direc == None):
     saveDirName(direc);
 
 # updating github repo
-call(["git", "pull"], cwd='gittut');
+call(["git", "pull"], cwd=direc);
 
 # commit process
-call(["git", "add", "."] + files, cwd='gittut');
-call(["git", "commit", "-m", "automated commit"], cwd='gittut');
-call(["git", "push"], cwd='gittut');
+call(["git", "add", "."] + files, cwd=direc);
+call(["git", "commit", "-m", "automated commit"], cwd=direc);
+call(["git", "push"], cwd=direc);
