@@ -7,10 +7,12 @@ def getDiff():
           "--new-line-format=%dn,", "exoplanet.eu_catalog.csv",
           "exoplanet.eu_catalog-2.csv"], stdout=PIPE)
     # read from stdout
-    out = output.stdout.read()
+    out = output.stdout.read().decode("utf-8")
+    print(out)
     out = out.split(',')[:-1]
     # cast to int
     out = list(map(int, out))
+    print(out)
     return out
 
 #if len(out) > 0:

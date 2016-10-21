@@ -57,9 +57,11 @@ def buildPlanet(line):
 file = open("exoplanet.eu_catalog-2.csv", "r")
 lines = getDiff()
 heads = file.readline().split(',')
-print(heads)
 line = file.readline()
+i = 1
 while(line):
-    line = line.split(',');
-    print(buildPlanet(line));
+    if(i in lines):
+        line = line.split(',');
+        print(buildPlanet(line));
     line = file.readline();
+    i += 1
