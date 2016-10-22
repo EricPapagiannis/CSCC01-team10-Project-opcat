@@ -1,7 +1,8 @@
 # team10-Project
 
-Jerry cheng
+Deliverables Folder:
+  - contains Deliverable 1, 2 and 3
 
-Ablion the pricip
+Project Folder:
 
-Vasili the kniggit
+Contains code for the project.
