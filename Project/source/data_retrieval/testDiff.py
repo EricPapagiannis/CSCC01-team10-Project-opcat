@@ -1,0 +1,35 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Sat Oct 22 15:21:40 2016
+
+@author: albion
+"""
+
+from subprocess import PIPE
+from subprocess import Popen
+
+def getDiff():
+    # do the diff call + redirect stdout to output var
+    output = Popen(["diff","--unchanged-line-format=","--old-line-format=",
+          "--new-line-format=%dn,", "exoplanet.eu_catalog.csv",
+          "exoplanet.eu_catalog-2.csv"], stdout=PIPE)
+    # read from stdout
+    out = output.stdout.read().decode("utf-8")
+    print(out)
+    out = out.split(',')[:-1]
+    # cast to int
+    out = list(map(int, out))
+    print(out)
+    return out
+
+#if len(out) > 0:
+ #   file = open("exoplanet.eu_catalog-2.csv")
+  #  for i, line in enumerate(file):
+        # header line
+   #     if i == 0:
+    #        print(line)
+     #   if i in out:
+      #      print(line)
+        # note it's naturally sorted b/c of how diff works
+       # elif i > out[-1]:
+#    break
