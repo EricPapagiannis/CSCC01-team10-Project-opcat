@@ -53,7 +53,8 @@ class Planet:
             return temp;
         
 
-def buildPlanetFromXML():
+def buildPlanetFromXMLa():
+    b = 1
     for planet in oec.findall(".//planet"):
         planetBuilder = Planet.Builder("tempName")
         i = 0
@@ -62,23 +63,60 @@ def buildPlanetFromXML():
                 if i == 0:
                     planetBuilder = Planet.Builder(child.text)
                 elif i == 1:
-                    planetBuilder.addValList("otherName", child.text)
+                    planetBuilder.addValList("otherNames", child.text)
                 else:
-                    planetBuilder.addToValList("otherName", child.text)
+                    planetBuilder.addToValList("otherNames", child.text)
                 i += 1
             else:
-                planetBuilder.addToValList("otherName", child.text)
-        planetBuilder.addVal("mass", planet.findtext("mass"))
+                planetBuilder.addToValList("otherNames", child.text)
 
-        planet = planetBuilder.compile();
+        # Pick out the other fields necessary
+        planetBuilder.addVal("semimajoraxis", planet.findtext("semimajoraxis"))
+        planetBuilder.addVal("separation", planet.findtext("separation"))
+        planetBuilder.addVal("eccentricity", planet.findtext("eccentricity"))
+        planetBuilder.addVal("periastron", planet.findtext("periastron"))
+        planetBuilder.addVal("longitude", planet.findtext("longitude"))
+        planetBuilder.addVal("meananomaly", planet.findtext("meananomaly"))
+        planetBuilder.addVal("ascendingnode", planet.findtext("ascendingnode"))
+        planetBuilder.addVal("inclination", planet.findtext("inclination"))
+        planetBuilder.addVal("impactparameter", planet.findtext("impactparameter"))
+        planetBuilder.addVal("period", planet.findtext("period"))
+        planetBuilder.addVal("transittime", planet.findtext("transittime"))
+        planetBuilder.addVal("periastrontime", planet.findtext("periastrontime"))
+        planetBuilder.addVal("maximumrvtime", planet.findtext("maximumrvtime"))
+        planetBuilder.addVal("mass", planet.findtext("mass"))
+        planetBuilder.addVal("radius", planet.findtext("radius"))
+        planetBuilder.addVal("temperature", planet.findtext("temperature"))
+        planetBuilder.addVal("age", planet.findtext("age"))
+        planetBuilder.addVal("spectraltype", planet.findtext("spectraltype"))
+        planetBuilder.addVal("magB", planet.findtext("magB"))
+        planetBuilder.addVal("magV", planet.findtext("magV"))
+        planetBuilder.addVal("magR", planet.findtext("magR"))
+        planetBuilder.addVal("magI", planet.findtext("magI"))
+        planetBuilder.addVal("magJ", planet.findtext("magJ"))
+        planetBuilder.addVal("magH", planet.findtext("magH"))
+        planetBuilder.addVal("magK", planet.findtext("magK"))
+        planetBuilder.addVal("magH", planet.findtext("magH"))
+        planetBuilder.addVal("discoverymethod", planet.findtext("discoverymethod"))
+        planetBuilder.addVal("istransiting", planet.findtext("istransiting"))
+        planetBuilder.addVal("description", planet.findtext("description"))
+        planetBuilder.addVal("discoveryyear", planet.findtext("discoveryyear"))
+        planetBuilder.addVal("lastupdate", planet.findtext("lastupdate"))
+        planetBuilder.addVal("spinorbitalignment", planet.findtext("spinorbitalignment"))
+
+
+
+        planet = planetBuilder.compile()
 
         '''
         for child in planet:
             planetBuilder = Planet.Builder(planet.findtext("name"))
             planetBuilder.addVal(child.tag, child.attrib)
         '''
-        planet = planetBuilder.compile();
-        print(planet);
+        planet = planetBuilder.compile()
+        if b == 1:
+            print(planet)
+            b += 1
     '''
     # Find all circumbinary planets
     for planet in oec.findall(".//binary/planet"):
@@ -89,33 +127,49 @@ def buildPlanetFromXML():
         print(system.findtext("distance"), len(system.findall(".//planet")))
     '''
 
-buildPlanetFromXML()
+def buildPlanetFromXMLb():
+    b = 1
+    for planet in oec.findall(".//system"):
+        i = 0
+        for child in planet.findall(".//name"):
+            if child.tag == "name":
+                if i == 0:
+                    planetBuilder = Planet.Builder(child.text)
+                elif i == 1:
+                    planetBuilder.addValList("otherNames", child.text)
+                else:
+                    planetBuilder.addToValList("otherNames", child.text)
+                i += 1
+            else:
+                planetBuilder.addToValList("otherNames", child.text)
 
-def buildPlanet(line):
-    _data_field = dict();
-    _name = 0;
-    _wanted = ["mass", "radius", "orbital_period"]
-    for i in _wanted:
-        temp = " ".join(i.split("_"));
-        _data_field[temp] = heads.index(i);
-    
-    planetBuilder = Planet.Builder(line[_name]);
-    
-    for i in _data_field:
-        planetBuilder.addVal(i, line[_data_field[i]]);
-        
-    planet = planetBuilder.compile();    
-    return planet;
-'''
-file = open("exoplanet.eu_catalog-2.csv", "r")
-lines = getDiff()
-heads = file.readline().split(',')
-print(heads)
-line = file.readline()
-while(line):
-    line = line.split(',');
-    print(buildPlanet(line));
-    line = file.readline();
-'''
+        # Pick out the other fields necessary
+        planetBuilder.addVal("declination", planet.findtext("declination"))
 
-buildPlanetFromXML()
+
+
+
+        planet = planetBuilder.compile()
+
+        '''
+        for child in planet:
+            planetBuilder = Planet.Builder(planet.findtext("name"))
+            planetBuilder.addVal(child.tag, child.attrib)
+        '''
+        planet = planetBuilder.compile()
+
+        print(planet)
+        b += 1
+    '''
+    # Find all circumbinary planets
+    for planet in oec.findall(".//binary/planet"):
+        print(planet.findtext("name"))
+
+    # Output distance to planetary system (in pc, if known) and number of planets in system
+    for system in oec.findall(".//system"):
+        print(system.findtext("distance"), len(system.findall(".//planet")))
+    '''
+
+
+buildPlanetFromXMLa()
+buildPlanetFromXMLb()
