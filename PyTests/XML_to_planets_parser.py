@@ -4,261 +4,161 @@ url = "https://github.com/OpenExoplanetCatalogue/oec_gzip/raw/master/systems.xml
 oec = ET.parse(gzip.GzipFile(fileobj=io.BytesIO(urllib.request.urlopen(url).read())))
 
 
-class System:
+class PlanetaryObject:
     def __init__(self):
-        self.data = dict();
+        self.data = dict()
+
+    def __init__(self, name):
+        self.data = {"nameSystem": name}
 
     def __str__(self):
-        out = "";
-        for i in self.data:
-            out += (i + ":");
-            out += str(self.data[i]);
-            out += " ";
-        return out;
+        return str(self.data)
 
-    class Builder:
-        def __init__(self, name):
-            self._data = {"nameSystem": name};
-
-        def addVal(self, name, val):
-            val = self._fixVal(val);
-            self._data[name] = val;
-            return self;
-
-        def addValList(self, name, val):
-            if isinstance(val, list):
-                self._data[name] = val
-            else:
-                val = self._fixVal(val)
-                self._data[name] = [val]
-            return self
-
-        def addToValList(self, name, val):
+    def addVal(self, name, val):
+        if isinstance(val, PlanetaryObject):
+            self.data[name] = val
+        else:
             val = self._fixVal(val)
-            self._data[name] += [val]
-            return self
+            self.data[name] = val
 
-        def getData(self):
-            return self._data
-
-        def getVal(self, name):
-            return self._data[name]
-
-        def compile(self):
-            system = System();
-            system.data = self._data;
-            return system;
-
-        def _fixVal(self, val):
-            temp = None;
-            if (val != ''):
-                try:
-                    temp = float(val);
-                except ValueError:
-                    temp = val;
-                except TypeError:
-                    temp = "N/A";
-            else:
-                temp = "N/A";
-            return temp;
-
-
-class Star:
-    def __init__(self):
-        self.data = dict();
-
-    def __str__(self):
-        out = "";
-        for i in self.data:
-            out += (i + ":");
-            out += str(self.data[i]);
-            out += " ";
-        return out;
-
-    class Builder:
-        def __init__(self, name):
-            self._data = {"nameStar": name};
-
-        def addVal(self, name, val):
-            val = self._fixVal(val);
-            self._data[name] = val;
-            return self;
-
-        def addValList(self, name, val):
-            if isinstance(val, list):
-                self._data[name] = val
-            else:
-                val = self._fixVal(val)
-                self._data[name] = [val]
-            return self
-
-        def addToValList(self, name, val):
+    def addValList(self, name, val):
+        if isinstance(val, list):
+            self.data[name] = val
+        else:
             val = self._fixVal(val)
-            self._data[name] += [val]
-            return self
+            self.data[name] = [val]
+        return self
 
-        def getData(self):
-            return self._data
+    def addToValList(self, name, val):
+        val = self._fixVal(val)
+        self.data[name] += [val]
+        return self
 
-        def getVal(self, name):
-            return self._data[name]
+    def getData(self):
+        return self.data
 
-        def compile(self):
-            star = Star();
-            star.data = self._data;
-            return star;
+    def getVal(self, name):
+        return self.data[name]
 
-        def _fixVal(self, val):
-            temp = None;
-            if (val != ''):
-                try:
-                    temp = float(val);
-                except ValueError:
-                    temp = val;
-                except TypeError:
-                    temp = "N/A";
-            else:
-                temp = "N/A";
-            return temp;
-
-
-class Planet:
-    def __init__(self):
-        self.data = dict();
-
-    def __str__(self):
-        out = "";
-        for i in self.data:
-            out += (i + ":");
-            out += str(self.data[i]);
-            out += " ";
-        return out;
-
-    class Builder:
-        def __init__(self, name):
-            self._data = {"namePlanet": name};
-
-        def addVal(self, name, val):
-            val = self._fixVal(val);
-            self._data[name] = val;
-            return self;
-
-        def addValList(self, name, val):
-            if isinstance(val, list):
-                self._data[name] = val
-            else:
-                val = self._fixVal(val)
-                self._data[name] = [val]
-            return self
-
-        def addToValList(self, name, val):
-            val = self._fixVal(val)
-            self._data[name] += [val]
-            return self
-
-        def getData(self):
-            return self._data
-
-        def getVal(self, name):
-            return self._data[name]
-
-        def compile(self):
-            planet = Planet();
-            planet.data = self._data;
-            return planet;
-
-        def _fixVal(self, val):
-            temp = None;
-            if (val != ''):
-                try:
-                    temp = float(val);
-                except ValueError:
-                    temp = val;
-                except TypeError:
-                    temp = "N/A";
-            else:
-                temp = "N/A";
-            return temp;
+    def _fixVal(self, val):
+        temp = None
+        if (val != ''):
+            try:
+                temp = float(val)
+            except ValueError:
+                temp = val
+            except TypeError:
+                temp = "N/A"
+        else:
+            temp = "N/A"
+        return temp
 
 
+class System(PlanetaryObject):
+
+    def __init__(self, name):
+        self.data = {"nameSystem": name}
+
+
+class Star(PlanetaryObject):
+
+    def __init__(self, name):
+        self.data = {"nameStar": name}
+
+class Planet(PlanetaryObject):
+
+    def __init__(self, name):
+        self.data = {"namePlanet": name}
+
+# returns list of system objects
 def buildSystemFromXML():
-    for system in oec.findall(".//system"):
+    systems = []
+    for systemXML in oec.findall(".//system"):
         i = 0
-        for child in system.findall(".//name"):
+        for child in systemXML.findall(".//name"):
             if child.tag == "name":
                 if i == 0:
                     systemName = child.text
-                    systemBuilder = System.Builder(systemName)
+                    system = System(systemName)
                 elif i == 1:
-                    systemBuilder.addValList("otherNamesSystem", child.text)
+                    system.addValList("otherNamesSystem", child.text)
                 else:
-                    systemBuilder.addToValList("otherNamesSystem", child.text)
+                    system.addToValList("otherNamesSystem", child.text)
                 i += 1
             else:
-                systemBuilder.addToValList("otherNamesSystem", child.text)
+                system.addToValList("otherNamesSystem", child.text)
 
-        for child in system:
+        for child in systemXML:
             if (child.tag.lower() != "star") and (child.tag.lower() != "name"):
-                systemBuilder.addVal(child.tag, child.text)
+                system.addVal(child.tag, child.text)
 
-        for star in system.findall(".//star"):
+        stars = []
+        for starXML in systemXML.findall(".//star"):
             ii = 0
-            for child in star.findall(".//name"):
+            for child in starXML.findall(".//name"):
                 if child.tag == "name":
                     if ii == 0:
-                        starBuilder = Star.Builder(child.text)
-                        systemBuilder.addValList("stars", child.text)
+                        star = Star(child.text)
+                        system.addValList("stars", child.text)
                     elif ii == 1:
-                        starBuilder.addValList("otherNamesStar", child.text)
+                        star.addValList("otherNamesStar", child.text)
                     else:
-                        starBuilder.addToValList("otherNamesStar", child.text)
+                        star.addToValList("otherNamesStar", child.text)
                     ii += 1
                 else:
-                    starBuilder.addToValList("otherNamesStar", child.text)
+                    star.addToValList("otherNamesStar", child.text)
 
-            for child in star:
+            for child in starXML:
                 if (child.tag.lower() != "planet") and (child.tag.lower() != "name"):
-                    starBuilder.addVal(child.tag, child.text)
+                    star.addVal(child.tag, child.text)
 
-            for planet in star.findall(".//planet"):
+            planets = []
+            for planetXML in starXML.findall(".//planet"):
                 iii = 0
-                for child in planet.findall(".//name"):
+                for child in planetXML.findall(".//name"):
                     if child.tag == "name":
                         if iii == 0:
-                            planetBuilder = Planet.Builder(child.text)
-                            starBuilder.addValList("planets", child.text)
+                            planet = Planet(child.text)
+                            star.addValList("planets", child.text)
                         elif iii == 1:
-                            planetBuilder.addValList("otherNamesPlanet", child.text)
+                            planet.addValList("otherNamesPlanet", child.text)
                         else:
-                            planetBuilder.addToValList("otherNamesPlanet", child.text)
+                            planet.addToValList("otherNamesPlanet", child.text)
                         iii += 1
                     else:
-                        planetBuilder.addToValList("otherNamesPlanet", child.text)
+                        planet.addToValList("otherNamesPlanet", child.text)
 
-                for child in planet:
+                for child in planetXML:
                     if (child.tag.lower() != "name"):
-                        planetBuilder.addVal(child.tag, child.text)
+                        planet.addVal(child.tag, child.text)
 
-                planetBuilder.addVal("nameSystem", systemBuilder.getVal("nameSystem"))
-                systemData = systemBuilder.getData()
+                planet.addVal("nameSystem", system.getVal("nameSystem"))
+                systemData = system.getData()
                 if "otherNamesSystem" in systemData:
-                    planetBuilder.addValList("otherNamesSystem", systemData["otherNamesSystem"])
+                    planet.addValList("otherNamesSystem", systemData["otherNamesSystem"])
 
-                planetBuilder.addVal("nameStar", starBuilder.getVal("nameStar"))
-                starData = starBuilder.getData()
+                planet.addVal("nameStar", star.getVal("nameStar"))
+                starData = star.getData()
 
                 if "otherNamesStar" in starData:
-                    planetBuilder.addValList("otherNamesStar", starData["otherNamesStar"])
-                planet = planetBuilder.compile()
+                    planet.addValList("otherNamesStar", starData["otherNamesStar"])
+                planets.append(planet)
+                planet.addVal("starObject", star)
+                planet.addVal("systemObject", system)
+                star.addValList("planetObjects", planets)
                 print("PLANET: ", planet)
-            starBuilder.addVal("nameSystem", systemBuilder.getVal("nameSystem"))
-            starBuilder.addValList("otherNamesSystem", systemBuilder.getVal("otherNamesSystem"))
-            star = starBuilder.compile()
+
+            star.addVal("nameSystem", system.getVal("nameSystem"))
+            star.addValList("otherNamesSystem", system.getVal("otherNamesSystem"))
+            stars.append(star)
+            star.addVal("systemObject", system)
+            system.addValList("starObjects", stars)
             print("STAR: ", star)
-        system = systemBuilder.compile()
+
+        systems.append(system)
         print("SYSTEM: ", system)
         print('\n\n')
 
+    return systems
 
-# buildPlanetFromXML()
 buildSystemFromXML()
