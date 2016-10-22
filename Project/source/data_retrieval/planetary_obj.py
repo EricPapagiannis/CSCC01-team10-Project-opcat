@@ -11,7 +11,8 @@ class planetary_obj:
     # return field value for that class. type can be list, string, float, etc   
     def getval(self, key):
         return self.data[key];
-
+    def getName(self):
+        return self.getval("name")
     def __str__(self):
         out = "";
         for i in self.data:
@@ -19,9 +20,15 @@ class planetary_obj:
             out += str(self.data[i]);
             out += " ";
         return out;
+        
     class Builder:
         def __init__(self, name):
             self._data = {"name": name};
+        # adds a planetary object class item to data.
+        def addObj(self, name, val):
+            if isinstance(val, planetary_obj):
+                self._data[name] = val
+            return self
         # adds new field with key being name, value being val    
         def addVal(self, name, val):
             val = self._fixVal(val);
