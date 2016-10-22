@@ -65,6 +65,7 @@ class Star(PlanetaryObject):
     def __init__(self, name):
         self.data = {"nameStar": name}
 
+
 class Planet(PlanetaryObject):
 
     def __init__(self, name):
