@@ -71,9 +71,16 @@ class Planet(PlanetaryObject):
     def __init__(self, name):
         self.data = {"namePlanet": name}
 
-# returns list of system objects
+# returns a tuple of a (list of all system objects, list of star objects, list of all planet objects)
+# system has reference to its stars
+# stars has reference to its planets
+
+# planets have reference to the star and system it is in
+# stars have reference to the system it is in
 def buildSystemFromXML():
-    systems = []
+    allSystems = []
+    allStars = []
+    allPlanets = []
     for systemXML in oec.findall(".//system"):
         i = 0
         for child in systemXML.findall(".//name"):
@@ -144,6 +151,7 @@ def buildSystemFromXML():
                 if "otherNamesStar" in starData:
                     planet.addValList("otherNamesStar", starData["otherNamesStar"])
                 planets.append(planet)
+                allPlanets.append(planet)
                 planet.addVal("starObject", star)
                 planet.addVal("systemObject", system)
                 star.addValList("planetObjects", planets)
@@ -152,14 +160,15 @@ def buildSystemFromXML():
             star.addVal("nameSystem", system.getVal("nameSystem"))
             star.addValList("otherNamesSystem", system.getVal("otherNamesSystem"))
             stars.append(star)
+            allStars.append(star)
             star.addVal("systemObject", system)
             system.addValList("starObjects", stars)
             print("STAR: ", star)
 
-        systems.append(system)
+        allSystems.append(system)
         print("SYSTEM: ", system)
         print('\n\n')
 
-    return systems
+    return (allSystems, allStars, allPlanets)
 
 buildSystemFromXML()
