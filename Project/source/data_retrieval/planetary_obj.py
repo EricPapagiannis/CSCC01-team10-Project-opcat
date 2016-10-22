@@ -8,7 +8,10 @@ Created on Sat Oct 22 16:38:44 2016
 class planetary_obj:
     def __init__(self):
         self.data = dict();
-        
+    # return field value for that class. type can be list, string, float, etc   
+    def getval(self, key):
+        return self.data[key];
+
     def __str__(self):
         out = "";
         for i in self.data:
@@ -19,17 +22,17 @@ class planetary_obj:
     class Builder:
         def __init__(self, name):
             self._data = {"name": name};
-            
+        # adds new field with key being name, value being val    
         def addVal(self, name, val):
             val = self._fixVal(val);
             self._data[name] = val;
             return self;
-
+        # adds a field connected to a list, initiates starts of list 
         def addValList(self, name, val):
             val = self._fixVal(val)
             self._data[name] = [val]
             return self
-
+        # adds a field value to an existing list
         def addToValList(self, name, val):
             val = self._fixVal(val)
             self._data[name] += [val]

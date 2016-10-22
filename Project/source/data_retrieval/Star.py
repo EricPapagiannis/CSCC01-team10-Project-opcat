@@ -38,8 +38,13 @@ def buildStarFromXMLa():
                     i += 1
                 else:
                     starBuilder.addToValList("otherNames", child.text)
+            starBuilder.addVal("mass", star.findtext("mass"));
+            starBuilder.addVal("radius", star.findtext("radius"));
+            starBuilder.addVal("temperature", star.findtext("temperature"));
+            starBuilder.addVal("age", star.findtext("age"));
             star = starBuilder.compile()
-            print(star)
+            # example of getval with star subclass
+            print(star.getval("age"))
             
 buildStarFromXMLa();
         
