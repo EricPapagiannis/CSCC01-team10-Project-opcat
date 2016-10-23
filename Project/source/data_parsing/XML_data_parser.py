@@ -96,7 +96,7 @@ def buildSystemFromXML():
                 planet.addVal("starObject", star)
                 planet.addVal("systemObject", system)
                 star.addValList("planetObjects", planets)
-                print("PLANET: ", planet)
+                #print("PLANET: ", planet)
 
             star.addVal("nameSystem", system.getVal("nameSystem"))
             star.addValList("otherNamesSystem", system.getVal("otherNamesSystem"))
@@ -104,11 +104,11 @@ def buildSystemFromXML():
             allStars.append(star)
             star.addVal("systemObject", system)
             system.addValList("starObjects", stars)
-            print("STAR: ", star)
+            #print("STAR: ", star)
 
         allSystems.append(system)
-        print("SYSTEM: ", system)
-        print('\n\n')
+        #print("SYSTEM: ", system)
+        #print('\n\n')
 
     return (allSystems, allStars, allPlanets)
 

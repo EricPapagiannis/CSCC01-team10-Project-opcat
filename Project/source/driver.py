@@ -1,5 +1,14 @@
-import getopt
-import sys
+import getopt, sys
+import data_retrieval.apiGet as API
+import data_parsing.XML_data_parser as XML
+
+
+help_string = "Opcat version 0.1\nBasic operation:\n$ driver --update   \
+Retrieves data from target catalogues (NASA, openexoplanet.eu) as a list of \
+starsystems. Retrieves data from the github database of Open Exoplanet \
+catalogue as a separate list of star systems. Compares the two lists, \
+building a list of proposed changes. (Not implemented yet) After update \
+is complete the user can view proposed changes. (Not implemented yet)\n\n"
 
 
 def usage():
@@ -7,17 +16,30 @@ def usage():
     Example called method
     Returns NoneType
     '''
+    print("usage: driver --help | --update \n")
+    #print("usage: driver -h | -u | -o string | -p string\n")
 
-    print("usage: driver -h | -v | -o string | -p string\n")
-
+def help():
+    print(help_string)
 
 def update():
     '''() -> NoneType
     Example called method
     Returns NoneType
     '''
+    
+    # open exoplanet cat
+    OEC_lists = XML.buildSystemFromXML()
+    
+    OEC_systems = OEC_lists[0]
+    OEC_stars = OEC_lists[1]
+    OEC_planets = OEC_lists[2]
+    
+    # targets:
+    #API_getter = API.apiGet("", "TEMP")
+    
 
-    print("updating...\n")
+    print("Update complete.\n")
 
 
 def main():
@@ -26,7 +48,6 @@ def main():
     Accepts command line arguments
     Returns NoneType
     '''
-
     # flags which do not expect parameter (--help for example)
     # short opts are single characters, add onto shortOPT to include
     shortOPT = "hu"
@@ -53,18 +74,18 @@ def main():
 
     output = None
     planet = None
-    update = False
+    update_flag = False
 
     for o, a in opts:
 
         # handles args and opts
         # a contains parameter for ARGs, not OPTs
         if o in ("-" + shortOPT[0], "--" + longOPT[0]):
-            usage()
+            help()
             sys.exit()
 
         elif o in ("-" + shortOPT[1], "--" + longOPT[1]):
-            update = True
+            update_flag = True
 
         elif o in ("-" + shortARG[0], "--" + longARG[0]):
             output = a
@@ -73,15 +94,18 @@ def main():
             planet = a
 
         else:
+            usage()
             assert False, "unhandled option"
 
     # processing example
-    if (update):
+    if (update_flag):
         update()
+    '''
     if (output):
         print("output: " + output)
     if (planet):
         print("planet specified: " + planet)
+    '''
 
 
 if __name__ == "__main__":
