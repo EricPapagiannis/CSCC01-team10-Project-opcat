@@ -1,8 +1,13 @@
-import xml.etree.ElementTree as ET, urllib.request, gzip, io
+import gzip
+import io
+import urllib.request
+import xml.etree.ElementTree as ET
+
+from Planet import *
 from PlanetaryObject import *
 from System import *
-from Star import *
-from Planet import *
+
+from parsing.Star import *
 
 url = "https://github.com/OpenExoplanetCatalogue/oec_gzip/raw/master/systems.xml.gz"
 oec = ET.parse(gzip.GzipFile(fileobj=io.BytesIO(urllib.request.urlopen(url).read())))

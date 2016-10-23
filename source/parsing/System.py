@@ -1,4 +1,4 @@
-from PlanetaryObject import *
+from parsing.PlanetaryObject import *
 
 
 class System(PlanetaryObject):
