@@ -5,6 +5,7 @@ import xml.etree.ElementTree as ET
 
 from data_parsing.System import *
 from data_parsing.Star import *
+
 from data_parsing.Planet import *
 
 url = "https://github.com/OpenExoplanetCatalogue/oec_gzip/raw/master/systems.xml.gz"
