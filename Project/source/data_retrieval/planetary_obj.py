@@ -20,7 +20,11 @@ class planetary_obj:
             out += str(self.data[i]);
             out += " ";
         return out;
-        
+    # adds a planetary object class item to data.
+    def addRefrence(self, name, val):
+        if isinstance(val, planetary_obj):
+            self.data[name] = val
+        return self    
     class Builder:
         def __init__(self, name):
             self._data = {"name": name};
@@ -36,8 +40,11 @@ class planetary_obj:
             return self;
         # adds a field connected to a list, initiates starts of list 
         def addValList(self, name, val):
-            val = self._fixVal(val)
-            self._data[name] = [val]
+            if isinstance(val, list):
+                self._data[name] = val
+            else: 
+                val = self._fixVal(val)
+                self._data[name] = [val]
             return self
         # adds a field value to an existing list
         def addToValList(self, name, val):
