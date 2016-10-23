@@ -1,3 +1,5 @@
+#!/usr/bin/env python3.5
+
 import getopt, sys
 import data_retrieval.apiGet as API
 import data_parsing.XML_data_parser as XML
