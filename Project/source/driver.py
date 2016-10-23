@@ -69,7 +69,6 @@ def update():
     # Saves exoplanetEU database into a text file named exo_file
     exoplanetEU_getter = API.apiGet(exoplanetEU_link, exo_file)
     exoplanetEU_getter.getFromAPI("")
-
     i = 0
     while i < 200 :
         try:
@@ -78,9 +77,19 @@ def update():
         except:
             pass
         i += 1
+    '''
+    # print all)
+    for planet in OEC_planets :
+        try:
+            print(planet)
+            print()
+        except:
+            pass
+    '''
     print("\n\n\n")
-    print("First 200 Planet objects from Open Exoplanet Catalogue are \
-    displayed.\n")
+    print("First 200 Planet objects from Open Exoplanet Catalogue are " +\
+          "displayed.")
+    print("Number of planet objects retrieved: " + str(len(OEC_planets)))
     print("Update complete.\n")
 
 
