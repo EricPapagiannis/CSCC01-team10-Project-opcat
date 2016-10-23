@@ -4,7 +4,6 @@ import getopt, sys
 import data_retrieval.apiGet as API
 import data_parsing.XML_data_parser as XML
 
-
 help_string = "Opcat version 0.1\nBasic operation:\n$ driver --update   \
 Retrieves data from target catalogues (NASA, openexoplanet.eu) as a list of \
 starsystems. Retrieves data from the github database of Open Exoplanet \
@@ -19,29 +18,32 @@ def usage():
     Returns NoneType
     '''
     print("usage: driver --help | --update \n")
-    #print("usage: driver -h | -u | -o string | -p string\n")
+    # print("usage: driver -h | -u | -o string | -p string\n")
+
 
 def help():
     print(help_string)
+
 
 def update():
     '''() -> NoneType
     Example called method
     Returns NoneType
     '''
-    
+
+    print("Updating...")
     # open exoplanet cat
     OEC_lists = XML.buildSystemFromXML()
-    
+
     OEC_systems = OEC_lists[0]
     OEC_stars = OEC_lists[1]
     OEC_planets = OEC_lists[2]
-    
-    # targets:
-    #API_getter = API.apiGet("", "TEMP")
-    
 
-    print("Update complete.\n")
+    # targets:
+    # API_getter = API.apiGet("", "TEMP")
+
+
+    print("...Update complete.\n")
 
 
 def main():
@@ -63,8 +65,8 @@ def main():
     longARG = ["output", "planet"]
 
     # arg, opt pre-processor, do not edit
-    short = ':'.join([shortARG[i:i + 1] for i in range(0, len(shortARG), 1)])\
-        + ":" + shortOPT
+    short = ':'.join([shortARG[i:i + 1] for i in range(0, len(shortARG), 1)]) \
+            + ":" + shortOPT
     long = ["=" + arg for arg in longARG] + longOPT
 
     try:
