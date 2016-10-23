@@ -40,7 +40,8 @@ def main():
     longARG = ["output", "planet"]
 
     # arg, opt pre-processor, do not edit
-    short = ':'.join([shortARG[i:i + 1] for i in range(0, len(shortARG), 1)]) + ":" + shortOPT
+    short = ':'.join([shortARG[i:i + 1] for i in range(0, len(shortARG), 1)])\
+        + ":" + shortOPT
     long = ["=" + arg for arg in longARG] + longOPT
 
     try:
