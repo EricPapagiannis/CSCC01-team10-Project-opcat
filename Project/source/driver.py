@@ -5,7 +5,6 @@ import data_retrieval.remoteGet as REM
 import data_retrieval.apiGet as API
 import data_parsing.XML_data_parser as XML
 
-
 help_string = "Opcat version 0.1\nBasic operation:\n$ driver --update   \
 Retrieves data from target catalogues (NASA, openexoplanet.eu) as a list of \
 starsystems. Retrieves data from the github database of Open Exoplanet \
@@ -29,7 +28,8 @@ def usage():
     Returns NoneType
     '''
     print("usage: driver --help | --update \n")
-    #print("usage: driver -h | -u | -o string | -p string\n")
+    # print("usage: driver -h | -u | -o string | -p string\n")
+
 
 
 def help():
@@ -92,8 +92,8 @@ def main():
     longARG = ["output", "planet"]
 
     # arg, opt pre-processor, do not edit
-    short = ':'.join([shortARG[i:i + 1] for i in range(0, len(shortARG), 1)])\
-        + ":" + shortOPT
+    short = ':'.join([shortARG[i:i + 1] for i in range(0, len(shortARG), 1)]) \
+            + ":" + shortOPT
     long = ["=" + arg for arg in longARG] + longOPT
 
     try:
