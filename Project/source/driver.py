@@ -32,7 +32,7 @@ def usage():
 
 
 
-def help():
+def print_help():
     print(help_string)
 
 
@@ -69,7 +69,18 @@ def update():
     # Saves exoplanetEU database into a text file named exo_file
     exoplanetEU_getter = API.apiGet(exoplanetEU_link, exo_file)
     exoplanetEU_getter.getFromAPI("")
-    
+
+    i = 0
+    while i < 200 :
+        try:
+            print(OEC_planets[i])
+            print()
+        except:
+            pass
+        i += 1
+    print("\n\n\n")
+    print("First 200 Planet objects from Open Exoplanet Catalogue are \
+    displayed.\n")
     print("Update complete.\n")
 
 
@@ -112,7 +123,7 @@ def main():
         # handles args and opts
         # a contains parameter for ARGs, not OPTs
         if o in ("-" + shortOPT[0], "--" + longOPT[0]):
-            help()
+            print_help()
             sys.exit()
 
         elif o in ("-" + shortOPT[1], "--" + longOPT[1]):
