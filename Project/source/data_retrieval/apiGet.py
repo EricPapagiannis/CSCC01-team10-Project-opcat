@@ -1,11 +1,11 @@
 import requests
 
+
 class apiGet():
-    
     def __init__(self, baseURL, saveTo):
         self.baseURL = baseURL
         self.saveTo = saveTo
-    
+
     def getFromAPI(self, parameters):
         '''(String) -> NoneType
         Retrieves using GET with specified paramters
@@ -28,8 +28,10 @@ class apiGet():
         except:
             raise CannotSaveFileException(self.saveTo)
 
+
 class CannotRetrieveDataException(Exception):
     pass
+
 
 class CannotSaveFileException(Exception):
     pass
