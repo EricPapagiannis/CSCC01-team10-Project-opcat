@@ -21,7 +21,6 @@ def update():
 
 
 def main():
-
     '''() -> NoneType
     Main driver method
     Accepts command line arguments
@@ -41,8 +40,7 @@ def main():
     longARG = ["output", "planet"]
 
     # arg, opt pre-processor, do not edit
-    short = ':'.join([shortARG[i:i+1] for i in range(0, len(shortARG), 1)]) +
-    ":" + shortOPT
+    short = ':'.join([shortARG[i:i + 1] for i in range(0, len(shortARG), 1)]) + ":" + shortOPT
     long = ["=" + arg for arg in longARG] + longOPT
 
     try:
@@ -80,9 +78,10 @@ def main():
     if (update):
         update()
     if (output):
-        print ("output: " + output)
+        print("output: " + output)
     if (planet):
-        print ("planet specified: " + planet)
+        print("planet specified: " + planet)
+
 
 if __name__ == "__main__":
     main()

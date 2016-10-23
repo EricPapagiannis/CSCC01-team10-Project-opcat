@@ -1,5 +1,4 @@
 class remoteGet:
-
     def __init__(self, link, saveTo):
         self._link = link
         self._saveTo = saveTo
@@ -9,6 +8,7 @@ class remoteGet:
     Raises CannotRetrieveFileException
     Returns NoneType
     '''
+
     def getFile(self):
         import urllib
         try:
@@ -22,6 +22,7 @@ class remoteGet:
     Raises CannotRetrieveFileException
     Returns bool
     '''
+
     def isNew(self):
         import hashlib
         import urllib
@@ -41,7 +42,8 @@ class remoteGet:
             hashgen2.update(buf2)
         csumOriginal = hashgen2.hexdigest()
         os.remove(self._saveTo + ".TMP")
-        return not(csumNew == csumOriginal)
+        return not (csumNew == csumOriginal)
+
 
 class CannotRetrieveFileException(Exception):
     pass
