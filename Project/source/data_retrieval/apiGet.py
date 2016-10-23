@@ -27,6 +27,22 @@ class apiGet():
             outFile.close
         except:
             raise CannotSaveFileException(self.saveTo)
+    
+    def getTextFromAPI(self, parameters):
+        '''(String) -> String
+        Retrieves using GET with specified paramters
+        Returns .csv file as a string
+        '''
+        fullURL = self.baseURL + parameters
+        try:
+            res = requests.get(fullURL)
+        except:
+            raise CannotRetrieveDataException(fullURL)
+        if (res.ok):
+            output = res.text
+            return output
+        else:
+            raise CannotRetrieveDataException(fullURL) 
 
 
 class CannotRetrieveDataException(Exception):

@@ -6,7 +6,27 @@ class PlanetaryObject:
             self.data = {"name" + self.__class__.__name__, name}
 
     def __str__(self):
-        return str(self.data)
+        '''
+        Builds up and returns a human-readable representation of 
+        PlanetaryObject, including all the keys and corresponding data values;
+        If references to other planetary objects are present, they are ignored.
+        '''
+        list_objects = ["Planet", "Star", "System", "PlanetaryObject"]
+        s = ""
+        s += "Object type : "
+        s += self.__class__.__name__
+        s += "\n"
+        for key in self.data.keys():
+            s += str(key)
+            s += " :   "
+            if self.data[key].__class__.__name__ in list_objects :
+                s += "Points to an instance of class "
+                s += self.data[key].__class__.__name__
+            else:
+                s += str(self.data[key])
+            s += "\n"
+        s += "\n"
+        return s
 
     def addVal(self, name, val):
         if isinstance(val, PlanetaryObject):
