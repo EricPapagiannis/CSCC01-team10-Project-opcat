@@ -1,8 +1,8 @@
 from Planet import Planet
-def buildPlanet(line, heads):
+def buildPlanet(line, heads, wanted):
     _data_field = dict()
     _name = 0;
-    _wanted = ["mass", "radius", "orbital_period"]
+    _wanted = wanted
     for i in _wanted:
         temp = " ".join(i.split("_"))
         _data_field[temp] = heads.index(i)
@@ -14,8 +14,8 @@ def buildPlanet(line, heads):
 
     return planet
 
-def buildListPlanets():
-    file = open("exoplanet.eu_catalog-2.csv", "r")
+def buildListPlanets(filename, wanted):
+    file = open(filename, "r")
     heads = file.readline().split(',')
     line = file.readline()
     planets = dict()
@@ -27,6 +27,6 @@ def buildListPlanets():
     return planets
 
 if __name__ == "__main__":
-    planets = buildListPlanets()
+    planets = buildListPlanets("exoplanet.eu_catalog-2.csv", ["mass", "radius", "orbital_period"])
     for i in planets:
         print(str(i))
