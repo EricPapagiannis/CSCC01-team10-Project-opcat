@@ -1,75 +1,12 @@
 import xml.etree.ElementTree as ET, urllib.request, gzip, io
+from PlanetaryObject import *
+from System import *
+from Star import *
+from Planet import *
 
 url = "https://github.com/OpenExoplanetCatalogue/oec_gzip/raw/master/systems.xml.gz"
 oec = ET.parse(gzip.GzipFile(fileobj=io.BytesIO(urllib.request.urlopen(url).read())))
 
-
-class PlanetaryObject:
-    def __init__(self):
-        self.data = dict()
-
-    def __init__(self, name):
-        self.data = {"nameSystem": name}
-
-    def __str__(self):
-        return str(self.data)
-
-    def addVal(self, name, val):
-        if isinstance(val, PlanetaryObject):
-            self.data[name] = val
-        else:
-            val = self._fixVal(val)
-            self.data[name] = val
-
-    def addValList(self, name, val):
-        if isinstance(val, list):
-            self.data[name] = val
-        else:
-            val = self._fixVal(val)
-            self.data[name] = [val]
-        return self
-
-    def addToValList(self, name, val):
-        val = self._fixVal(val)
-        self.data[name] += [val]
-        return self
-
-    def getData(self):
-        return self.data
-
-    def getVal(self, name):
-        return self.data[name]
-
-    def _fixVal(self, val):
-        temp = None
-        if (val != ''):
-            try:
-                temp = float(val)
-            except ValueError:
-                temp = val
-            except TypeError:
-                temp = "N/A"
-        else:
-            temp = "N/A"
-        return temp
-
-
-class System(PlanetaryObject):
-
-    def __init__(self, name):
-        self.data = {"nameSystem": name}
-
-
-class Star(PlanetaryObject):
-
-    def __init__(self, name):
-        self.data = {"nameStar": name}
-
-
-class Planet(PlanetaryObject):
-
-    def __init__(self, name):
-        self.data = {"namePlanet": name}
 
 # returns a tuple of a (list of all system objects, list of star objects, list of all planet objects)
 # system has reference to its stars
@@ -170,5 +107,6 @@ def buildSystemFromXML():
         print('\n\n')
 
     return (allSystems, allStars, allPlanets)
+
 
 buildSystemFromXML()
