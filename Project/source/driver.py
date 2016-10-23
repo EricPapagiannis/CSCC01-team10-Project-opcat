@@ -1,6 +1,7 @@
 #!/usr/bin/env python3.5
 
-import getopt, sys
+import getopt, sys, os
+import data_retrieval.remoteGet as REM
 import data_retrieval.apiGet as API
 import data_parsing.XML_data_parser as XML
 
@@ -13,6 +14,15 @@ building a list of proposed changes. (Not implemented yet) After update \
 is complete the user can view proposed changes. (Not implemented yet)\n\n"
 
 
+NASA_link = "http://exoplanetarchive.ipac.caltech.edu/cgi-bin/nsted\
+API/nph-nstedAPI?table=exoplanets"
+
+exoplanetEU_link = "http://exoplanet.eu/catalog/csv/"
+
+nasa_file = "nasa_csv"
+exo_file = "exoplanetEU_csv"
+
+
 def usage():
     '''() -> NoneType
     Example called method
@@ -21,26 +31,45 @@ def usage():
     print("usage: driver --help | --update \n")
     #print("usage: driver -h | -u | -o string | -p string\n")
 
+
 def help():
     print(help_string)
+
+
+def clean_files():
+    '''
+    () -> NoneType
+    Removes text files from previous update.
+    Returns None
+    '''
+    for name in [nasa_file, exo_file]:
+        try:
+            os.remove(name)
+        except:
+            pass
+
 
 def update():
     '''() -> NoneType
     Example called method
     Returns NoneType
     '''
-    
-    # open exoplanet cat
+    # open exoplanet catalogue
     OEC_lists = XML.buildSystemFromXML()
-    
     OEC_systems = OEC_lists[0]
     OEC_stars = OEC_lists[1]
     OEC_planets = OEC_lists[2]
+    # delete text files from previous update
+    clean_files()
     
     # targets:
-    #API_getter = API.apiGet("", "TEMP")
+    # Saves nasa database into a text file named nasa_file
+    NASA_getter = API.apiGet(NASA_link, nasa_file)
+    NASA_getter.getFromAPI("&table=planets")
+    # Saves exoplanetEU database into a text file named exo_file
+    exoplanetEU_getter = API.apiGet(exoplanetEU_link, exo_file)
+    exoplanetEU_getter.getFromAPI("")
     
-
     print("Update complete.\n")
 
 
