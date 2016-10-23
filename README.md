@@ -1,8 +1,49 @@
 # team10-Project
 
-Deliverables Folder:
-  - contains Deliverable 1, 2 and 3
+An utility for updating the open exoplanet catelogue with external sources
 
-Project Folder:
+Copyright (c) 2016 [Chain Coders], All Right Reserved
 
-Contains code for the project.
+DIRECTORY STRUCTURE
+
+root
+|
+|_Deliverables
+|            |_Deliverable_1.pdf
+|            |_Deliverable_2.pdf
+|            |_Deliverable_3.pdf
+|_Project
+        |_source_
+                 |_data_parsing
+                 |            |_CSV_data_parser.py
+                 |            |_Planet.py
+                 |            |_PlanetaryObject.py
+                 |            |_Star.py
+                 |            |_System.py
+                 |            |_XML_data_parser.py
+                 |
+                 |_data_retrieval
+                 |              |_apiGet.py
+                 |              |_remoteGet.py
+                 |
+                 |___init__.py
+                 |_driver.py
+                 |_installDep.sh
+
+INSTALLATION
+
+  -  Ensure that Python 3.x is installed
+
+  -  Ensure that pip (https://pypi.python.org/pypi/pip) is installed
+
+  -  IMPORTANT: Execute "installDep.sh" found in /Project/source/
+     This will install the GPL-compatible "requests" library
+
+USAGE
+
+  -  Program is ran on the command line through passing commands to "driver.py",
+     found in /Project/source/
+
+LICENSE
+
+  This software is licensed under the MIT License
