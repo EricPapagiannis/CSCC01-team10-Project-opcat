@@ -7,7 +7,7 @@ from Planet import *
 from PlanetaryObject import *
 from System import *
 
-from parsing.Star import *
+from data_parsing.Star import *
 
 url = "https://github.com/OpenExoplanetCatalogue/oec_gzip/raw/master/systems.xml.gz"
 oec = ET.parse(gzip.GzipFile(fileobj=io.BytesIO(urllib.request.urlopen(url).read())))

@@ -1,4 +1,4 @@
-from parsing.PlanetaryObject import *
+from data_parsing.PlanetaryObject import *
 
 
 class Planet(PlanetaryObject):
