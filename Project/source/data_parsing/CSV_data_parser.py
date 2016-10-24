@@ -92,11 +92,11 @@ if __name__ == "__main__":
         print(str(i))
     print("<<<<<EU\n\n\n\n\n\nNASA>>>>>>")
     planets = buildListPlanets("nasa_csv", ["mass", "radius", "eccentricity", "period", 
-        "lastupdate"], "nasa")#, "discoverymethod"], "nasa")
+        "lastupdate", "discoverymethod"], "nasa")
     print(len(planets))
     for i in planets:
         print(str(i))
             #pass
     #except:
         #print("what")
-        pass
+        #pass
