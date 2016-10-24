@@ -1,8 +1,11 @@
 from data_parsing.Planet import Planet
+#from Planet import Planet
 
-eu = {"mass": "mass", "radius":"radius", "orbital_period": "period", "semi_major_axis":"semimajoraxis",
-    "eccentricity":"eccentricity", "detection_type":"discoverymethod", "discovered":"discoveryyear"}
-nasa = {"pl_hostname":"name", "pl_radj":"radius", "pl_orbeccen":"eccentricity"}
+eu = {"mass": "mass", "radius":"radius", "period":"orbital_period", "semimajoraxis":"semi_major_axis",
+    "eccentricity":"eccentricity", "discoverymethod":"detection_type", "discoveryyear":"discovered",
+    "lastupdate":"updated"}
+nasa = {"name":"pl_hostname", "radius":"pl_radj", "eccentricity":"pl_orbeccen", "period":"pl_orbper",
+    "lastupdate":"rowupdate"}
 
 discoveryCorrection = {"Radial Velocity": "RV", "Primary Transit": "transit", "Imaging":"imaging",
     "Pulsar":"timing", "Microlensing":"microlensing", "TTV":"transit", "Astrometry":"RV"}
@@ -11,7 +14,7 @@ correction = {"discoverymethod":discoveryCorrection}
 
 def buildPlanet(line, heads, wanted, source):
     _data_field = dict()
-    _name = 0
+    _name_index = 0
     _wanted = wanted
 
     if(source == "eu"):
@@ -21,17 +24,21 @@ def buildPlanet(line, heads, wanted, source):
 
     for i in _wanted:
         temp = _actual[i]
-        tempval = _fixVal(temp, heads.index(i))
+        tempval = _fixVal(i, heads.index(temp))
         #if(heads.index(i) == "Other"):
-        _data_field[temp] = tempval
+        _data_field[i] = tempval
 
-    planet = Planet(line[_name])
+    # fixing nasa's weird naming thing
+    _name = line[_name_index]
+    if(source == "nasa"):
+        _name += " " + line[_name_index+1]
+    #create planet
+    planet = Planet(_name)
 
     for i in _data_field:
-        # here
         try:
             planet.addVal(i, line[_data_field[i]])
-        except:
+        except KeyError:
             planet.addVal(i, "")
 
     return planet
@@ -73,12 +80,13 @@ def buildListPlanetsAllField(filename, source):
 if __name__ == "__main__":
     try:
         planets = buildListPlanets("exoplanetEU_csv",
-            ["mass", "radius", "orbital_period", "semi_major_axis", "discovered"], "eu")
+            ["mass", "radius", "period", "semimajoraxis", "discoveryyear"], "eu")
         for i in planets:
             print(str(i))
         print("<<<<<EU\n\n\n\n\n\nNASA>>>>>>")
-        planets = buildListPlanets("nasa_csv", ["pl_radj", "pl_orbeccen"], "nasa")
+        planets = buildListPlanets("nasa_csv", ["radius", "eccentricity", "period", "lastupdate"], "nasa")
         for i in planets:
             print(str(i))
+            #pass
     except:
         pass
