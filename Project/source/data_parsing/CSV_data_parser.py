@@ -5,10 +5,11 @@ eu = {"mass": "mass", "radius":"radius", "period":"orbital_period", "semimajorax
     "eccentricity":"eccentricity", "discoverymethod":"detection_type", "discoveryyear":"discovered",
     "lastupdate":"updated"}
 nasa = {"name":"pl_hostname", "radius":"pl_radj", "eccentricity":"pl_orbeccen", "period":"pl_orbper",
-    "lastupdate":"rowupdate"}
+    "lastupdate":"rowupdate", "discoverymethod":"pl_discmethod", "mass":"pl_bmassj"}
 
 discoveryCorrection = {"Radial Velocity": "RV", "Primary Transit": "transit", "Imaging":"imaging",
-    "Pulsar":"timing", "Microlensing":"microlensing", "TTV":"transit", "Astrometry":"RV"}
+    "Pulsar":"timing", "Microlensing":"microlensing", "TTV":"transit", "Transit Timing Variation":"transit",
+    "Astrometry":"RV"}
 
 correction = {"discoverymethod":discoveryCorrection}
 
@@ -23,15 +24,18 @@ def buildPlanet(line, heads, wanted, source):
         _actual = nasa
 
     for i in _wanted:
-        temp = _actual[i]
-        tempval = _fixVal(i, heads.index(temp))
+        try:
+            temp = _actual[i]
+            tempval = _fixVal(i, heads.index(temp))
+        except KeyError:
+            temp = i
         #if(heads.index(i) == "Other"):
         _data_field[i] = tempval
 
     # fixing nasa's weird naming thing
     _name = line[_name_index]
     if(source == "nasa"):
-        _name += " " + line[_name_index+1]
+        _name += (" " + line[_name_index+1])
     #create planet
     planet = Planet(_name)
 
@@ -52,6 +56,8 @@ def _fixVal(field, value):
 def buildDictionaryPlanets(filename, wanted, source):
     file = open(filename, "r")
     heads = file.readline().split(',')
+    if(heads[-1][-1] == '\n'):
+        heads[-1] = heads[-1][:-1]
     line = file.readline()
     planets = dict()
 
@@ -78,15 +84,19 @@ def buildListPlanetsAllField(filename, source):
     return buildListPlanets(filename, heads, source)
 
 if __name__ == "__main__":
-    try:
-        planets = buildListPlanets("exoplanetEU_csv",
-            ["mass", "radius", "period", "semimajoraxis", "discoveryyear"], "eu")
-        for i in planets:
-            print(str(i))
-        print("<<<<<EU\n\n\n\n\n\nNASA>>>>>>")
-        planets = buildListPlanets("nasa_csv", ["radius", "eccentricity", "period", "lastupdate"], "nasa")
-        for i in planets:
-            print(str(i))
+    #try:
+    planets = buildListPlanets("exoplanetEU_csv",
+        ["mass", "radius", "period", "semimajoraxis", "discoveryyear", "lastupdate",
+        "discoverymethod", "eccentricity"], "eu")
+    for i in planets:
+        print(str(i))
+    print("<<<<<EU\n\n\n\n\n\nNASA>>>>>>")
+    planets = buildListPlanets("nasa_csv", ["mass", "radius", "eccentricity", "period", 
+        "lastupdate", "discoverymethod"], "nasa")
+    print(len(planets))
+    for i in planets:
+        print(str(i))
             #pass
-    except:
-        pass
+    #except:
+        #print("what")
+        #pass
