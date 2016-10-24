@@ -27,10 +27,9 @@ def buildPlanet(line, heads, wanted, source):
         _data_field[i] = tempval
 
     # fixing nasa's weird naming thing
-    if(source == "eu"):
-        _name = line[_name_index]
-    else: # source == "nasa"
-        _name = line[_name_index] + " " + line[_name_index+1]
+    _name = line[_name_index]
+    if(source == "nasa"):
+        _name += " " + line[_name_index+1]
     #create planet
     planet = Planet(_name)
 
