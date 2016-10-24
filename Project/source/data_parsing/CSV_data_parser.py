@@ -1,8 +1,8 @@
 from Planet import Planet
 
 eu = {"mass": "mass", "radius":"radius", "orbital_period": "period", "semi_major_axis":"semimajoraxis",
-    "eccentricity":"eccentricity", "detection_type":"discoverymethod"}
-nasa = {}
+    "eccentricity":"eccentricity", "detection_type":"discoverymethod", "discovered":"discoveryyear"}
+nasa = {"pl_hostname":"name", "pl_radj":"radius", "pl_orbeccen":"eccentricity"}
 
 discoveryCorrection = {"Radial Velocity": "RV", "Primary Transit": "transit", "Imaging":"imaging",
     "Pulsar":"timing", "Microlensing":"microlensing", "TTV":"transit", "Astrometry":"RV"}
@@ -49,6 +49,7 @@ def buildDictionaryPlanets(filename, wanted, source):
         planet = buildPlanet(line, heads, wanted, source)
         planets[planet.data["namePlanet"]] = planet
         line = file.readline()
+    file.close()
     return planets
 
 def buildListPlanets(filename, wanted, source):
@@ -59,8 +60,18 @@ def buildListPlanets(filename, wanted, source):
         rlist += [tdict[name]]
     return rlist
 
+def buildListPlanetsAllField(filename, source):
+    file = open(filename, "r")
+    heads = file.readline().split(',')
+    file.close()
+    return buildListPlanets(filename, heads, source)
+
 if __name__ == "__main__":
-    planets = buildListPlanets("exoplanet.eu_catalog-2.csv",
-        ["mass", "radius", "orbital_period", "semi_major_axis"], "eu")
+    planets = buildListPlanets("exoplanetEU_csv",
+        ["mass", "radius", "orbital_period", "semi_major_axis", "discovered"], "eu")
+    for i in planets:
+        print(str(i))
+    print("<<<<<EU\n\n\n\n\n\nNASA>>>>>>")
+    planets = buildListPlanets("nasa_csv", ["pl_radj", "pl_orbeccen"], "nasa")
     for i in planets:
         print(str(i))
