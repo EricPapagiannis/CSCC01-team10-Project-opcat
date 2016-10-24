@@ -71,21 +71,14 @@ def buildListPlanetsAllField(filename, source):
     return buildListPlanets(filename, heads, source)
 
 if __name__ == "__main__":
-<<<<<<< HEAD
-    planets = buildListPlanets("exoplanetEU_csv",
-        ["mass", "radius", "orbital_period", "semi_major_axis", "discovered"], "eu")
-    for i in planets:
-        print(str(i))
-    print("<<<<<EU\n\n\n\n\n\nNASA>>>>>>")
-    planets = buildListPlanets("nasa_csv", ["pl_radj", "pl_orbeccen"], "nasa")
-    for i in planets:
-        print(str(i))
-=======
     try:
-        planets = buildListPlanets("exoplanet.eu_catalog-2.csv",
-            ["mass", "radius", "orbital_period", "semi_major_axis"], "eu")
+        planets = buildListPlanets("exoplanetEU_csv",
+            ["mass", "radius", "orbital_period", "semi_major_axis", "discovered"], "eu")
+        for i in planets:
+            print(str(i))
+        print("<<<<<EU\n\n\n\n\n\nNASA>>>>>>")
+        planets = buildListPlanets("nasa_csv", ["pl_radj", "pl_orbeccen"], "nasa")
         for i in planets:
             print(str(i))
     except:
         pass
->>>>>>> 72fd0b986e910f44d33f9073d32cd1d0db4dfa46
