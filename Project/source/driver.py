@@ -74,17 +74,17 @@ def update():
                                     ["mass", "radius", "orbital_period", 
                                      "semi_major_axis"], "eu")
     i = 0
-    while i < 200 :
+    while i < 100 :
         try:
-            print(OEC_planets[i])
+            print(EXO_planets[i])
             print()
         except:
             pass
         i += 1
     i = 0
-    while i < 200 :
+    while i < 100 :
         try:
-            print(EXO_planets[i])
+            print(OEC_planets[i])            
             print()
         except:
             pass
@@ -99,7 +99,7 @@ def update():
             pass
     '''
     print("\n\n\n")
-    print("First 200 Planet objects from Open Exoplanet Catalogue and from"+\
+    print("First 100 Planet objects from Open Exoplanet Catalogue and from"+\
           " exoplanet.eu are displayed.")
     print("Number of planet objects retrieved: " + str(len(OEC_planets)) +\
           " From Open Exoplanet Catalogue; " + str(len(EXO_planets)) +\
