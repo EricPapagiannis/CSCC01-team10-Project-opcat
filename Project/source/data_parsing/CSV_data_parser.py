@@ -1,4 +1,4 @@
-from Planet import Planet
+from data_parsing.Planet import Planet
 
 eu = {"mass": "mass", "radius":"radius", "orbital_period": "period", "semi_major_axis":"semimajoraxis",
     "eccentricity":"eccentricity", "detection_type":"discoverymethod", "discovered":"discoveryyear"}
@@ -28,7 +28,11 @@ def buildPlanet(line, heads, wanted, source):
     planet = Planet(line[_name])
 
     for i in _data_field:
-        planet.addVal(i, line[_data_field[i]])
+        # here
+        try:
+            planet.addVal(i, line[_data_field[i]])
+        except:
+            planet.addVal(i, "")
 
     return planet
 
@@ -67,6 +71,7 @@ def buildListPlanetsAllField(filename, source):
     return buildListPlanets(filename, heads, source)
 
 if __name__ == "__main__":
+<<<<<<< HEAD
     planets = buildListPlanets("exoplanetEU_csv",
         ["mass", "radius", "orbital_period", "semi_major_axis", "discovered"], "eu")
     for i in planets:
@@ -75,3 +80,12 @@ if __name__ == "__main__":
     planets = buildListPlanets("nasa_csv", ["pl_radj", "pl_orbeccen"], "nasa")
     for i in planets:
         print(str(i))
+=======
+    try:
+        planets = buildListPlanets("exoplanet.eu_catalog-2.csv",
+            ["mass", "radius", "orbital_period", "semi_major_axis"], "eu")
+        for i in planets:
+            print(str(i))
+    except:
+        pass
+>>>>>>> 72fd0b986e910f44d33f9073d32cd1d0db4dfa46
