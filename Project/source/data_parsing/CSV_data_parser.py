@@ -36,7 +36,7 @@ def buildPlanet(line, heads, wanted, source):
     for i in _data_field:
         try:
             planet.addVal(i, line[_data_field[i]])
-        except:
+        except KeyError:
             planet.addVal(i, "")
 
     return planet
