@@ -1,5 +1,5 @@
-from data_parsing.Planet import Planet
-#from Planet import Planet
+#from data_parsing.Planet import Planet
+from Planet import Planet
 
 eu = {"mass": "mass", "radius":"radius", "period":"orbital_period", "semimajoraxis":"semi_major_axis",
     "eccentricity":"eccentricity", "discoverymethod":"detection_type", "discoveryyear":"discovered"}
@@ -12,7 +12,7 @@ correction = {"discoverymethod":discoveryCorrection}
 
 def buildPlanet(line, heads, wanted, source):
     _data_field = dict()
-    _name = 0
+    _name_index = 0
     _wanted = wanted
 
     if(source == "eu"):
@@ -26,7 +26,13 @@ def buildPlanet(line, heads, wanted, source):
         #if(heads.index(i) == "Other"):
         _data_field[i] = tempval
 
-    planet = Planet(line[_name])
+    # fixing nasa's weird naming thing
+    if(source == "eu"):
+        _name = line[_name_index]
+    else: # source == "nasa"
+        _name = line[_name_index] + " " + line[_name_index+1]
+    #create planet
+    planet = Planet(_name)
 
     for i in _data_field:
         try:
