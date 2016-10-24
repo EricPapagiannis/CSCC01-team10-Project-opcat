@@ -71,8 +71,8 @@ def update():
     exoplanetEU_getter = API.apiGet(exoplanetEU_link, exo_file)
     exoplanetEU_getter.getFromAPI("")
     EXO_planets = CSV.buildListPlanets(exo_file,
-                                    ["mass", "radius", "orbital_period", 
-                                     "semi_major_axis"], "eu")
+                                    ["mass", "radius", "period", 
+                                     "semimajoraxis"], "eu")
     i = 0
     while i < 100 :
         try:

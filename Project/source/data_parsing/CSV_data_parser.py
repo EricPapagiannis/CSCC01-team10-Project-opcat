@@ -1,9 +1,11 @@
-#from data_parsing.Planet import Planet
-from Planet import Planet
+from data_parsing.Planet import Planet
+#from Planet import Planet
 
 eu = {"mass": "mass", "radius":"radius", "period":"orbital_period", "semimajoraxis":"semi_major_axis",
-    "eccentricity":"eccentricity", "discoverymethod":"detection_type", "discoveryyear":"discovered"}
-nasa = {"name":"pl_hostname", "radius":"pl_radj", "eccentricity":"pl_orbeccen", "period":"pl_orbper"}
+    "eccentricity":"eccentricity", "discoverymethod":"detection_type", "discoveryyear":"discovered",
+    "lastupdate":"updated"}
+nasa = {"name":"pl_hostname", "radius":"pl_radj", "eccentricity":"pl_orbeccen", "period":"pl_orbper",
+    "lastupdate":"rowupdate"}
 
 discoveryCorrection = {"Radial Velocity": "RV", "Primary Transit": "transit", "Imaging":"imaging",
     "Pulsar":"timing", "Microlensing":"microlensing", "TTV":"transit", "Astrometry":"RV"}
@@ -82,7 +84,7 @@ if __name__ == "__main__":
         for i in planets:
             print(str(i))
         print("<<<<<EU\n\n\n\n\n\nNASA>>>>>>")
-        planets = buildListPlanets("nasa_csv", ["radius", "eccentricity", "period"], "nasa")
+        planets = buildListPlanets("nasa_csv", ["radius", "eccentricity", "period", "lastupdate"], "nasa")
         for i in planets:
             print(str(i))
             #pass
