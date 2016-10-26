@@ -85,9 +85,8 @@ def buildListPlanetsAllField(filename, source):
     file.close()
     return buildListPlanets(filename, heads, source)
 
-def buildListStar(filename, wanted, source):
+def buildDictStar(planets, source):
     #unsafe to call until after merge and planetary object has a catch
-    planets = buildListPlanets(filename, wanted, source)
     stars = dict()
     for planet in planets:
         starname = planet.getVal('nameStar')
@@ -96,7 +95,15 @@ def buildListStar(filename, wanted, source):
             stars[starname].addValList("planetObjects", [planet])
         else:
             stars[starname].addToValList("planetObjects", [planet])
-    return stars.values()
+    return stars
+
+def buildListStar(filename, wanted, source):
+    planets = buildListPlanets(filename, wanted, source)
+    return buildDictStar.values()
+
+def buildListStarAllField(filename, source):
+    planets = buildListPlanetsAllField(filename, source)
+    return buildDictStar.values()
 
 
 if __name__ == "__main__":
