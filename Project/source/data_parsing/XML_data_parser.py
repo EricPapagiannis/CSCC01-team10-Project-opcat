@@ -7,7 +7,6 @@ from data_parsing.System import *
 from data_parsing.Star import *
 from data_parsing.Planet import *
 
-
 url = "https://github.com/OpenExoplanetCatalogue/oec_gzip/raw/master/systems.xml.gz"
 oec = ET.parse(
     gzip.GzipFile(fileobj=io.BytesIO(urllib.request.urlopen(url).read())))
@@ -123,11 +122,16 @@ def buildSystemFromXML():
 
                 # add the star name that the planet is in
                 planet.addVal("nameStar", star.getVal("nameStar"))
+                planet.starObjectNamesToStar[star.getVal("nameStar")] = star
                 starData = star.getData()
                 # and others if there are any
                 if "otherNamesStar" in starData:
                     planet.addValList("otherNamesStar",
                                       starData["otherNamesStar"])
+                    for starObject in starData["otherNamesStar"]:
+                        planet.starObjectNamesToStar[
+                            starObject] = star
+
                 # add this planet to the list of planets in the star
                 planets.append(planet)
                 # and all planets list
@@ -143,11 +147,15 @@ def buildSystemFromXML():
             star.planetObjects = planets
             # add the name of the system that the star is in
             star.addVal("nameSystem", system.getVal("nameSystem"))
+            star.systemObjectNamesToSystem[star.getVal("nameSystem")] = system
             systemData = system.getData()
             # and others if there are any
             if "otherNamesSystem" in systemData:
                 star.addValList("otherNamesSystem",
-                                system.getVal("otherNamesSystem"))
+                                systemData["otherNamesSystem"])
+            for systemObject in systemData["otherNamesSystem"]:
+                star.systemObjectNamesToSystem[
+                    systemObject] = system
             # add the stars to the list of stars in the system
             stars.append(star)
             # and all stars list
@@ -166,7 +174,13 @@ def buildSystemFromXML():
     return (allSystems, allStars, allPlanets)
 
 
-buildSystemFromXML()
+if __name__ == "__main__":
+    (a, b, c) = buildSystemFromXML()
+    print(b[2].data["otherNamesSystem"])
+    print(b[2].systemObjectNamesToSystem)
+    print("-------")
+    print(c[2].data["otherNamesStar"])
+    print(c[2].starObjectNamesToStar)
 
 ''' givin a proposed change which inlcudes:
 the changes from the original planet
