@@ -1,5 +1,6 @@
 class PlanetaryObject:
     def __init__(self, name=None):
+        self.name = name
         if name is None:
             self.data = dict()
         else:

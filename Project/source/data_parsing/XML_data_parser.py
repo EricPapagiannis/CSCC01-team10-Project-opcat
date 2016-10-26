@@ -19,6 +19,7 @@ oec = ET.parse(gzip.GzipFile(fileobj=io.BytesIO(urllib.request.urlopen(url).read
 # planets have reference to the star and system it is in
 # stars have reference to the system it is in
 def buildSystemFromXML():
+
     allSystems = []
     allStars = []
     allPlanets = []
@@ -94,17 +95,24 @@ def buildSystemFromXML():
                 planets.append(planet)
                 allPlanets.append(planet)
                 planet.addVal("starObject", star)
+                planet.starObject = star
                 planet.addVal("systemObject", system)
-                star.addValList("planetObjects", planets)
+                planet.systemObject = system
+
                 #print("PLANET: ", planet)
 
+            star.addValList("planetObjects", planets)
+            star.planetObjects = planets
             star.addVal("nameSystem", system.getVal("nameSystem"))
             star.addValList("otherNamesSystem", system.getVal("otherNamesSystem"))
             stars.append(star)
             allStars.append(star)
             star.addVal("systemObject", system)
             system.addValList("starObjects", stars)
-            #print("STAR: ", star)
+            system.starObjects = stars
+            # print("STAR: ", star)
+
+
 
         allSystems.append(system)
         #print("SYSTEM: ", system)
@@ -114,3 +122,22 @@ def buildSystemFromXML():
 
 
 buildSystemFromXML()
+
+
+''' givin a proposed change which inlcudes:
+the changes from the original planet
+and a reference to the planet
+
+
+algorithm outline:
+loop through each proposed change (make into other method)
+get the reference from the proposed change
+figure out how to get xml from one planet on oec github givin the name of system (stored in planet)
+then do stuff similar to download
+ie. find the planet in the system
+instead of storing the field, replace it with the new one from proposed change
+finalize the field updating
+pull request? with new xml string (maybe have to turn into file first, then delete after?) on the link
+'''
+def uploadProposedChange():
+    pass
