@@ -4,6 +4,7 @@ import getopt, sys, os
 import data_retrieval.remoteGet as REM
 import data_retrieval.apiGet as API
 import data_parsing.XML_data_parser as XML
+import data_parsing.CSV_data_parser as CSV
 
 help_string = "Opcat version 0.1\nBasic operation:\n$ driver --update   \
 Retrieves data from target catalogues (NASA, openexoplanet.eu) as a list of \
@@ -69,14 +70,25 @@ def update():
     # Saves exoplanetEU database into a text file named exo_file
     exoplanetEU_getter = API.apiGet(exoplanetEU_link, exo_file)
     exoplanetEU_getter.getFromAPI("")
+    EXO_planets = CSV.buildListPlanets(exo_file,
+                                    ["mass", "radius", "period", 
+                                     "semimajoraxis"], "eu")
     i = 0
-    while i < 200 :
+    while i < 100 :
         try:
-            print(OEC_planets[i])
+            print(EXO_planets[i])
             print()
         except:
             pass
         i += 1
+    i = 0
+    while i < 100 :
+        try:
+            print(OEC_planets[i])            
+            print()
+        except:
+            pass
+        i += 1    
     '''
     # print all)
     for planet in OEC_planets :
@@ -87,9 +99,11 @@ def update():
             pass
     '''
     print("\n\n\n")
-    print("First 200 Planet objects from Open Exoplanet Catalogue are " +\
-          "displayed.")
-    print("Number of planet objects retrieved: " + str(len(OEC_planets)))
+    print("First 100 Planet objects from Open Exoplanet Catalogue and from"+\
+          " exoplanet.eu are displayed.")
+    print("Number of planet objects retrieved: " + str(len(OEC_planets)) +\
+          " From Open Exoplanet Catalogue; " + str(len(EXO_planets)) +\
+          " from exoplanet.eu")
     print("Update complete.\n")
 
 
