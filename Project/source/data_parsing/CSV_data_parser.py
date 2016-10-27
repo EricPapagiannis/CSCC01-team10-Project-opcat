@@ -101,6 +101,12 @@ def buildListStar(filename, wanted, source):
     planets = buildListPlanets(filename, wanted, source)
     return buildDictStar.values()
 
+def buildListStarExistingField(filename, source):
+    if(source == "eu"):
+        return planets = buildListStar(filename, eu, source)
+    else: #source == "nasa"
+        return planets = buildListStar(filename, nasa, source)
+
 def buildListStarAllField(filename, source):
     planets = buildListPlanetsAllField(filename, source)
     return buildDictStar.values()
