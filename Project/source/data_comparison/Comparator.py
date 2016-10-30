@@ -22,7 +22,7 @@ class comparator():
             raise ObjectTypeMismatchException
 
 
-    def sqljoin(left_join):
+    def sqlJoin(left_join):
         '''(bool) -> Dictionary
         works similar to joins in sql
         if input bool is true, a left join is performed
