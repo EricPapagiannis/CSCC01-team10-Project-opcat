@@ -16,42 +16,37 @@ discoveryCorrection = {"Radial Velocity": "RV", "Primary Transit": "transit", "I
 correction = {"discoverymethod":discoveryCorrection}
 
 def buildPlanet(line, heads, wanted, source):
-    _data_field = dict()
     _name_index = 0
-    _wanted = wanted
+    _data_field = dict()
 
-    if(source == "eu"):
+    if (source == "eu"):
         _actual = eu
-    else: #(source == "nasa")
+    else:
         _actual = nasa
 
-    for i in _wanted:
+    for i in wanted:
         try:
             temp = _actual[i]
-            tempval = _fixVal(i, heads.index(temp))
-        except KeyError:
-            tempval = i
-        #if(heads.index(i) == "Other"):
-        _data_field[i] = tempval
+            tempval = heads.index(temp)
+            _data_field[i] = tempval
+        except ValueError:
+            pass
 
-    # fixing nasa's weird naming thing
     _name = line[_name_index]
     if(source == "nasa"):
         _name += (" " + line[_name_index+1])
-    #create planet
     planet = Planet(_name)
 
     for i in _data_field:
         try:
-            planet.addVal(i, line[_data_field[i]])
+            planet.addVal(i, _fixVal(i, line[_data_field[i]]))
         except KeyError:
-            planet.addVal(i, "")
-
+            planet.addVal(i,"")
     return planet
 
 def _fixVal(field, value):
-    if(field in correction and value in correction[field]):
-        return correction[field[value]]
+    if(field in correction and value in correction[field].keys()):
+        return correction[field][value]
     else:
         return value
 
