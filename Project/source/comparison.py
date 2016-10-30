@@ -27,8 +27,8 @@ catalogue_2["star2"] = star2
 class Comparison:
     '''accepts an addition object or modification object'''
     def __init__(self, target, target_og, destination):
-        # takes in a target dictionary, a string containing target database
-        # origin, and the destination dictionary. All dictionaries contain a list of star objects
+        ''' takes in a target dictionary, a string containing target database
+        origin, and the destination dictionary. All dictionaries contain a list of star objects '''
         self.target = target
         self.origin = target_og
         self.destination = destination
@@ -36,7 +36,7 @@ class Comparison:
     
     def find_new_star(self):
         '''checks between target and destination dictionaries for new star objects
-           based on star name. returns list of star objects from target that aren't in dest.
+           based on star name. returns list of addition objects for stars.
         '''
         # for each key in target catalogue check if that key is also in the destination catalogue.
         new_star_list = []
@@ -58,8 +58,11 @@ class Comparison:
         self.changes["Additions"] = self.changes["Additions"] + new_star_list
         
     def find_new_planet(self):
+        '''checks between target and destination dictionaries for new planet objects
+           based on planet name. returns list of addition objects for planets.
+        '''
         new_planet_list = []
-        # for each star in the target database, check for any  planet additions
+        # for each star in the target database, check for any planet additions
         for star in self.target:
             planet_list = self.target[star].planetObjects
             for planet in planet_list:
