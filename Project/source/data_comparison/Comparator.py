@@ -30,7 +30,7 @@ class comparator():
         returns a Dictionary containing three keys,
         first with a list of field names
         the rest with lists of data values in the same order
-        sql join logic will determine what is included
+        SQL join logic will determine what is included
         '''
 
         if (left_join):
@@ -56,6 +56,27 @@ class comparator():
                 result_dict['right'].append(right_data[key])
 
         return result_dict
+    
+    def innerJoinDiff():
+        '''() -> Dictionary
+        Selects fields akin to SQL inner join
+        On selected fields, find differing field values
+        Returns a dictionary with keys corresponding to any differing field
+        values. The keys map to tuples of the values of (obj1, obj2).
+        '''
+
+        left_data = self.obj1.getData()
+        right_data = self.obj2.getData()
+
+        result_dict = {}
+
+        for key in left_data:
+            if key in right_data:
+                if (left_data[key] != right_data[key]):
+                    result_dict[key] = (left_data[key], right_data[key])
+
+        return result_dict
+
 
 
 class ObjectTypeMismatchException(Exception):
