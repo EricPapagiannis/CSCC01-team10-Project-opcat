@@ -35,13 +35,26 @@ class Comparison:
         self.changes = {"Additions":[], "Modifications":[]}
     
     def find_new_star(self):
+        '''checks between target and destination dictionaries for new star objects
+           based on star name. returns list of star objects from target that aren't in dest.
+        '''
         # for each key in target catalogue check if that key is also in the destination catalogue.
         new_star_list = []
         for star in self.target:
+            # if star name is not in destination, check each star object in destination
+            # for alternate names
             if star not in self.destination:
-                # create an addition object for each star not in the destination database
-                new_star = Addition(self.origin, self.target[star]);
-                new_star_list.append(new_star);
+                has_star = False
+                for named_star in self.destination:
+                    stardata = self.destination[named_star].data
+                    if "otherNamesStar" not in stardata:
+                        pass
+                    elif star in stardata["otherNamesStar"]:
+                        has_star = True
+                if not has_star:
+                    # create an addition object for each star not in the destination database
+                    new_star = Addition(self.origin, self.target[star]);
+                    new_star_list.append(new_star);
         self.changes["Additions"] = self.changes["Additions"] + new_star_list
         
     def find_new_planet(self):
@@ -61,6 +74,24 @@ class Comparison:
         pass
     def total_changes(self):
         return len(self.changes["Additions"]) + len(self.changes["Modifications"])
+        
+    def compare_numerical_values(target_val, dest_val, target_error_low=0, target_error_high=0, 
+                                  dest_val_low=0, dest_val_high=0):
+
+        '''helper function for detecting changes in numerical values. returns true if
+        value in target catalogue falls outside the acceptable range of values for 
+        the destination catalogue.
+        '''
+        # simple range comparison between values
+        # NOTE this does not work for temperature 
+        # since OEC keeps temperature as lower limit/upper limit instead of error+ and -.
+        # must convert temerature uncertainty.
+        dest_low = dest_val-dest_val_low
+        dest_high = dest_val+dest_val_high
+        if (target_val < dest_low or target_val > dest_high):
+            return True
+        return False
+            
 
 compare = Comparison(catalogue_1, "catalogue_1", catalogue_2)
 compare.find_new_star()
