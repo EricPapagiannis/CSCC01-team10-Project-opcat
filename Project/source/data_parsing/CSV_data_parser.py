@@ -6,8 +6,8 @@ from data_parsing.Star import Star
 eu = {"mass": "mass", "radius":"radius", "period":"orbital_period", "semimajoraxis":"semi_major_axis",
     "eccentricity":"eccentricity", "discoverymethod":"detection_type", "discoveryyear":"discovered",
     "lastupdate":"updated", "nameStar":"star_name"}
-nasa = {"nameStar":"pl_hostname", "radius":"pl_radj", "eccentricity":"pl_orbeccen", "period":"pl_orbper",
-    "lastupdate":"rowupdate", "discoverymethod":"pl_discmethod", "mass":"pl_bmassj"}
+nasa = {"name":"pl_hostname", "radius":"pl_radj", "eccentricity":"pl_orbeccen", "period":"pl_orbper",
+    "lastupdate":"rowupdate", "discoverymethod":"pl_discmethod", "mass":"pl_bmassj","nameStar":"pl_hostname"}
 
 discoveryCorrection = {"Radial Velocity": "RV", "Primary Transit": "transit", "Imaging":"imaging",
     "Pulsar":"timing", "Microlensing":"microlensing", "TTV":"transit", "Transit Timing Variation":"transit",
@@ -30,7 +30,7 @@ def buildPlanet(line, heads, wanted, source):
             temp = _actual[i]
             tempval = _fixVal(i, heads.index(temp))
         except KeyError:
-            temp = i
+            tempval = i
         #if(heads.index(i) == "Other"):
         _data_field[i] = tempval
 

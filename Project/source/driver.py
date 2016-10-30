@@ -79,8 +79,8 @@ def update():
     
     # targets:
     # Saves nasa database into a text file named nasa_file
-    NASA_getter = API.apiGet(NASA_link, nasa_file)
-    NASA_getter.getFromAPI("&table=planets")
+    # NASA_getter = API.apiGet(NASA_link, nasa_file)
+    # NASA_getter.getFromAPI("&table=planets")
     # Saves exoplanetEU database into a text file named exo_file
     exoplanetEU_getter = API.apiGet(exoplanetEU_link, exo_file)
     exoplanetEU_getter.getFromAPI("")
@@ -118,6 +118,9 @@ def update():
     print("Number of planet objects retrieved: " + str(len(OEC_planets)) +\
           " From Open Exoplanet Catalogue; " + str(len(EXO_planets)) +\
           " from exoplanet.eu")
+    EU_stars = CSV.buildDictStarExistingField(exo_file, "eu")
+
+    #NASA_stars = CSV.buildDictStarExistingField(nasa_file, "nasa")
     print("Update complete.\n")
 
 
