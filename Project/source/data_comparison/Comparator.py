@@ -1,12 +1,10 @@
-from Planet import *
-from Star import *
-from System import *
+from data_parsing.Planet import *
+from data_parsing.Star import *
+from data_parsing.System import *
 
 
-class comparator():
-
-
-    def __init__(obj1, obj2):
+class Comparator():
+    def __init__(self, obj1, obj2):
         '''(PlanetaryObject, PlanetaryObject) -> NoneTye
         sets up the comparator with two objects of PlanetaryObject
         type must match
@@ -21,8 +19,7 @@ class comparator():
         else:
             raise ObjectTypeMismatchException
 
-
-    def sqlJoin(left_join):
+    def sqlJoin(self, left_join):
         '''(bool) -> Dictionary
         works similar to joins in sql
         if input bool is true, a left join is performed
@@ -41,10 +38,10 @@ class comparator():
             right_data = self.obj1.getData()
 
         missing_keys = []
-        result_dict = {'data':[], 'left':[], 'right':[]}
+        result_dict = {'data': [], 'left': [], 'right': []}
 
         for key in left_data:
-            if not(key in right_data):
+            if not (key in right_data):
                 missing_keys.append(key)
             result_dict['data'].append(key)
 
@@ -56,8 +53,8 @@ class comparator():
                 result_dict['right'].append(right_data[key])
 
         return result_dict
-    
-    def innerJoinDiff():
+
+    def innerJoinDiff(self):
         '''() -> Dictionary
         Selects fields akin to SQL inner join
         On selected fields, find differing field values
@@ -78,6 +75,25 @@ class comparator():
         return result_dict
 
 
-
 class ObjectTypeMismatchException(Exception):
     pass
+
+if __name__ == "__main__":
+    import data_parsing.XML_data_parser as XML
+    import data_parsing.CSV_data_parser as CSV
+
+    EXO_planets = CSV.buildListPlanets("exoplanetEU_csv",
+                                       ["mass", "radius", "period",
+                                        "semimajoraxis"], "eu")
+    a = XML.buildSystemFromXML()
+    planets = a[5]
+    for planet in EXO_planets:
+        if planet.data["namePlanet"] == "11 Com b":
+            b = planet
+    b.data["mass"] = 20
+    print(b)
+    p = planets["11 Com b"]
+    print(p)
+    c = Comparator(b, p)
+    d = c.sqlJoin(True)
+    print(d)
