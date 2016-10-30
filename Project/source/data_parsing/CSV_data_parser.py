@@ -7,7 +7,7 @@ eu = {"mass": "mass", "radius":"radius", "period":"orbital_period", "semimajorax
     "eccentricity":"eccentricity", "discoverymethod":"detection_type", "discoveryyear":"discovered",
     "lastupdate":"updated", "nameStar":"star_name"}
 nasa = {"name":"pl_hostname", "radius":"pl_radj", "eccentricity":"pl_orbeccen", "period":"pl_orbper",
-    "lastupdate":"rowupdate", "discoverymethod":"pl_discmethod", "mass":"pl_bmassj"}
+    "lastupdate":"rowupdate", "discoverymethod":"pl_discmethod", "mass":"pl_bmassj","nameStar":"pl_hostname"}
 
 discoveryCorrection = {"Radial Velocity": "RV", "Primary Transit": "transit", "Imaging":"imaging",
     "Pulsar":"timing", "Microlensing":"microlensing", "TTV":"transit", "Transit Timing Variation":"transit",
