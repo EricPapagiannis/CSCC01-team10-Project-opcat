@@ -44,7 +44,7 @@ class comparator():
         result_dict = {'data':[], 'left':[], 'right':[]}
 
         for key in left_data:
-            if not(key in left_data):
+            if not(key in right_data):
                 missing_keys.append(key)
             result_dict['data'].append(key)
 
