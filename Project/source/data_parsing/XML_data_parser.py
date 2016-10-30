@@ -203,10 +203,6 @@ def buildSystemFromXML():
             allPlanetsDict)
 
 
-def buildDictOfStars(allSystems):
-    starDict = dict()
-
-
 if __name__ == "__main__":
     (a, b, c, d, e, f) = buildSystemFromXML()
     print(b)
