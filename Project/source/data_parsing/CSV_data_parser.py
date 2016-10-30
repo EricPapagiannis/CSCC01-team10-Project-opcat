@@ -86,7 +86,6 @@ def buildListPlanetsAllField(filename, source):
     return buildListPlanets(filename, heads, source)
 
 def buildDictStar(planets, source):
-    #unsafe to call until after merge and planetary object has a catch
     stars = dict()
     for planet in planets:
         starname = planet.getVal('nameStar')
@@ -96,6 +95,13 @@ def buildDictStar(planets, source):
         else:
             stars[starname].addToValList("planetObjects", [planet])
     return stars
+
+def buildDictStarExistingField(filename, source):
+    if(source == "eu"):
+        wanted = eu
+    else:
+        wanted = nasa
+    return buildDictStar(buildListPlanets(filename, wanted, source), source)
 
 def buildListStar(filename, wanted, source):
     planets = buildListPlanets(filename, wanted, source)
