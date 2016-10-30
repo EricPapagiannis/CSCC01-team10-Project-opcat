@@ -30,7 +30,7 @@ def buildPlanet(line, heads, wanted, source):
             temp = _actual[i]
             tempval = _fixVal(i, heads.index(temp))
         except KeyError:
-            temp = i
+            tempval = i
         #if(heads.index(i) == "Other"):
         _data_field[i] = tempval
 
