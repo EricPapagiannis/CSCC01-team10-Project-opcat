@@ -5,13 +5,13 @@ from data_parsing.Star import Star
 
 eu = {"mass": "mass", "radius":"radius", "period":"orbital_period", "semimajoraxis":"semi_major_axis",
     "eccentricity":"eccentricity", "discoverymethod":"detection_type", "discoveryyear":"discovered",
-    "lastupdate":"updated"}
+    "lastupdate":"updated", "nameStar":"star_name"}
 nasa = {"name":"pl_hostname", "radius":"pl_radj", "eccentricity":"pl_orbeccen", "period":"pl_orbper",
     "lastupdate":"rowupdate", "discoverymethod":"pl_discmethod", "mass":"pl_bmassj"}
 
 discoveryCorrection = {"Radial Velocity": "RV", "Primary Transit": "transit", "Imaging":"imaging",
     "Pulsar":"timing", "Microlensing":"microlensing", "TTV":"transit", "Transit Timing Variation":"transit",
-    "Astrometry":"RV"}
+    "Astrometry":"RV", "nameStar":"pl_hostname"}
 
 correction = {"discoverymethod":discoveryCorrection}
 
@@ -103,9 +103,9 @@ def buildListStar(filename, wanted, source):
 
 def buildListStarExistingField(filename, source):
     if(source == "eu"):
-        return planets = buildListStar(filename, eu, source)
+        return  buildListStar(filename, eu, source)
     else: #source == "nasa"
-        return planets = buildListStar(filename, nasa, source)
+        return buildListStar(filename, nasa, source)
 
 def buildListStarAllField(filename, source):
     planets = buildListPlanetsAllField(filename, source)
