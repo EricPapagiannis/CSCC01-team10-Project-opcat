@@ -28,18 +28,18 @@ def usage():
     Example called method
     Returns NoneType
     '''
-    print("usage: driver --help | --update \n")
-    # print("usage: driver -h | -u | -o string | -p string\n")
-
+    print("usage: driver [--help] [--update] [--output string] " +
+    "[--planet string] [--showall | --shownumber int]\n")
 
 
 def print_help():
+    '''() -> NoneType
+    '''
     print(help_string)
 
 
 def clean_files():
-    '''
-    () -> NoneType
+    '''() -> NoneType
     Removes text files from previous update.
     Returns None
     '''
@@ -48,6 +48,20 @@ def clean_files():
             os.remove(name)
         except:
             pass
+	
+
+def show_all():
+    '''() -> NoneType
+    Skeleton function
+    '''
+    print("showed all")
+
+
+def show_number(show_parameter):
+    '''() -> NoneType
+    Skeleton function
+    '''
+    print(show_parameter + " showed")
 
 
 def update():
@@ -115,20 +129,20 @@ def main():
     '''
     # flags which do not expect parameter (--help for example)
     # short opts are single characters, add onto shortOPT to include
-    shortOPT = "hu"
+    shortOPT = "hua"
     # log opts are phrases, add onto longOPT to include
-    longOPT = ["help", "update"]
+    longOPT = ["help", "update", "showall"]
 
     # flags that do expect a parameter (--output file.txt for example)
     # similar to shortOPT
-    shortARG = "op"
+    shortARG = "ops"
     # similar to longOTP
-    longARG = ["output", "planet"]
+    longARG = ["output", "planet", "shownumber"]
 
     # arg, opt pre-processor, do not edit
     short = ':'.join([shortARG[i:i + 1] for i in range(0, len(shortARG), 1)]) \
             + ":" + shortOPT
-    long = ["=" + arg for arg in longARG] + longOPT
+    long = [arg + "=" for arg in longARG] + longOPT
 
     try:
         opts, args = getopt.getopt(sys.argv[1:], short, long)
@@ -139,32 +153,60 @@ def main():
 
     output = None
     planet = None
+    show_parameter = None
     update_flag = False
+    show_flag = False
+    all_flag = False
 
     for o, a in opts:
 
         # handles args and opts
         # a contains parameter for ARGs, not OPTs
+
+	# help
         if o in ("-" + shortOPT[0], "--" + longOPT[0]):
             print_help()
             sys.exit()
 
+	# update
         elif o in ("-" + shortOPT[1], "--" + longOPT[1]):
             update_flag = True
 
+	# output
         elif o in ("-" + shortARG[0], "--" + longARG[0]):
             output = a
 
+	# planet
         elif o in ("-" + shortARG[1], "--" + longARG[1]):
             planet = a
+
+        # shownumer
+        elif o in ("-" + shortARG[2], "--" + longARG[2]):
+            show_flag = True
+            show_parameter = a
+
+        # showall
+        elif o in ("-" + shortOPT[2], "--" + longOPT[2]):
+            show_flag = True
+            all_flag = True
 
         else:
             usage()
             assert False, "unhandled option"
+	
+    if (show_flag):
+        if ((all_flag) and (show_parameter)):
+            print_help()
+            return 1
+        elif (all_flag):
+            show_all()
+        else:
+            show_number(show_parameter)
 
-    # processing example
+    # update
     if (update_flag):
         update()
+	
     '''
     if (output):
         print("output: " + output)
