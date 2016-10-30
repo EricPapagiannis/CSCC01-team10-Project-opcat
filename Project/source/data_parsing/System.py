@@ -6,3 +6,4 @@ class System(PlanetaryObject):
         self.data = {"nameSystem": name}
         self.name = name
         self.starObjects = []
+        self.nameToStar = dict()
