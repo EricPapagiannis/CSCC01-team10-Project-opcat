@@ -8,3 +8,4 @@ class Star(PlanetaryObject):
         self.systemObject = None
         self.planetObjects = []
         self.systemObjectNamesToSystem = dict()
+        self.nameToStar = dict()
