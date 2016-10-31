@@ -1,14 +1,16 @@
 from data_parsing.Planet import *
 from data_parsing.Star import *
 from data_parsing.System import *
-
+from proposed_change import *
 
 class Comparator():
-    def __init__(self, obj1, obj2):
-        '''(PlanetaryObject, PlanetaryObject) -> NoneTye
+    def __init__(self, obj1, obj2, origin):
+        '''(PlanetaryObject, PlanetaryObject, str) -> NoneTye
         sets up the comparator with two objects of PlanetaryObject
-        type must match
-        raises ObjectTypeMismatchException
+        type of two objects must match
+        str must be one of {"NASA archive", "exoplanet.eu"}
+
+        raises ObjectTypeMismatchException is objects do not match
         returns NoneType
         '''
 
@@ -16,6 +18,7 @@ class Comparator():
             self.obj1 = obj1
             self.obj2 = obj2
             self.working_type = type(obj1)
+            self.origin = origin
         else:
             raise ObjectTypeMismatchException
 
@@ -74,9 +77,37 @@ class Comparator():
 
         return result_dict
 
+
+    def proposedChangeStarCompare(self):
+        '''() -> list
+        Similar to starCompare but returns a list of Addition
+        and Modification Objects
+        '''
+
+        result_dict = []
+
+        main_dictionary = starCompare()
+
+        for field in main_dictionary["starC"]:
+            result_dict.append(Modification(self.origin, None, None, field,
+            main_dictionary["starC"][field][1],
+            main_dictionary["starC"][field][0]))
+
+        i = 0
+        for data in main_dictionary["starN"]["right"]:
+            if (data == "N/A"):
+                i += 1
+                result_dict.append(Addition(self.origin, None, None,
+                main_dictionary["starN"]["data"][i],
+                main_dictionary["starN"]["left"][i],
+                main_dictionary["starN"]["right"][i]))
+
+        return result_dict
+
+
     def starCompare(self):
         '''() -> Dictionary
-        Similar to method innerJoinDiff but designed for stars
+        Comparison method for only stars
         Will find differing data for both the star and any planets
         attached to the system
 
