@@ -5,6 +5,7 @@ import data_retrieval.remoteGet as REM
 import data_retrieval.apiGet as API
 import data_parsing.XML_data_parser as XML
 import data_parsing.CSV_data_parser as CSV
+import data_comparison.Comparator as COMP
 
 help_string = "Opcat version 0.1\nBasic operation:\n$ driver --update   \
 Retrieves data from target catalogues (NASA, openexoplanet.eu) as a list of \
@@ -24,6 +25,8 @@ EU_file = "exoplanetEU_csv"
 
 all_tags = ["mass", "radius", "period", "semimajoraxis", "discoveryyear", \
             "lastupdate", "discoverymethod", "eccentricity"]
+
+CHANGES = []
 
 def usage():
     '''() -> NoneType
@@ -56,14 +59,25 @@ def show_all():
     '''() -> NoneType
     Skeleton function
     '''
-    print("showed all")
+    update()
+    i = 0
+    while i < len(CHANGES):
+        show_number(i)
+        i += 1
 
 
-def show_number(show_parameter):
+def show_number(n):
     '''() -> NoneType
     Skeleton function
     '''
-    print(show_parameter + " showed")
+    if len(CHANGES) == 0:
+        update()
+    if n < len(CHANGES) and n > 0:
+        print("\nShowing number : " + str(n) + "\n")
+        print(CHANGES[n])
+        print()
+    else:
+        print("Out of range.")
 
 
 def update():
@@ -76,6 +90,8 @@ def update():
     OEC_systems = OEC_lists[0]
     OEC_stars = OEC_lists[1]
     OEC_planets = OEC_lists[2]
+    
+    
     # delete text files from previous update
     #clean_files()
     
@@ -85,7 +101,8 @@ def update():
     # Saves nasa database into a text file named nasa_file
     NASA_getter = API.apiGet(NASA_link, nasa_file)
     try:
-        NASA_getter.getFromAPI("&table=planets")
+        #NASA_getter.getFromAPI("&table=planets")
+	NASA_getter.getFromAPI("")
     except (TimeoutError, API.CannotRetrieveDataException) as e:
         print("NASA archive is unreacheable.\n")
     # Saves exoplanetEU database into a text file named exo_file
@@ -96,74 +113,50 @@ def update():
         print("exoplanet.eu is unreacheable.\n")
     '''
     
-    
     # build the dict of stars from exoplanet.eu
     EU_stars = CSV.buildDictStarExistingField(EU_file, "eu")
     # build the dict of stars from NASA
     NASA_stars = CSV.buildDictStarExistingField(nasa_file, "nasa")
     # build the dictionary of stars from Open Exoplanet Catalogue
-    OEC_stars = {}
+    OEC_stars = XML.buildSystemFromXML()[4]
     
+    # clean both dictionaries
+    for d in [EU_stars, NASA_stars]:
+        for key in d:
+            if d.get(key).__class__.__name__ != "Star" :
+                d.pop(key)
     
+    # add chages from EU to the list
+    for key in EU_stars.keys():
+        if key in OEC_stars.keys() :
+            C = COMP.Comparator(EU_stars.get(key), OEC_stars.get(key), "eu")
+            CHANGES.extend(C.proposedChangeStarCompare())
+
+    # add chages from NASA to the list    
+    for key in NASA_stars.keys():
+        if key in OEC_stars.keys() :
+            C = COMP.Comparator(NASA_stars.get(key), OEC_stars.get(key), "nasa")
+            CHANGES.extend(C.proposedChangeStarCompare())   
+	
+	
+    '''
     for curr in [EU_stars, NASA_stars] :
         print(curr.keys())
         print()
-    
-    
-    
-    
-    
-    '''
-    EU_stars = CSV.buildListPlanets(exo_file, all_tags, "eu")
-
-
-    q = CSV.buildListPlanetsAllField(EU_file, "eu")
-    qq = CSV.buildListPlanetsAllField(nasa_file, "nasa")
-    
-    for l in [q, qq] :
-        for planet in q :
-            print(planet)
-
-
-
-    i = 0
-    while i < 10 :
+	
+    for i in OEC_stars.keys() :
         try:
-            print(EXO_planets[i])
-            print()
+            print(i, " : ")
+            #print(OEC_stars.get(i))
         except:
             pass
-        i += 1
-    
-    i = 0
-    while i < 10 :
-        try:
-            print(OEC_planets[i])            
-            print()
-        except:
-            pass
-        i += 1
-    
-    
-    # print all)
-    for planet in OEC_planets :
-        try:
-            print(planet)
-            print()
-        except:
-            pass
-    print("\n\n\n")
-    print("First 100 Planet objects from Open Exoplanet Catalogue and from"+\
-          " exoplanet.eu are displayed.")
-    print("Number of planet objects retrieved: " + str(len(OEC_planets)) +\
-          " From Open Exoplanet Catalogue; " + str(len(EXO_planets)) +\
-          " from exoplanet.eu")
+        print()
+	
     '''
     
+ 
     
     
-    
-    print("Update complete.\n")
 
 
 def main():
@@ -246,12 +239,17 @@ def main():
         elif (all_flag):
             show_all()
         else:
-            show_number(show_parameter)
+            try:
+                show_parameter = int(show_parameter)
+                show_number(show_parameter)
+            except ValueError:
+                print("Invalid Parameter to shownumber.")    
+            
 
     # update
     if (update_flag):
         update()
-	
+        print("Update complete.\n")
     '''
     if (output):
         print("output: " + output)
