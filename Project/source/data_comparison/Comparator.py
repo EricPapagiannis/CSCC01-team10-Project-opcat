@@ -3,6 +3,7 @@ from data_parsing.Star import *
 from data_parsing.System import *
 from data_comparison.proposed_change import *
 
+
 class Comparator():
     def __init__(self, obj1, obj2, origin):
         '''(PlanetaryObject, PlanetaryObject, str) -> NoneTye
@@ -77,7 +78,6 @@ class Comparator():
 
         return result_dict
 
-
     def proposedChangeStarCompare(self):
         '''() -> list
         Similar to starCompare but returns a list of Addition
@@ -87,12 +87,14 @@ class Comparator():
         result_dict = []
 
         main_dictionary = self.starCompare()
-        print(main_dictionary)
 
-        for field in main_dictionary["starC"]:
-            result_dict.append(Modification(self.origin, None, None, field,
-            main_dictionary["starC"][field][1],
-            main_dictionary["starC"][field][0]))
+        for planet in main_dictionary["planetDC"]:
+            for field in main_dictionary["planetDC"][planet]:
+                result_dict.append(Modification(self.origin, None, None, field,
+                                                main_dictionary["planetDC"][
+                                                    planet][field][0],
+                                                main_dictionary["planetDC"][
+                                                    planet][field][1]))
 
         i = 0
         '''
@@ -105,7 +107,6 @@ class Comparator():
                 main_dictionary["starN"]["right"][i]))
         '''
         return result_dict
-
 
     def starCompare(self):
         '''() -> Dictionary
@@ -157,6 +158,7 @@ class Comparator():
             planetsDataChange = {}
 
             # examine all planets attached to system
+            '''
             print("+++++++++++++++++++++++++++++")
             print(self.obj1.planetObjects)
             print(self.obj1.planetObjects[0])
@@ -166,21 +168,20 @@ class Comparator():
             print(self.obj2.planetObjects[0])
             print(self.obj2.nameToPlanet)
 
-
             print("+++++++++++++++++++++++++++++")
-
+            '''
             for planet in self.obj1.planetObjects:
                 # if (planet in self.obj2.planetObjects):
                 if (planet.name in self.obj2.nameToPlanet):
-
                     # create comparartor instance on planets
                     planetCompare = Comparator(planet,
-                                               self.obj2.nameToPlanet[planet.name], self.origin)
+                                               self.obj2.nameToPlanet[
+                                                   planet.name], self.origin)
                     # get dictionary of new planet data for that planet
-                    newPlanetsData[str(planet)] = planetCompare.sqlJoin(
+                    newPlanetsData[planet.name] = planetCompare.sqlJoin(
                         True)
                     # get dictionary of changed planet data for that planet
-                    planetsDataChange[str(planet)] = \
+                    planetsDataChange[planet.name] = \
                         planetCompare.innerJoinDiff()
 
             # generates output
@@ -244,4 +245,6 @@ if __name__ == "__main__":
     print(xml.planetObjects[0])
     qq = z.proposedChangeStarCompare()
     print(qq)
+    for proposed_change in qq:
+        print(proposed_change)
     # print(qq[0])
