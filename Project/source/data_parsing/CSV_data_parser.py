@@ -5,53 +5,48 @@ from data_parsing.Star import Star
 
 eu = {"mass": "mass", "radius":"radius", "period":"orbital_period", "semimajoraxis":"semi_major_axis",
     "eccentricity":"eccentricity", "discoverymethod":"detection_type", "discoveryyear":"discovered",
-    "lastupdate":"updated"}
+    "lastupdate":"updated", "nameStar":"star_name"}
 nasa = {"name":"pl_hostname", "radius":"pl_radj", "eccentricity":"pl_orbeccen", "period":"pl_orbper",
-    "lastupdate":"rowupdate", "discoverymethod":"pl_discmethod", "mass":"pl_bmassj"}
+    "lastupdate":"rowupdate", "discoverymethod":"pl_discmethod", "mass":"pl_bmassj","nameStar":"pl_hostname"}
 
 discoveryCorrection = {"Radial Velocity": "RV", "Primary Transit": "transit", "Imaging":"imaging",
     "Pulsar":"timing", "Microlensing":"microlensing", "TTV":"transit", "Transit Timing Variation":"transit",
-    "Astrometry":"RV"}
+    "Astrometry":"RV", "nameStar":"pl_hostname"}
 
 correction = {"discoverymethod":discoveryCorrection}
 
 def buildPlanet(line, heads, wanted, source):
-    _data_field = dict()
     _name_index = 0
-    _wanted = wanted
+    _data_field = dict()
 
-    if(source == "eu"):
+    if (source == "eu"):
         _actual = eu
-    else: #(source == "nasa")
+    else:
         _actual = nasa
 
-    for i in _wanted:
+    for i in wanted:
         try:
             temp = _actual[i]
-            tempval = _fixVal(i, heads.index(temp))
-        except KeyError:
-            temp = i
-        #if(heads.index(i) == "Other"):
-        _data_field[i] = tempval
+            tempval = heads.index(temp)
+            _data_field[i] = tempval
+        except ValueError:
+            pass
 
-    # fixing nasa's weird naming thing
     _name = line[_name_index]
     if(source == "nasa"):
         _name += (" " + line[_name_index+1])
-    #create planet
     planet = Planet(_name)
 
     for i in _data_field:
         try:
-            planet.addVal(i, line[_data_field[i]])
+            planet.addVal(i, _fixVal(i, line[_data_field[i]]))
         except KeyError:
-            planet.addVal(i, "")
-
+            planet.addVal(i,"")
     return planet
 
 def _fixVal(field, value):
-    if(field in correction and value in correction[field]):
-        return correction[field[value]]
+    if(field in correction and value in correction[field].keys()):
+        return correction[field][value]
     else:
         return value
 
@@ -86,7 +81,6 @@ def buildListPlanetsAllField(filename, source):
     return buildListPlanets(filename, heads, source)
 
 def buildDictStar(planets, source):
-    #unsafe to call until after merge and planetary object has a catch
     stars = dict()
     for planet in planets:
         starname = planet.getVal('nameStar')
@@ -97,15 +91,22 @@ def buildDictStar(planets, source):
             stars[starname].addToValList("planetObjects", [planet])
     return stars
 
+def buildDictStarExistingField(filename, source):
+    if(source == "eu"):
+        wanted = eu
+    else:
+        wanted = nasa
+    return buildDictStar(buildListPlanets(filename, wanted, source), source)
+
 def buildListStar(filename, wanted, source):
     planets = buildListPlanets(filename, wanted, source)
     return buildDictStar.values()
 
 def buildListStarExistingField(filename, source):
     if(source == "eu"):
-        return planets = buildListStar(filename, eu, source)
+        return  buildListStar(filename, eu, source)
     else: #source == "nasa"
-        return planets = buildListStar(filename, nasa, source)
+        return buildListStar(filename, nasa, source)
 
 def buildListStarAllField(filename, source):
     planets = buildListPlanetsAllField(filename, source)

@@ -20,8 +20,10 @@ API/nph-nstedAPI?table=exoplanets"
 exoplanetEU_link = "http://exoplanet.eu/catalog/csv/"
 
 nasa_file = "nasa_csv"
-exo_file = "exoplanetEU_csv"
+EU_file = "exoplanetEU_csv"
 
+all_tags = ["mass", "radius", "period", "semimajoraxis", "discoveryyear", \
+            "lastupdate", "discoverymethod", "eccentricity"]
 
 def usage():
     '''() -> NoneType
@@ -43,7 +45,7 @@ def clean_files():
     Removes text files from previous update.
     Returns None
     '''
-    for name in [nasa_file, exo_file]:
+    for name in [nasa_file, EU_file]:
         try:
             os.remove(name)
         except:
@@ -75,35 +77,74 @@ def update():
     OEC_stars = OEC_lists[1]
     OEC_planets = OEC_lists[2]
     # delete text files from previous update
-    clean_files()
+    #clean_files()
     
+    
+    '''
     # targets:
     # Saves nasa database into a text file named nasa_file
     NASA_getter = API.apiGet(NASA_link, nasa_file)
-    NASA_getter.getFromAPI("&table=planets")
+    try:
+        NASA_getter.getFromAPI("&table=planets")
+    except (TimeoutError, API.CannotRetrieveDataException) as e:
+        print("NASA archive is unreacheable.\n")
     # Saves exoplanetEU database into a text file named exo_file
-    exoplanetEU_getter = API.apiGet(exoplanetEU_link, exo_file)
-    exoplanetEU_getter.getFromAPI("")
-    EXO_planets = CSV.buildListPlanets(exo_file,
-                                    ["mass", "radius", "period", 
-                                     "semimajoraxis"], "eu")
+    exoplanetEU_getter = API.apiGet(exoplanetEU_link, EU_file)
+    try:
+        exoplanetEU_getter.getFromAPI("")
+    except (TimeoutError, API.CannotRetrieveDataException) as e:
+        print("exoplanet.eu is unreacheable.\n")
+    '''
+    
+    
+    # build the dict of stars from exoplanet.eu
+    EU_stars = CSV.buildDictStarExistingField(EU_file, "eu")
+    # build the dict of stars from NASA
+    NASA_stars = CSV.buildDictStarExistingField(nasa_file, "nasa")
+    # build the dictionary of stars from Open Exoplanet Catalogue
+    OEC_stars = {}
+    
+    
+    for curr in [EU_stars, NASA_stars] :
+        print(curr.keys())
+        print()
+    
+    
+    
+    
+    
+    '''
+    EU_stars = CSV.buildListPlanets(exo_file, all_tags, "eu")
+
+
+    q = CSV.buildListPlanetsAllField(EU_file, "eu")
+    qq = CSV.buildListPlanetsAllField(nasa_file, "nasa")
+    
+    for l in [q, qq] :
+        for planet in q :
+            print(planet)
+
+
+
     i = 0
-    while i < 100 :
+    while i < 10 :
         try:
             print(EXO_planets[i])
             print()
         except:
             pass
         i += 1
+    
     i = 0
-    while i < 100 :
+    while i < 10 :
         try:
             print(OEC_planets[i])            
             print()
         except:
             pass
-        i += 1    
-    '''
+        i += 1
+    
+    
     # print all)
     for planet in OEC_planets :
         try:
@@ -111,13 +152,17 @@ def update():
             print()
         except:
             pass
-    '''
     print("\n\n\n")
     print("First 100 Planet objects from Open Exoplanet Catalogue and from"+\
           " exoplanet.eu are displayed.")
     print("Number of planet objects retrieved: " + str(len(OEC_planets)) +\
           " From Open Exoplanet Catalogue; " + str(len(EXO_planets)) +\
           " from exoplanet.eu")
+    '''
+    
+    
+    
+    
     print("Update complete.\n")
 
 
