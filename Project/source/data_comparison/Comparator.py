@@ -1,7 +1,7 @@
 from data_parsing.Planet import *
 from data_parsing.Star import *
 from data_parsing.System import *
-from proposed_change import *
+from data_comparison.proposed_change import *
 
 class Comparator():
     def __init__(self, obj1, obj2, origin):
@@ -86,7 +86,7 @@ class Comparator():
 
         result_dict = []
 
-        main_dictionary = starCompare()
+        main_dictionary = self.starCompare()
 
         for field in main_dictionary["starC"]:
             result_dict.append(Modification(self.origin, None, None, field,
@@ -202,18 +202,18 @@ if __name__ == "__main__":
     print(b)
     p = planets["11 Com b"]
     print(p)
-    c = Comparator(b, p)
+    c = Comparator(b, p, "eu")
     d = c.sqlJoin(True)
     print(d)
     e = c.innerJoinDiff()
     print(e)
 
     stars = a[4]
-    str = stars["11 Com"]
-    print(str)
+    st = stars["11 Com"]
+    print(st)
     bob = CSV.buildDictStarExistingField("../exoplanetEU_csv", "eu")
     ayy = bob["11 Com"]
     print(ayy)
-    z = Comparator(ayy, str)
+    z = Comparator(ayy, st, "eu")
     f = z.starCompare()
     print(f)
