@@ -1,12 +1,10 @@
-from Planet import *
-from Star import *
-from System import *
+from data_parsing.Planet import *
+from data_parsing.Star import *
+from data_parsing.System import *
 
 
-class comparator():
-
-
-    def __init__(obj1, obj2):
+class Comparator():
+    def __init__(self, obj1, obj2):
         '''(PlanetaryObject, PlanetaryObject) -> NoneTye
         sets up the comparator with two objects of PlanetaryObject
         type must match
@@ -21,8 +19,7 @@ class comparator():
         else:
             raise ObjectTypeMismatchException
 
-
-    def sqlJoin(left_join):
+    def sqlJoin(self, left_join):
         '''(bool) -> Dictionary
         works similar to joins in sql
         if input bool is true, a left join is performed
@@ -41,23 +38,23 @@ class comparator():
             right_data = self.obj1.getData()
 
         missing_keys = []
-        result_dict = {'data':[], 'left':[], 'right':[]}
+        result_dict = {'data': [], 'left': [], 'right': []}
 
         for key in left_data:
-            if not(key in right_data):
+            if not (key in right_data):
                 missing_keys.append(key)
             result_dict['data'].append(key)
 
         for key in result_dict['data']:
             result_dict['left'].append(left_data[key])
             if key in missing_keys:
-                result_dict['right'].append(None)
+                result_dict['right'].append("N/A")
             else:
                 result_dict['right'].append(right_data[key])
 
         return result_dict
-    
-    def innerJoinDiff():
+
+    def innerJoinDiff(self):
         '''() -> Dictionary
         Selects fields akin to SQL inner join
         On selected fields, find differing field values
@@ -77,8 +74,7 @@ class comparator():
 
         return result_dict
 
-
-    def starCompare():
+    def starCompare(self):
         '''() -> Dictionary
         Similar to method innerJoinDiff but designed for stars
         Will find differing data for both the star and any planets
@@ -106,38 +102,39 @@ class comparator():
         stars
         '''
 
-        if not(isinstance(self.obj1, Star)):
+        if not (isinstance(self.obj1, Star)):
             # do not call this method for non-stars
             raise ObjectTypeIncompatibleException
         else:
             # starC
-            starDataChange = innerJoinDiff()
+            starDataChange = self.innerJoinDiff()
 
             # starN
-            starDataNew = sqlJoin(True)
+            starDataNew = self.sqlJoin(True)
 
             # planetN
             newPlanets = {}
-            newPlanets["left"] = list(set(obj1.planetObjects) -
-                                      set(obj2.planetObjects))
-            newPlanets["right"] = list(set(obj2.planetObjects) -
-                                       set(obj1.planetObjects))
+            newPlanets["left"] = list(set(self.obj1.planetObjects) -
+                                      set(self.obj2.planetObjects))
+            newPlanets["right"] = list(set(self.obj2.planetObjects) -
+                                       set(self.obj1.planetObjects))
 
             # planetDN and DC:
             newPlanetsData = {}
             planetsDataChange = {}
 
             # examine all planets attached to system
-            for planet in obj1.planetObjects:
-                if (planet in obj2.planetObjects):
+            for planet in self.obj1.planetObjects:
+                if (planet in self.obj2.planetObjects):
                     # create comparartor instance on planets
-                    planetCompare = comparator(obj1.nameToPlanet[planet],
-                                               obj2.nameToPlanet[planet])
+                    planetCompare = Comparator(self.obj1.nameToPlanet[planet],
+                                               self.obj2.nameToPlanet[planet])
                     # get dictionary of new planet data for that planet
-                    newPlanetData[str(planet)] = planetCompare.sqlJoin(True)
+                    self.newPlanetData[str(planet)] = planetCompare.sqlJoin(
+                        True)
                     # get dictionary of changed planet data for that planet
-                    planetDataChange[str(planet)] = \
-                    planetCompare.innerJoinDiff()
+                    self.planetDataChange[str(planet)] = \
+                        planetCompare.innerJoinDiff()
 
             # generates output
             output_dict = {}
@@ -150,9 +147,42 @@ class comparator():
             return output_dict
 
 
-
 class ObjectTypeMismatchException(Exception):
     pass
 
+
 class ObjectTypeIncompatibleException(Exception):
     pass
+
+
+if __name__ == "__main__":
+    import data_parsing.XML_data_parser as XML
+    import data_parsing.CSV_data_parser as CSV
+
+    EXO_planets = CSV.buildListPlanets("../exoplanetEU_csv",
+                                       ["mass", "radius", "period",
+                                        "semimajoraxis"], "eu")
+    a = XML.buildSystemFromXML()
+    planets = a[5]
+    for planet in EXO_planets:
+        if planet.data["namePlanet"] == "11 Com b":
+            b = planet
+    b.data["mass"] = 20
+    print(b)
+    p = planets["11 Com b"]
+    print(p)
+    c = Comparator(b, p)
+    d = c.sqlJoin(True)
+    print(d)
+    e = c.innerJoinDiff()
+    print(e)
+
+    stars = a[4]
+    str = stars["11 Com"]
+    print(str)
+    bob = CSV.buildDictStarExistingField("../exoplanetEU_csv", "eu")
+    ayy = bob["11 Com"]
+    print(ayy)
+    z = Comparator(ayy, str)
+    f = z.starCompare()
+    print(f)
