@@ -21,7 +21,7 @@ class TestComparator(unittest.TestCase):
     Star1 = Star("star1")
     Star1.addVal("mass", 100)
     Star2 = Star("star2")
-    Star2.addVal("mass", 100)
+    Star2.addVal("mass", 113)
     system1 = System("sys1")
     planet3 = Planet("planet3")
     planet4 = Planet("planet4")
@@ -35,11 +35,11 @@ class TestComparator(unittest.TestCase):
         self.assertRaises(ObjectTypeMismatchException, Comparator(planet1, Star1))
         
     def testSQLjoin():
-        comparator = Comparator(planet1, planet2)
+        comparator = Comparator(planet2, planet1)
         result = comparator.sqlJoin(True)
-        self.assertEqual(result["data"], [])
-        self.assertEqual(result["left"], [])
-        self.assertEqual(result["right"], [])
+        self.assertEqual(result["data"], ["mass", "temperature"])
+        self.assertEqual(result["left"], [12, 145])
+        self.assertEqual(result["right"], [10, "N/A"])
         
     def testInnerJoinDiffFieldMatch():
         comparator = Comparator(Star1, Star2)
@@ -53,3 +53,11 @@ class TestComparator(unittest.TestCase):
         
     def testStarCompare():
         comparator = Comparator(Star1, Star2)
+        result = comparator.starCompare()
+        self.assertEqual(result["starC"], {"mass": (100, 113)})
+        self.assertEqual(result["starN"], {"data":["mass"], "left":[100], "right":[113]})
+        self.assertEqual(result["planetN"], {"left":[], "right":[planet4]})
+        self.assertEqual(result["planetDN"], {str(planet1):{"data":["mass"], "left":[10], "right":[10]},
+                         str(planet3):{"data":[], "left":[], "right":[]}})
+        self.assertEqual(result["planetDC"], {str(planet1):{"mass": (10, 10)},str(planet3):{} })
+        
