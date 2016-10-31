@@ -63,7 +63,8 @@ def buildDictionaryPlanets(filename, wanted, source):
     while(line):
         line = line.split(',')
         planet = buildPlanet(line, heads, wanted, source)
-        planets[planet.data["namePlanet"]] = planet
+        # planets[planet.data["namePlanet"]] = planet
+        planets[planet.name] = planet
         line = '\n'
         while(line == '\n'):
             line = file.readline()
@@ -90,9 +91,11 @@ def buildDictStar(planets, source):
         starname = planet.getVal('nameStar')
         if starname not in stars:
             stars[starname] = Star(starname)
-            stars[starname].addValList("planetObjects", [planet])
+            stars[starname].planetObjects = [planet]
+            # stars[starname].addValList("planetObjects", [planet])
         else:
-            stars[starname].addToValList("planetObjects", [planet])
+            # stars[starname].addToValList("planetObjects", [planet])
+            stars[starname].planetObjects.append(planet)
     return stars
 
 def buildDictStarExistingField(filename, source):
@@ -124,7 +127,7 @@ if __name__ == "__main__":
     for i in planets:
         print(str(i))
     print("<<<<<EU\n\n\n\n\n\nNASA>>>>>>")
-    planets = buildListPlanets("nasa_csv", ["mass", "radius", "eccentricity", "period", 
+    planets = buildListPlanets("nasa_csv", ["mass", "radius", "eccentricity", "period",
         "lastupdate", "discoverymethod"], "nasa")
     print(len(planets))
     for i in planets:
