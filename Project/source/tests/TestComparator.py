@@ -57,6 +57,7 @@ class TestComparator(unittest.TestCase):
         self.assertEqual(result["starC"], {"mass": (100, 113)})
         self.assertEqual(result["starN"], {"data":["mass"], "left":[100], "right":[113]})
         self.assertEqual(result["planetN"], {"left":[], "right":[planet4]})
-        self.assertEqual(result["planetDN"], {})
-        self.assertEqual(result["planetDC"], {})
+        self.assertEqual(result["planetDN"], {str(planet1):{"data":["mass"], "left":[10], "right":[10]},
+                         str(planet3):{"data":[], "left":[], "right":[]}})
+        self.assertEqual(result["planetDC"], {str(planet1):{"mass": (10, 10)},str(planet3):{} })
         
