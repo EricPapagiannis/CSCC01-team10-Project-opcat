@@ -8,9 +8,20 @@ from data_parsing.Star import *
 from data_parsing.Planet import *
 
 url = "https://github.com/OpenExoplanetCatalogue/oec_gzip/raw/master/systems.xml.gz"
-oec = ET.parse(
-    gzip.GzipFile(fileobj=io.BytesIO(urllib.request.urlopen(url).read())))
+'''
+oec = ET.parse(gzip.GzipFile(fileobj=io.BytesIO(urllib.request.urlopen(url).read())))
+'''
 
+# Write to file
+file=io.BytesIO(urllib.request.urlopen(url).read())
+with gzip.open("storage/OEC_XML.gz", "wb") as f_out, gzip.open(file, 'rb') as f_in:
+    f_out.writelines(f_in)
+f_out.close()
+f_in.close()
+# Read from file
+with gzip.open("storage/OEC_XML.gz", "rb") as f:
+    oec = ET.parse(f)
+f.close()
 
 # returns a tuple of a (list of all system objects, list of star objects, list of all planet objects)
 # system has reference to its stars
@@ -229,11 +240,13 @@ def buildSystemFromXML():
 
 
 if __name__ == "__main__":
+    '''
     (a, b, c, d, e, f) = buildSystemFromXML()
     print(b)
     print(len(b))
     print(e)
     print(len(e))
+    '''
 
 ''' givin a proposed change which inlcudes:
 the changes from the original planet
