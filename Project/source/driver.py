@@ -119,13 +119,14 @@ def update():
     NASA_stars = CSV.buildDictStarExistingField(nasa_file, "nasa")
     # build the dictionary of stars from Open Exoplanet Catalogue
     OEC_stars = XML.buildSystemFromXML()[4]
-    
+
+    '''
     # clean both dictionaries
     for d in [EU_stars, NASA_stars]:
         for key in d:
             if d.get(key).__class__.__name__ != "Star" :
                 d.pop(key)
-    
+    '''
     # add chages from EU to the list
     for key in EU_stars.keys():
         if key in OEC_stars.keys() :

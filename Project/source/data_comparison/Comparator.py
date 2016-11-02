@@ -88,13 +88,17 @@ class Comparator():
 
         main_dictionary = self.starCompare()
 
+        # return list of proposed changes of the planets in star
         for planet in main_dictionary["planetDC"]:
             for field in main_dictionary["planetDC"][planet]:
-                result_dict.append(Modification(self.origin, None, None, field,
-                                                main_dictionary["planetDC"][
-                                                    planet][field][0],
-                                                main_dictionary["planetDC"][
-                                                    planet][field][1]))
+                result_dict.append(
+                    Modification(self.origin,
+                                 self.obj2.nameToPlanet[planet], field,
+                                 main_dictionary["planetDC"][
+                                     planet][field][0],
+                                 main_dictionary["planetDC"][
+                                     planet][field][1])
+                )
 
         i = 0
         '''
@@ -247,4 +251,4 @@ if __name__ == "__main__":
     print(qq)
     for proposed_change in qq:
         print(proposed_change)
-    # print(qq[0])
+        # print(qq[0])
