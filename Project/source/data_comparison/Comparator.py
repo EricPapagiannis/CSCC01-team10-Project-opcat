@@ -73,7 +73,10 @@ class Comparator():
 
         for key in left_data:
             if key in right_data:
-                if (left_data[key] != right_data[key]):
+                if (isinstance(left_data[key], str) and isinstance(right_data[key], str)):
+                    if (left_data[key].lower() != right_data[key].lower()):
+                        result_dict[key] = (left_data[key], right_data[key])
+                elif (left_data[key] != right_data[key]):
                     result_dict[key] = (left_data[key], right_data[key])
 
         return result_dict
