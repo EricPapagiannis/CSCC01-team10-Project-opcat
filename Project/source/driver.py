@@ -120,7 +120,7 @@ def update():
     # build the dictionary of stars from Open Exoplanet Catalogue
     OEC_stars = XML.buildSystemFromXML()[4]
 
-    
+
     # clean both dictionaries
     for d in [EU_stars, NASA_stars]:
         for key in d:
