@@ -20,7 +20,8 @@ oec = ET.parse(
 # stars have reference to the system it is in
 def buildSystemFromXML():
     '''
-    () -> ([System], [Star], [Planet])
+    () -> ([System], [Star], [Planet], {systemName: System}, {starName: Star},
+           {planetName: Planet})
     Assuming a valid connection, parse the xml from the big xml document
     that contains every system into a tuple of system objects, star objects,
     and planet objects. Each Planetary Object dictionary contains the fields
@@ -35,6 +36,9 @@ def buildSystemFromXML():
     allSystems = []
     allStars = []
     allPlanets = []
+    allSystemsDict = dict()
+    allStarsDict = dict()
+    allPlanetsDict = dict()
     # loop through each system in the xml
     for systemXML in oec.findall(".//system"):
         # loop through teach tag in the system that is name
@@ -46,14 +50,18 @@ def buildSystemFromXML():
                 if i == 0:
                     systemName = child.text
                     system = System(systemName)
+                    allSystemsDict[child.text] = system
                 # if there are more names, create / add them to other names list
                 elif i == 1:
                     system.addValList("otherNamesSystem", child.text)
+                    allSystemsDict[child.text] = system
                 else:
                     system.addToValList("otherNamesSystem", child.text)
+                    allSystemsDict[child.text] = system
                 i += 1
             else:
                 system.addToValList("otherNamesSystem", child.text)
+                allSystemsDict[child.text] = system
 
         # build the system data dictionary mapping the tag name to the tag value
         # in the system
@@ -64,6 +72,7 @@ def buildSystemFromXML():
         # build a list of stars that are in the system
         stars = []
         # loop through each star in the system
+        localStarsDict = dict()
         for starXML in systemXML.findall(".//star"):
             ii = 0
             # loop through teach tag in the star that is name
@@ -74,15 +83,23 @@ def buildSystemFromXML():
                     if ii == 0:
                         star = Star(child.text)
                         system.addValList("stars", child.text)
+                        allStarsDict[child.text] = star
+                        localStarsDict[child.text] = star
                     # if there are more names, create / add them to other names
                     # list
                     elif ii == 1:
                         star.addValList("otherNamesStar", child.text)
+                        allStarsDict[child.text] = star
+                        localStarsDict[child.text] = star
                     else:
                         star.addToValList("otherNamesStar", child.text)
+                        allStarsDict[child.text] = star
+                        localStarsDict[child.text] = star
                     ii += 1
                 else:
                     star.addToValList("otherNamesStar", child.text)
+                    allStarsDict[child.text] = star
+                    localStarsDict[child.text] = star
 
             # build the star data dictionary mapping the tag name to the tag
             # value in the system
@@ -94,6 +111,7 @@ def buildSystemFromXML():
             # build a list of planets that are in the star
             planets = []
             # loop through each planet in the star
+            localPlanetsDict = dict()
             for planetXML in starXML.findall(".//planet"):
                 iii = 0
                 # loop through teach tag in the planet that is name
@@ -104,15 +122,23 @@ def buildSystemFromXML():
                         if iii == 0:
                             planet = Planet(child.text)
                             star.addValList("planets", child.text)
+                            allPlanetsDict[child.text] = planet
+                            localPlanetsDict[child.text] = planet
                         # if there are more names, create / add them to other
                         # names list
                         elif iii == 1:
                             planet.addValList("otherNamesPlanet", child.text)
+                            allPlanetsDict[child.text] = planet
+                            localPlanetsDict[child.text] = planet
                         else:
                             planet.addToValList("otherNamesPlanet", child.text)
+                            allPlanetsDict[child.text] = planet
+                            localPlanetsDict[child.text] = planet
                         iii += 1
                     else:
                         planet.addToValList("otherNamesPlanet", child.text)
+                        allPlanetsDict[child.text] = planet
+                        localPlanetsDict[child.text] = planet
 
                 # build the planet data dictionary mapping the tag name to the
                 # tag value in the system
@@ -148,6 +174,7 @@ def buildSystemFromXML():
             # add the name of the system that the star is in
             star.addVal("nameSystem", system.getVal("nameSystem"))
             star.systemObjectNamesToSystem[star.getVal("nameSystem")] = system
+            star.nameToPlanet = localPlanetsDict
             systemData = system.getData()
             # and others if there are any
             if "otherNamesSystem" in systemData:
@@ -165,22 +192,23 @@ def buildSystemFromXML():
             # add the list of stars in the system to the system
             system.addValList("starObjects", stars)
             system.starObjects = stars
+            system.nameToStar = localStarsDict
             # print("STAR: ", star)
         # add the system to the list of all systems list
         allSystems.append(system)
         # print("SYSTEM: ", system)
         # print('\n\n')
 
-    return (allSystems, allStars, allPlanets)
+    return (allSystems, allStars, allPlanets, allSystemsDict, allStarsDict,
+            allPlanetsDict)
 
 
 if __name__ == "__main__":
-    (a, b, c) = buildSystemFromXML()
-    print(b[2].data["otherNamesSystem"])
-    print(b[2].systemObjectNamesToSystem)
-    print("-------")
-    print(c[2].data["otherNamesStar"])
-    print(c[2].starObjectNamesToStar)
+    (a, b, c, d, e, f) = buildSystemFromXML()
+    print(b)
+    print(len(b))
+    print(e)
+    print(len(e))
 
 ''' givin a proposed change which inlcudes:
 the changes from the original planet
