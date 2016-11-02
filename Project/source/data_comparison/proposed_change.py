@@ -62,6 +62,9 @@ class Modification(ProposedChange):
         s += "Type of object modified: "
         s += str(self.OEC_object.__class__.__name__)
         s += "\n"
+        s += "Name of object modified: "
+        s += self.OEC_object.name
+        s += "\n"
         if self.OEC_object.__class__.__name__ != "System":
             s += "Part of System: "
             if self.OEC_object.__class__.__name__ == "Star":
