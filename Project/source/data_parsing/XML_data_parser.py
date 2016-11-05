@@ -12,16 +12,24 @@ url = "https://github.com/OpenExoplanetCatalogue/oec_gzip/raw/master/systems.xml
 oec = ET.parse(gzip.GzipFile(fileobj=io.BytesIO(urllib.request.urlopen(url).read())))
 '''
 
-# Write to file
-file=io.BytesIO(urllib.request.urlopen(url).read())
-with gzip.open("storage/OEC_XML.gz", "wb") as f_out, gzip.open(file, 'rb') as f_in:
-    f_out.writelines(f_in)
-f_out.close()
-f_in.close()
+
+def downloadXML():
+    # Write to file
+    file = io.BytesIO(urllib.request.urlopen(url).read())
+    with gzip.open("storage/OEC_XML.gz", "wb") as f_out, gzip.open(file,
+                                                                   'rb') as f_in:
+        f_out.writelines(f_in)
+    f_out.close()
+    f_in.close()
+
+
 # Read from file
-with gzip.open("storage/OEC_XML.gz", "rb") as f:
-    oec = ET.parse(f)
-f.close()
+def readXML():
+    with gzip.open("storage/OEC_XML.gz", "rb") as f:
+        oec = ET.parse(f)
+    f.close()
+    return oec
+
 
 # returns a tuple of a (list of all system objects, list of star objects, list of all planet objects)
 # system has reference to its stars
@@ -44,6 +52,7 @@ def buildSystemFromXML():
     '''
     # initialize empty lists that will be returned at the end  of all
     # planetary objects
+    oec = readXML()
     allSystems = []
     allStars = []
     allPlanets = []
