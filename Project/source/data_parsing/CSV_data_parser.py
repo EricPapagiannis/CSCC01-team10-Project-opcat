@@ -67,7 +67,7 @@ def buildDictionaryPlanets(filename, wanted, source):
         planets[planet.name] = planet
         line = '\n'
         while(line == '\n'):
-            line = file.readline()
+            line = file.readline().rstrip().lstrip()
     file.close()
     return planets
 
