@@ -1,2 +1,2 @@
-pl_hostname,pl_letter,pl_radj,pl_orbeccen,pl_orbper,rowupdate,pl_discmethod,pl_bmassj
-mars,a,3.14,1,30,10/10/2010,Imaging,0.7
+pl_hostname,pl_letter,pl_radj,pl_orbeccen,pl_orbper,rowupdate,pl_discmethod,pl_bmassj,star_name
+mars,a,3.14,1,30,10/10/2010,Imaging,0.7,sun
