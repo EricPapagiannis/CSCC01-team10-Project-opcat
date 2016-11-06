@@ -61,3 +61,10 @@ class TestComparator(unittest.TestCase):
                          str(planet3):{"data":[], "left":[], "right":[]}})
         self.assertEqual(result["planetDC"], {str(planet1):{"mass": (10, 10)},str(planet3):{} })
         
+if __name__ == "__main__":
+    testCom = TestComparator();
+    testCom.testRaiseTypeMismatch();
+    testCom.testSQLjoin();
+    testCom.testInnerJoinDiffFieldMatch();
+    testCom.testInnerJoinDiffFieldDiff();
+    testcom.testStarCompare();
