@@ -8,8 +8,27 @@ from data_parsing.Star import *
 from data_parsing.Planet import *
 
 url = "https://github.com/OpenExoplanetCatalogue/oec_gzip/raw/master/systems.xml.gz"
-oec = ET.parse(
-    gzip.GzipFile(fileobj=io.BytesIO(urllib.request.urlopen(url).read())))
+'''
+oec = ET.parse(gzip.GzipFile(fileobj=io.BytesIO(urllib.request.urlopen(url).read())))
+'''
+
+
+def downloadXML():
+    # Write to file
+    file = io.BytesIO(urllib.request.urlopen(url).read())
+    with gzip.open("storage/OEC_XML.gz", "wb") as f_out, gzip.open(file,
+                                                                   'rb') as f_in:
+        f_out.writelines(f_in)
+    f_out.close()
+    f_in.close()
+
+
+# Read from file
+def readXML():
+    with gzip.open("storage/OEC_XML.gz", "rb") as f:
+        oec = ET.parse(f)
+    f.close()
+    return oec
 
 
 # returns a tuple of a (list of all system objects, list of star objects, list of all planet objects)
@@ -33,6 +52,7 @@ def buildSystemFromXML():
     '''
     # initialize empty lists that will be returned at the end  of all
     # planetary objects
+    oec = readXML()
     allSystems = []
     allStars = []
     allPlanets = []
@@ -53,14 +73,17 @@ def buildSystemFromXML():
                     allSystemsDict[child.text] = system
                 # if there are more names, create / add them to other names list
                 elif i == 1:
-                    system.addValList("otherNamesSystem", child.text)
+                    # system.addValList("otherNamesSystem", child.text)
+                    system.otherNamesSystem.append(child.text)
                     allSystemsDict[child.text] = system
                 else:
-                    system.addToValList("otherNamesSystem", child.text)
+                    # system.addToValList("otherNamesSystem", child.text)
+                    system.otherNamesSystem.append(child.text)
                     allSystemsDict[child.text] = system
                 i += 1
             else:
-                system.addToValList("otherNamesSystem", child.text)
+                # system.addToValList("otherNamesSystem", child.text)
+                system.otherNamesSystem.append(child.text)
                 allSystemsDict[child.text] = system
 
         # build the system data dictionary mapping the tag name to the tag value
@@ -82,22 +105,25 @@ def buildSystemFromXML():
                     # main name
                     if ii == 0:
                         star = Star(child.text)
-                        system.addValList("stars", child.text)
+                        # system.addValList("stars", child.text)
                         allStarsDict[child.text] = star
                         localStarsDict[child.text] = star
                     # if there are more names, create / add them to other names
                     # list
                     elif ii == 1:
-                        star.addValList("otherNamesStar", child.text)
+                        # star.addValList("otherNamesStar", child.text)
+                        star.otherNamesStar.append(child.text)
                         allStarsDict[child.text] = star
                         localStarsDict[child.text] = star
                     else:
-                        star.addToValList("otherNamesStar", child.text)
+                        # star.addToValList("otherNamesStar", child.text)
+                        star.otherNamesStar.append(child.text)
                         allStarsDict[child.text] = star
                         localStarsDict[child.text] = star
                     ii += 1
                 else:
-                    star.addToValList("otherNamesStar", child.text)
+                    # star.addToValList("otherNamesStar", child.text)
+                    star.otherNamesStar.append(child.text)
                     allStarsDict[child.text] = star
                     localStarsDict[child.text] = star
 
@@ -121,22 +147,25 @@ def buildSystemFromXML():
                         # that main name
                         if iii == 0:
                             planet = Planet(child.text)
-                            star.addValList("planets", child.text)
+                            # star.addValList("planets", child.text)
                             allPlanetsDict[child.text] = planet
                             localPlanetsDict[child.text] = planet
                         # if there are more names, create / add them to other
                         # names list
                         elif iii == 1:
-                            planet.addValList("otherNamesPlanet", child.text)
+                            # planet.addValList("otherNamesPlanet", child.text)
+                            planet.otherNamesPlanet.append(child.text)
                             allPlanetsDict[child.text] = planet
                             localPlanetsDict[child.text] = planet
                         else:
-                            planet.addToValList("otherNamesPlanet", child.text)
+                            # planet.addToValList("otherNamesPlanet", child.text)
+                            planet.otherNamesPlanet.append(child.text)
                             allPlanetsDict[child.text] = planet
                             localPlanetsDict[child.text] = planet
                         iii += 1
                     else:
-                        planet.addToValList("otherNamesPlanet", child.text)
+                        # planet.addToValList("otherNamesPlanet", child.text)
+                        planet.otherNamesPlanet.append(child.text)
                         allPlanetsDict[child.text] = planet
                         localPlanetsDict[child.text] = planet
 
@@ -147,40 +176,55 @@ def buildSystemFromXML():
                         planet.addVal(child.tag, child.text)
 
                 # add the star name that the planet is in
-                planet.addVal("nameStar", star.getVal("nameStar"))
-                planet.starObjectNamesToStar[star.getVal("nameStar")] = star
+                # planet.addVal("nameStar", star.getVal("nameStar"))
+                planet.nameStar = star.name
+                # planet.starObjectNamesToStar[star.getVal("nameStar")] = star
+                planet.starObjectNamesToStar[star.name] = star
                 starData = star.getData()
                 # and others if there are any
+                '''
                 if "otherNamesStar" in starData:
                     planet.addValList("otherNamesStar",
                                       starData["otherNamesStar"])
                     for starObject in starData["otherNamesStar"]:
                         planet.starObjectNamesToStar[
                             starObject] = star
-
+                '''
+                planet.otherNamesStar = star.otherNamesStar
+                for starObject in star.otherNamesStar:
+                    planet.starObjectNamesToStar[
+                        starObject] = star
                 # add this planet to the list of planets in the star
                 planets.append(planet)
                 # and all planets list
                 allPlanets.append(planet)
                 # add the star reference in the planet
-                planet.addVal("starObject", star)
+                # planet.addVal("starObject", star)
                 planet.starObject = star
 
                 # print("PLANET: ", planet)
 
             # add the list of planets in the star to the star
-            star.addValList("planetObjects", planets)
+            # star.addValList("planetObjects", planets)
             star.planetObjects = planets
             # add the name of the system that the star is in
-            star.addVal("nameSystem", system.getVal("nameSystem"))
-            star.systemObjectNamesToSystem[star.getVal("nameSystem")] = system
+            # star.addVal("nameSystem", system.getVal("nameSystem"))
+            star.nameSystem = system.name
+            # star.systemObjectNamesToSystem[star.getVal("nameSystem")] = system
+            star.systemObjectNamesToSystem[star.nameSystem] = system
             star.nameToPlanet = localPlanetsDict
             systemData = system.getData()
             # and others if there are any
+            '''
             if "otherNamesSystem" in systemData:
                 star.addValList("otherNamesSystem",
                                 systemData["otherNamesSystem"])
-            for systemObject in systemData["otherNamesSystem"]:
+                for systemObject in systemData["otherNamesSystem"]:
+                    star.systemObjectNamesToSystem[
+                        systemObject] = system
+            '''
+            star.otherNamesSystem = system.otherNamesSystem
+            for systemObject in system.otherNamesSystem:
                 star.systemObjectNamesToSystem[
                     systemObject] = system
             # add the stars to the list of stars in the system
@@ -188,9 +232,10 @@ def buildSystemFromXML():
             # and all stars list
             allStars.append(star)
             # add the system reference in the star
-            star.addVal("systemObject", system)
+            # star.addVal("systemObject", system)
+            star.systemObject = system
             # add the list of stars in the system to the system
-            system.addValList("starObjects", stars)
+            # system.addValList("starObjects", stars)
             system.starObjects = stars
             system.nameToStar = localStarsDict
             # print("STAR: ", star)
@@ -204,11 +249,13 @@ def buildSystemFromXML():
 
 
 if __name__ == "__main__":
+    '''
     (a, b, c, d, e, f) = buildSystemFromXML()
     print(b)
     print(len(b))
     print(e)
     print(len(e))
+    '''
 
 ''' givin a proposed change which inlcudes:
 the changes from the original planet

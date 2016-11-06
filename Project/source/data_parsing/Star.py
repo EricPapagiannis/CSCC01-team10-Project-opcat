@@ -4,7 +4,8 @@ from data_parsing.PlanetaryObject import *
 class Star(PlanetaryObject):
     def __init__(self, name):
         # data fields in the star
-        self.data = {"nameStar": name}
+        # self.data = {"nameStar": name}
+        self.data = dict()
         # main name of the star
         self.name = name
         # the system the star is in
@@ -17,3 +18,7 @@ class Star(PlanetaryObject):
         # a dict mapping the planet names (and alternate names) to the planet
         # objects in the star
         self.nameToPlanet = dict()
+
+        self.nameSystem = ""
+        self.otherNamesStar = []
+        self.otherNamesSystem = []
