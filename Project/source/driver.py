@@ -67,7 +67,7 @@ def show_all():
 
 
 def show_number(n):
-    '''() -> NoneType
+    '''(int) -> NoneType
     Skeleton function
     '''
     if len(CHANGES) == 0:
@@ -78,6 +78,20 @@ def show_number(n):
         print()
     else:
         print("Out of range.")
+
+
+def accept(n):
+    '''(int) -> NoneType
+    Skeleton fuction
+    '''
+    print("\nAccepted: \n" + n)
+
+
+def accept_all():
+    '''() -> NoneType
+    Skeleton function
+    '''
+    print("\nAccepted all\n")
 
 
 def update():
@@ -168,15 +182,15 @@ def main():
     '''
     # flags which do not expect parameter (--help for example)
     # short opts are single characters, add onto shortOPT to include
-    shortOPT = "hua"
+    shortOPT = "huac"
     # log opts are phrases, add onto longOPT to include
-    longOPT = ["help", "update", "showall"]
+    longOPT = ["help", "update", "showall", "acceptall"]
 
     # flags that do expect a parameter (--output file.txt for example)
     # similar to shortOPT
-    shortARG = "ops"
+    shortARG = "opsn"
     # similar to longOTP
-    longARG = ["output", "planet", "shownumber"]
+    longARG = ["output", "planet", "shownumber", "accept"]
 
     # arg, opt pre-processor, do not edit
     short = ':'.join([shortARG[i:i + 1] for i in range(0, len(shortARG), 1)]) \
@@ -196,6 +210,9 @@ def main():
     update_flag = False
     show_flag = False
     all_flag = False
+    accept = False
+    accept_all = False
+    accept_marker = None
 
     for o, a in opts:
 
@@ -228,6 +245,15 @@ def main():
         elif o in ("-" + shortOPT[2], "--" + longOPT[2]):
             show_flag = True
             all_flag = True
+	    
+	# shownumer
+	elif o in ("-" + shortARG[3], "--" + longARG[3]):
+	    accept = True
+	    accept_marker = a
+
+	# acceptall
+	elif o in ("-" + shortOPT[3], "--" + longOPT[3]):
+	    accept_all = True
 
         else:
             usage()
@@ -245,12 +271,20 @@ def main():
                 show_number(show_parameter)
             except ValueError:
                 print("Invalid Parameter to shownumber.")    
-            
 
     # update
     if (update_flag):
         update()
         print("Update complete.\n")
+
+    # accept
+    if (accept):
+	accept(accept_marker)
+
+    # accept all
+    if (accept_all):
+	accept_all()
+
     '''
     if (output):
         print("output: " + output)
