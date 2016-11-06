@@ -167,7 +167,7 @@ class Comparator():
             starDataChange = self.innerJoinDiff()
 
             # starN
-            starDataNew = self.sqlJoin(True)
+            starDataNew = self.sqlJoinNewOnly(True)
 
             # planetN
             newPlanets = {}
