@@ -46,9 +46,10 @@ def buildPlanet(line, heads, wanted, source):
 
 def _fixVal(field, value):
     if(field in correction and value in correction[field].keys()):
-        return correction[field][value]
+        re = correction[field][value]
     else:
-        return value
+        re = value
+    return UnitConverter.convertToOpen(re)
 
 def buildDictionaryPlanets(filename, wanted, source):
     file = open(filename, "r")
@@ -121,9 +122,17 @@ def buildListStarAllField(filename, source):
     return buildDictStar.values()
 
 class UnitConverter:
-    #eu = {"eccentricity":"eccentricity", "discoverymethod":"detection_type", "discoveryyear":"discovered", "lastupdate":covnertEUdate}
-    #nasa = {"lastupdate":convertNASAdate, "discoverymethod":"pl_discmethod", "mass":"pl_bmassj","nameStar":"pl_hostname"}
-    
+
+    def covnertDate(data):
+        data = data.split('-')
+        re += data[0][2:] + '/'
+        re += data[1] + '/'
+        re += data[2]
+        return re
+
+    eu = {"lastupdate":covnertDate}
+    nasa = {"lastupdate":convertDate}
+
     def convertToOpen(field, data, source):
         if source == "eu":
             if field not in eu.keys():
@@ -132,15 +141,9 @@ class UnitConverter:
         else:
             if field not in nasa.keys():
                 return data
-            result
+            result = nasa[field](data)
 
         return result
-
-    def covnertEUdate(data):
-        pass
-
-    def convertNASAdate(data):
-        pass
 
 
 if __name__ == "__main__":
