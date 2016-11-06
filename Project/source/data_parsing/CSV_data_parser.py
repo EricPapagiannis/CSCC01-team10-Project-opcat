@@ -3,7 +3,7 @@ from data_parsing.Star import Star
 #from Planet import Planet
 #from Star import star
 
-eu = {"mass": "mass", "radius":"radius", "period":"orbital_period", "semimajoraxis":"semi_major_axis",
+eu = {"name":"# name","mass": "mass", "radius":"radius", "period":"orbital_period", "semimajoraxis":"semi_major_axis",
     "eccentricity":"eccentricity", "discoverymethod":"detection_type", "discoveryyear":"discovered",
     "lastupdate":"updated", "nameStar":"star_name"}
 nasa = {"name":"pl_hostname", "radius":"pl_radj", "eccentricity":"pl_orbeccen", "period":"pl_orbper",
@@ -80,9 +80,10 @@ def buildListPlanets(filename, wanted, source):
     return rlist
 
 def buildListPlanetsAllField(filename, source):
-    file = open(filename, "r")
-    heads = file.readline().split(',')
-    file.close()
+    if(source == eu):
+        heads = eu.keys()
+    else:
+        heads = nasa.keys()
     return buildListPlanets(filename, heads, source)
 
 def buildDictStar(planets, source):
@@ -100,9 +101,9 @@ def buildDictStar(planets, source):
 
 def buildDictStarExistingField(filename, source):
     if(source == "eu"):
-        wanted = eu
+        wanted = eu.keys()
     else:
-        wanted = nasa
+        wanted = nasa.keys()
     return buildDictStar(buildListPlanets(filename, wanted, source), source)
 
 def buildListStar(filename, wanted, source):
@@ -118,6 +119,28 @@ def buildListStarExistingField(filename, source):
 def buildListStarAllField(filename, source):
     planets = buildListPlanetsAllField(filename, source)
     return buildDictStar.values()
+
+class UnitConverter:
+    #eu = {"eccentricity":"eccentricity", "discoverymethod":"detection_type", "discoveryyear":"discovered", "lastupdate":covnertEUdate}
+    #nasa = {"lastupdate":convertNASAdate, "discoverymethod":"pl_discmethod", "mass":"pl_bmassj","nameStar":"pl_hostname"}
+    
+    def convertToOpen(field, data, source):
+        if source == "eu":
+            if field not in eu.keys():
+                return data
+            result = eu[field](data)
+        else:
+            if field not in nasa.keys():
+                return data
+            result
+
+        return result
+
+    def covnertEUdate(data):
+        pass
+
+    def convertNASAdate(data):
+        pass
 
 
 if __name__ == "__main__":

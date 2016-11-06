@@ -13,27 +13,26 @@ oec = ET.parse(gzip.GzipFile(fileobj=io.BytesIO(urllib.request.urlopen(url).read
 '''
 
 
-def downloadXML():
+def downloadXML(path="../storage/OEC_XML.gz"):
     ''' 
     () -> ()
     Opens OEC.gz as a series of XML documents for reading. 
     '''
     # Write to file
     file = io.BytesIO(urllib.request.urlopen(url).read())
-    with gzip.open("storage/OEC_XML.gz", "wb") as f_out, gzip.open(file,
-                                                                   'rb') as f_in:
+    with gzip.open(path, "wb") as f_out, gzip.open(file, 'rb') as f_in:
         f_out.writelines(f_in)
     f_out.close()
     f_in.close()
 
 
 # Read from file
-def readXML():
+def readXML(path="../storage/OEC_XML.gz"):
     '''
     () -> ElementTree
     Parses OEC as an ElementTree
     '''
-    with gzip.open("storage/OEC_XML.gz", "rb") as f:
+    with gzip.open(path, "rb") as f:
         oec = ET.parse(f)
     f.close()
     return oec
@@ -45,7 +44,7 @@ def readXML():
 
 # planets have reference to the star and system it is in
 # stars have reference to the system it is in
-def buildSystemFromXML():
+def buildSystemFromXML(path="../storage/OEC_XML.gz"):
     '''
     () -> ([System], [Star], [Planet], {systemName: System}, {starName: Star},
            {planetName: Planet})
@@ -60,7 +59,7 @@ def buildSystemFromXML():
     '''
     # initialize empty lists that will be returned at the end  of all
     # planetary objects
-    oec = readXML()
+    oec = readXML(path)
     allSystems = []
     allStars = []
     allPlanets = []

@@ -26,6 +26,8 @@ EU_file = "storage/exoplanetEU_csv"
 all_tags = ["mass", "radius", "period", "semimajoraxis", "discoveryyear", \
             "lastupdate", "discoverymethod", "eccentricity"]
 
+XML_path = "storage/OEC_XML.gz"
+
 CHANGES = []
 
 def usage():
@@ -100,7 +102,8 @@ def update():
     Returns NoneType
     '''
     # open exoplanet catalogue
-    OEC_lists = XML.buildSystemFromXML()
+    XML.downloadXML(XML_path)
+    OEC_lists = XML.buildSystemFromXML(XML_path)
     OEC_systems = OEC_lists[0]
     OEC_stars = OEC_lists[1]
     OEC_planets = OEC_lists[2]
@@ -131,7 +134,7 @@ def update():
     # build the dict of stars from NASA
     NASA_stars = CSV.buildDictStarExistingField(nasa_file, "nasa")
     # build the dictionary of stars from Open Exoplanet Catalogue
-    OEC_stars = XML.buildSystemFromXML()[4]
+    OEC_stars = XML.buildSystemFromXML(XML_path)[4]
 
 
     # clean both dictionaries
