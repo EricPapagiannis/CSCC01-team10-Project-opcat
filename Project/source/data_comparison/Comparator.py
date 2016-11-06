@@ -80,7 +80,6 @@ class Comparator():
         Returns a dictionary with keys corresponding to any differing field
         values. The keys map to tuples of the values of (obj1, obj2).
         '''
-
         left_data = self.obj1.getData()
         right_data = self.obj2.getData()
 
@@ -173,6 +172,8 @@ class Comparator():
             newPlanets = {}
             newPlanets["left"] = list(set(self.obj1.planetObjects) -
                                       set(self.obj2.planetObjects))
+
+
             newPlanets["right"] = list(set(self.obj2.planetObjects) -
                                        set(self.obj1.planetObjects))
 
@@ -271,3 +272,6 @@ if __name__ == "__main__":
         print(proposed_change)
         # print(qq[0])
     print(f)
+    print(f)
+    print(f["planetN"]["left"][0])
+    print(f["planetN"]["right"][0])
