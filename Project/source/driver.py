@@ -151,30 +151,6 @@ def update():
         if key in OEC_stars.keys() :
             C = COMP.Comparator(NASA_stars.get(key), OEC_stars.get(key), "nasa")
             CHANGES.extend(C.proposedChangeStarCompare())   
-<<<<<<< HEAD
-    
- 
-    
-    
-=======
-
-
-    '''
-    for curr in [EU_stars, NASA_stars] :
-        print(curr.keys())
-        print()
-	
-    for i in OEC_stars.keys() :
-        try:
-            print(i, " : ")
-            #print(OEC_stars.get(i))
-        except:
-            pass
-        print()
-	
-    '''
->>>>>>> tony
-
 
 def main():
     '''() -> NoneType
