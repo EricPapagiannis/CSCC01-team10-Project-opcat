@@ -57,4 +57,4 @@ class TestbuildSystemFromXML(unittest.TestCase):
                           "incorrect number of systems")
 
 if __name__ == "__main__":
-    unittest.main(exit="false")
+    unittest.main(exit=False)
