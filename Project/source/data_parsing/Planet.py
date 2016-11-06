@@ -7,7 +7,7 @@ class Planet(PlanetaryObject):
         # self.data = {"namePlanet": name}
         self.data = dict()
         # the main name of the planet
-        self.name = name
+        self.name = self._fixStr(name)
         # the star the planet is in
         self.nameStar = ""
         self.starObject = None
