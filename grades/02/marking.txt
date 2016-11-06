@@ -1,0 +1,113 @@
+CSCC01 Deliverable 2 Marking Guide
+-----------------------------------
+
+Personas:  13 / 20
+
+  Format: 3 / 4
+
+      must contain: gender, age, personality, skills, environment,
+      attitude towards technology in general, attitude towards
+      computer software, goals when using the system
+
+      Too many irrelevant details are not useful!
+
+==== Comments ====
+- Persona #2: Professional context is missing (-1). Where is he working? He is working with Hanno?
+===================
+
+  Information content:  6 / 8
+
+      The purpose of each persona is clear. Personas suggest different
+      system requirements.
+
+==== Comments ====
+- The personas do not address the goals when using the system (-2)
+===================
+
+
+  Coverage: 6 / 8
+
+      personas must include at least two of the following type of users:
+
+      -- "Hanno type"
+
+      -- Hanno's grad student: can approve modifications to the data,
+           but cannot add other such users (only Hanno can)
+
+      -- A less tech-savvy astronomer: Sure, Hanno is the client who
+           makes the order, but the software will be released as
+           open-source, so other types of users are 100% realistic.
+
+==== Comments ====
+- You have not considered users's privileges (-2)
+- You have not considered someone outside Hanno's team at UofT.
+How about an astronomer living somewhere else in the world  that wants to contribute to the database but does not know how to use git and github?
+====================
+
+
+Product Backlog:  34 / 50
+
+    9 / 10 : User stories follow the format
+                "As __name__ (__role__), I want __something__."
+		("so that __benefit__" is optional)
+	       AND each __name__ corresponds to one of the personas.
+
+    5 / 10 : User stories, together, reflect all the user
+    	        requirements (from all prospective users).
+
+    10 / 10 : User stories correspond to actual requirements (no
+    	        "invented" features).
+
+    5 / 10 : User stories contain enough information for devs to
+                estimate how long it would take to implement it.
+
+    5 / 10 : Each user story addresses one specific requirement (no
+                "world peace" stories).
+
+==== Comments ====
+- It would have been good to group user stories by user. (-1)
+- You have not addressed the problem of conflicting updates. (-5)
+- Most of the stories are vague (-5) and it makes it hard (most of the time impossible) to evaluate the work to be implemented (-5)
+====================
+
+Presentation:  20 / 20
+
+  4 / 4 : well-presented, is easy to read and to navigate
+
+  4 / 4 : spelling and grammar
+
+  10 / 10 : looks professional
+
+  1 / 2 : quality of the README file
+
+==== Comments ====
+README should be more explicit about what the deliverables contain (-1)
+===================
+
+Interview: 5 / 10
+
+==== Comments ====
+
+1) The process [2]:
+
+Satisfying although there should be a lot more face-to-face meeting at this earlier stage of the project
+- 3 face-to-face meeting (1 after meeting with client)
+- Use google docs and the comment feature for discussion
+
+2) Personas [2]:
+
+Satisfying although persona #2 is on the edge: not tech-savvy but knows Github (this seems rather artificial)
+
+3) Product Backlog [2]:
+
+Not satisfying. The student was not able to explain the logic behind the user stories. (-2)
+
+4) Details of User Stories [2]:
+
+No satisfying, the explanation provided made no sense (-2).
+
+5) Sprint Backlog [2]:
+
+Not fully satisfying. The student clearly underestimates the time it takes to implement something. (-1)
+
+===================

@@ -1,0 +1,61 @@
+CSCC01 -- Deliverable 1 -- Marking Guidelines
+
+
+1) Introduce the team:      5/10
+
+  team's name present: 1
+
+  team logo present: 1
+
+  picture of the entire team present: 1
+
+  team's goals presented: 0/3
+    spelling and grammar:
+    clarity:
+    realistic yet ambitious goals:
+
+  team's strengths explained: 2/4
+    spelling and grammar: 1
+    clarity: 1
+    makes good use of each member's background: 2
+
+==== Comments ====
+Team goal is missing (-3)
+Team strength is vague and does not address each member's background (-2)
+===================
+
+2) Introduce the team members:     28/30
+
+   I am assuming 5 members. If your team has four members,
+   scale accordingly.
+
+   for each member:
+      approx 150 words: 1
+      spelling and grammar: 1
+      clarity: 1
+      professionalism: 2
+
+   The members' introductions are consistent w.r.t. person (in
+   first/third person), style, qualities/interests described, etc., so
+   that the overall introduction reads well:      5
+
+==== Comments ====
+The PDF document quality id descent
+Consistency could have been improved (-2)
+===================
+
+3) Team agreement:      6/10
+
+    methods of communication, including wait time for replies, clearly stated:  2
+    meeting times arranged:  2
+    contingency planning (member is sick, missing meetings, not performing up to standards, etc.):  2
+    use of version control is discussed:  2
+    some planning of individual roles:  2
+
+==== Comments ====
+- No signature
+- Methods of communication are inefficient (-1)
+- No details about the use of version control beyond "having meaningful log messages" (-1)
+- Division of work is not addressed beyond "work is evenly divided". (-1)
+- No contingency plan beyond "make efforts among ourselves". (-1)
+===================
