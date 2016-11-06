@@ -57,6 +57,23 @@ class Comparator():
 
         return result_dict
 
+
+    def sqlJoinNewOnly(self, left_join):
+        '''(bool) -> Dictionary
+        Identical to method sqlJoin except excludes all rows
+        which do not have a new or missing data field
+        Returns dictionary structured in the same manner as sqlJoin
+        '''        
+        raw_dict = sqlJoin(left_join)
+        entry_count = len(raw_dict['data'])
+        for i in range(0, entry_count):
+            if ((raw_dict['right'] == "N/A") or (raw_dict['left'] == "N/A")):
+                raw_dict['data'].pop(i)
+                raw_dict['left'].pop(i)
+                raw_dict['right'].pop(i)
+        return raw_dict
+
+
     def innerJoinDiff(self):
         '''() -> Dictionary
         Selects fields akin to SQL inner join
