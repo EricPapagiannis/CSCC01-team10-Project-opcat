@@ -56,13 +56,17 @@ def buildDictionaryPlanets(filename, wanted, source):
     if(heads[-1][-1] == '\n'):
         heads[-1] = heads[-1][:-1]
     line = file.readline()
+    while(line == "\n"):
+        line = file.readline()
     planets = dict()
 
     while(line):
         line = line.split(',')
         planet = buildPlanet(line, heads, wanted, source)
         planets[planet.data["namePlanet"]] = planet
-        line = file.readline()
+        line = '\n'
+        while(line == '\n'):
+            line = file.readline()
     file.close()
     return planets
 
