@@ -20,8 +20,8 @@ API/nph-nstedAPI?table=exoplanets"
 
 exoplanetEU_link = "http://exoplanet.eu/catalog/csv/"
 
-nasa_file = "nasa_csv"
-EU_file = "exoplanetEU_csv"
+nasa_file = "storage/nasa_csv"
+EU_file = "storage/exoplanetEU_csv"
 
 all_tags = ["mass", "radius", "period", "semimajoraxis", "discoveryyear", \
             "lastupdate", "discoverymethod", "eccentricity"]
@@ -93,25 +93,24 @@ def update():
     
     
     # delete text files from previous update
-    #clean_files()
+    clean_files()
     
-    
-    '''
     # targets:
     # Saves nasa database into a text file named nasa_file
     NASA_getter = API.apiGet(NASA_link, nasa_file)
     try:
-        #NASA_getter.getFromAPI("&table=planets")
-	NASA_getter.getFromAPI("")
+        NASA_getter.getFromAPI("&table=planets")
+	#NASA_getter.getFromAPI("")
     except (TimeoutError, API.CannotRetrieveDataException) as e:
         print("NASA archive is unreacheable.\n")
+    
     # Saves exoplanetEU database into a text file named exo_file
     exoplanetEU_getter = API.apiGet(exoplanetEU_link, EU_file)
     try:
         exoplanetEU_getter.getFromAPI("")
     except (TimeoutError, API.CannotRetrieveDataException) as e:
         print("exoplanet.eu is unreacheable.\n")
-    '''
+    
     
     # build the dict of stars from exoplanet.eu
     EU_stars = CSV.buildDictStarExistingField(EU_file, "eu")
@@ -138,22 +137,6 @@ def update():
         if key in OEC_stars.keys() :
             C = COMP.Comparator(NASA_stars.get(key), OEC_stars.get(key), "nasa")
             CHANGES.extend(C.proposedChangeStarCompare())   
-	
-	
-    '''
-    for curr in [EU_stars, NASA_stars] :
-        print(curr.keys())
-        print()
-	
-    for i in OEC_stars.keys() :
-        try:
-            print(i, " : ")
-            #print(OEC_stars.get(i))
-        except:
-            pass
-        print()
-	
-    '''
     
  
     

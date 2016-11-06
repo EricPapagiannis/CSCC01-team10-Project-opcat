@@ -31,27 +31,27 @@ class TestComparator(unittest.TestCase):
     def __init__(self, *args, **kwargs):
         super(TestComparator, self).__init__(*args, **kwargs)
 
-    def testRaiseTypeMismatch():
+    def testRaiseTypeMismatch(self):
         self.assertRaises(ObjectTypeMismatchException, Comparator(planet1, Star1))
         
-    def testSQLjoin():
+    def testSQLjoin(self):
         comparator = Comparator(planet2, planet1)
         result = comparator.sqlJoin(True)
         self.assertEqual(result["data"], ["mass", "temperature"])
         self.assertEqual(result["left"], [12, 145])
         self.assertEqual(result["right"], [10, "N/A"])
         
-    def testInnerJoinDiffFieldMatch():
+    def testInnerJoinDiffFieldMatch(self):
         comparator = Comparator(Star1, Star2)
         inner = comparator.innerJoinDiff()
         self.assertEqual(inner, {})
         
-    def testInnerJoinDiffFieldDiff():
+    def testInnerJoinDiffFieldDiff(self):
         comparator = Comparator(planet1, planet2)
         inner = comparator.innerJoinDiff()
         self.assertEqual(inner, {"mass": (10, 12)})
         
-    def testStarCompare():
+    def testStarCompare(self):
         comparator = Comparator(Star1, Star2)
         result = comparator.starCompare()
         self.assertEqual(result["starC"], {"mass": (100, 113)})
@@ -61,3 +61,10 @@ class TestComparator(unittest.TestCase):
                          str(planet3):{"data":[], "left":[], "right":[]}})
         self.assertEqual(result["planetDC"], {str(planet1):{"mass": (10, 10)},str(planet3):{} })
         
+if __name__ == "__main__":
+    testCom = TestComparator();
+    testCom.testRaiseTypeMismatch();
+    testCom.testSQLjoin();
+    testCom.testInnerJoinDiffFieldMatch();
+    testCom.testInnerJoinDiffFieldDiff();
+    testcom.testStarCompare();

@@ -14,6 +14,10 @@ oec = ET.parse(gzip.GzipFile(fileobj=io.BytesIO(urllib.request.urlopen(url).read
 
 
 def downloadXML():
+    ''' 
+    () -> ()
+    Opens OEC.gz as a series of XML documents for reading. 
+    '''
     # Write to file
     file = io.BytesIO(urllib.request.urlopen(url).read())
     with gzip.open("storage/OEC_XML.gz", "wb") as f_out, gzip.open(file,
@@ -25,6 +29,10 @@ def downloadXML():
 
 # Read from file
 def readXML():
+    '''
+    () -> ElementTree
+    Parses OEC as an ElementTree
+    '''
     with gzip.open("storage/OEC_XML.gz", "rb") as f:
         oec = ET.parse(f)
     f.close()
