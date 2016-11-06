@@ -84,7 +84,7 @@ def accept(n):
     '''(int) -> NoneType
     Skeleton fuction
     '''
-    print("\nAccepted: \n" + n)
+    print("\nAccepted: \n" + str(n))
 
 
 def accept_all():
@@ -152,8 +152,8 @@ def update():
         if key in OEC_stars.keys() :
             C = COMP.Comparator(NASA_stars.get(key), OEC_stars.get(key), "nasa")
             CHANGES.extend(C.proposedChangeStarCompare())   
-	
-	
+
+
     '''
     for curr in [EU_stars, NASA_stars] :
         print(curr.keys())
@@ -168,10 +168,6 @@ def update():
         print()
 	
     '''
-    
- 
-    
-    
 
 
 def main():
@@ -236,29 +232,29 @@ def main():
         elif o in ("-" + shortARG[1], "--" + longARG[1]):
             planet = a
 
-        # shownumer
+        # shownumber
         elif o in ("-" + shortARG[2], "--" + longARG[2]):
             show_flag = True
-            show_parameter = a
+            show_parameter = int(a)
 
         # showall
         elif o in ("-" + shortOPT[2], "--" + longOPT[2]):
             show_flag = True
             all_flag = True
-	    
-	# shownumer
-	elif o in ("-" + shortARG[3], "--" + longARG[3]):
-	    accept = True
-	    accept_marker = a
+
+	# accept
+        elif o in ("-" + shortARG[3], "--" + longARG[3]):
+            accept = True
+            accept_marker = int(a)
 
 	# acceptall
-	elif o in ("-" + shortOPT[3], "--" + longOPT[3]):
-	    accept_all = True
+        elif o in ("-" + shortOPT[3], "--" + longOPT[3]):
+            accept_all = True
 
         else:
             usage()
             assert False, "unhandled option"
-	
+
     if (show_flag):
         if ((all_flag) and (show_parameter)):
             print_help()
@@ -279,11 +275,11 @@ def main():
 
     # accept
     if (accept):
-	accept(accept_marker)
+        accept(accept_marker)
 
     # accept all
     if (accept_all):
-	accept_all()
+        accept_all()
 
     '''
     if (output):
