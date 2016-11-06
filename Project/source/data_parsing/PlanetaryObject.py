@@ -25,6 +25,8 @@ class PlanetaryObject:
             if self.data[key].__class__.__name__ in list_objects :
                 s += "Points to an instance of class "
                 s += self.data[key].__class__.__name__
+            elif str(self.data[key]) == "":
+                s += 'N/A'
             else:
                 s += str(self.data[key])
             s += "\n"

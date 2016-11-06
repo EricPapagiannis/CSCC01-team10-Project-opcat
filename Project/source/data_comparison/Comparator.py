@@ -105,7 +105,7 @@ class Comparator():
         result_dict = []
 
         main_dictionary = self.starCompare()
-
+        '''
         # return list of proposed changes of the planets in star
         for planet in main_dictionary["planetDC"]:
             for field in main_dictionary["planetDC"][planet]:
@@ -117,7 +117,10 @@ class Comparator():
                                  main_dictionary["planetDC"][
                                      planet][field][1])
                 )
-
+        '''
+        for planet in main_dictionary["planetA"]:
+            result_dict.append(Addition(self.origin, main_dictionary["planetA"][
+                planet]))
         i = 0
         '''
         for data in main_dictionary["starN"]["right"]:
@@ -173,7 +176,6 @@ class Comparator():
             newPlanets["left"] = list(set(self.obj1.planetObjects) -
                                       set(self.obj2.planetObjects))
 
-
             newPlanets["right"] = list(set(self.obj2.planetObjects) -
                                        set(self.obj1.planetObjects))
 
@@ -194,6 +196,8 @@ class Comparator():
 
             print("+++++++++++++++++++++++++++++")
             '''
+            planetsAddition = {}
+
             for planet in self.obj1.planetObjects:
                 # if (planet in self.obj2.planetObjects):
                 if (planet.name in self.obj2.nameToPlanet):
@@ -207,6 +211,8 @@ class Comparator():
                     # get dictionary of changed planet data for that planet
                     planetsDataChange[planet.name] = \
                         planetCompare.innerJoinDiff()
+                else:
+                    planetsAddition[planet.name] = planet
 
             # generates output
             output_dict = {}
@@ -215,6 +221,7 @@ class Comparator():
             output_dict["planetN"] = newPlanets
             output_dict["planetDN"] = newPlanetsData
             output_dict["planetDC"] = planetsDataChange
+            output_dict["planetA"] = planetsAddition
 
             return output_dict
 
@@ -262,7 +269,6 @@ if __name__ == "__main__":
     print(f)
     print(f["planetN"]["left"][0])
     print(f["planetN"]["right"][0])
-
 
     print(ayy.planetObjects[0])
     print(xml.planetObjects[0])
