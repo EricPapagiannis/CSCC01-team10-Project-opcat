@@ -20,8 +20,8 @@ API/nph-nstedAPI?table=exoplanets"
 
 exoplanetEU_link = "http://exoplanet.eu/catalog/csv/"
 
-nasa_file = "nasa_csv"
-EU_file = "exoplanetEU_csv"
+nasa_file = "storage/nasa_csv"
+EU_file = "storage/exoplanetEU_csv"
 
 all_tags = ["mass", "radius", "period", "semimajoraxis", "discoveryyear", \
             "lastupdate", "discoverymethod", "eccentricity"]
@@ -67,7 +67,7 @@ def show_all():
 
 
 def show_number(n):
-    '''() -> NoneType
+    '''(int) -> NoneType
     Skeleton function
     '''
     if len(CHANGES) == 0:
@@ -78,6 +78,20 @@ def show_number(n):
         print()
     else:
         print("Out of range.")
+
+
+def accept(n):
+    '''(int) -> NoneType
+    Skeleton fuction
+    '''
+    print("\nAccepted: \n" + str(n))
+
+
+def accept_all():
+    '''() -> NoneType
+    Skeleton function
+    '''
+    print("\nAccepted all\n")
 
 
 def update():
@@ -93,25 +107,24 @@ def update():
     
     
     # delete text files from previous update
-    #clean_files()
+    clean_files()
     
-    
-    '''
     # targets:
     # Saves nasa database into a text file named nasa_file
     NASA_getter = API.apiGet(NASA_link, nasa_file)
     try:
-        #NASA_getter.getFromAPI("&table=planets")
-	NASA_getter.getFromAPI("")
+        NASA_getter.getFromAPI("&table=planets")
+	#NASA_getter.getFromAPI("")
     except (TimeoutError, API.CannotRetrieveDataException) as e:
         print("NASA archive is unreacheable.\n")
+    
     # Saves exoplanetEU database into a text file named exo_file
     exoplanetEU_getter = API.apiGet(exoplanetEU_link, EU_file)
     try:
         exoplanetEU_getter.getFromAPI("")
     except (TimeoutError, API.CannotRetrieveDataException) as e:
         print("exoplanet.eu is unreacheable.\n")
-    '''
+    
     
     # build the dict of stars from exoplanet.eu
     EU_stars = CSV.buildDictStarExistingField(EU_file, "eu")
@@ -138,27 +151,6 @@ def update():
         if key in OEC_stars.keys() :
             C = COMP.Comparator(NASA_stars.get(key), OEC_stars.get(key), "nasa")
             CHANGES.extend(C.proposedChangeStarCompare())   
-	
-	
-    '''
-    for curr in [EU_stars, NASA_stars] :
-        print(curr.keys())
-        print()
-	
-    for i in OEC_stars.keys() :
-        try:
-            print(i, " : ")
-            #print(OEC_stars.get(i))
-        except:
-            pass
-        print()
-	
-    '''
-    
- 
-    
-    
-
 
 def main():
     '''() -> NoneType
@@ -168,15 +160,15 @@ def main():
     '''
     # flags which do not expect parameter (--help for example)
     # short opts are single characters, add onto shortOPT to include
-    shortOPT = "hua"
+    shortOPT = "huac"
     # log opts are phrases, add onto longOPT to include
-    longOPT = ["help", "update", "showall"]
+    longOPT = ["help", "update", "showall", "acceptall"]
 
     # flags that do expect a parameter (--output file.txt for example)
     # similar to shortOPT
-    shortARG = "ops"
+    shortARG = "opsn"
     # similar to longOTP
-    longARG = ["output", "planet", "shownumber"]
+    longARG = ["output", "planet", "shownumber", "accept"]
 
     # arg, opt pre-processor, do not edit
     short = ':'.join([shortARG[i:i + 1] for i in range(0, len(shortARG), 1)]) \
@@ -196,6 +188,9 @@ def main():
     update_flag = False
     show_flag = False
     all_flag = False
+    accept = False
+    accept_all = False
+    accept_marker = None
 
     for o, a in opts:
 
@@ -219,20 +214,29 @@ def main():
         elif o in ("-" + shortARG[1], "--" + longARG[1]):
             planet = a
 
-        # shownumer
+        # shownumber
         elif o in ("-" + shortARG[2], "--" + longARG[2]):
             show_flag = True
-            show_parameter = a
+            show_parameter = int(a)
 
         # showall
         elif o in ("-" + shortOPT[2], "--" + longOPT[2]):
             show_flag = True
             all_flag = True
 
+	# accept
+        elif o in ("-" + shortARG[3], "--" + longARG[3]):
+            accept = True
+            accept_marker = int(a)
+
+	# acceptall
+        elif o in ("-" + shortOPT[3], "--" + longOPT[3]):
+            accept_all = True
+
         else:
             usage()
             assert False, "unhandled option"
-	
+
     if (show_flag):
         if ((all_flag) and (show_parameter)):
             print_help()
@@ -245,12 +249,20 @@ def main():
                 show_number(show_parameter)
             except ValueError:
                 print("Invalid Parameter to shownumber.")    
-            
 
     # update
     if (update_flag):
         update()
         print("Update complete.\n")
+
+    # accept
+    if (accept):
+        accept(accept_marker)
+
+    # accept all
+    if (accept_all):
+        accept_all()
+
     '''
     if (output):
         print("output: " + output)

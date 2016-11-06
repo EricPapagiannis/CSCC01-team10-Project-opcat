@@ -31,33 +31,35 @@ class TestComparator(unittest.TestCase):
     def __init__(self, *args, **kwargs):
         super(TestComparator, self).__init__(*args, **kwargs)
 
-    def testRaiseTypeMismatch():
-        self.assertRaises(ObjectTypeMismatchException, Comparator(planet1, Star1))
+    def testRaiseTypeMismatch(self):
+        self.assertRaises(ObjectTypeMismatchException, Comparator(self.planet1, self.Star1, "eu"))
         
-    def testSQLjoin():
-        comparator = Comparator(planet2, planet1)
+    def testSQLjoin(self):
+        comparator = Comparator(self.planet2, self.planet1, "eu")
         result = comparator.sqlJoin(True)
         self.assertEqual(result["data"], ["mass", "temperature"])
         self.assertEqual(result["left"], [12, 145])
         self.assertEqual(result["right"], [10, "N/A"])
         
-    def testInnerJoinDiffFieldMatch():
-        comparator = Comparator(Star1, Star2)
+    def testInnerJoinDiffFieldMatch(self):
+        comparator = Comparator(self.Star1, self.Star2, "eu")
         inner = comparator.innerJoinDiff()
         self.assertEqual(inner, {})
         
-    def testInnerJoinDiffFieldDiff():
-        comparator = Comparator(planet1, planet2)
+    def testInnerJoinDiffFieldDiff(self):
+        comparator = Comparator(self.planet1, self.planet2, "eu")
         inner = comparator.innerJoinDiff()
         self.assertEqual(inner, {"mass": (10, 12)})
         
-    def testStarCompare():
-        comparator = Comparator(Star1, Star2)
+    def testStarCompare(self):
+        comparator = Comparator(self.Star1, self.Star2, "eu")
         result = comparator.starCompare()
         self.assertEqual(result["starC"], {"mass": (100, 113)})
         self.assertEqual(result["starN"], {"data":["mass"], "left":[100], "right":[113]})
-        self.assertEqual(result["planetN"], {"left":[], "right":[planet4]})
-        self.assertEqual(result["planetDN"], {str(planet1):{"data":["mass"], "left":[10], "right":[10]},
-                         str(planet3):{"data":[], "left":[], "right":[]}})
-        self.assertEqual(result["planetDC"], {str(planet1):{"mass": (10, 10)},str(planet3):{} })
+        self.assertEqual(result["planetN"], {"left":[], "right":[self.planet4]})
+        self.assertEqual(result["planetDN"], {str(self.planet1):{"data":["mass"], "left":[10], "right":[10]},
+                         str(self.planet3):{"data":[], "left":[], "right":[]}})
+        self.assertEqual(result["planetDC"], {str(self.planet1):{"mass": (10, 10)},str(self.planet3):{} })
         
+if __name__ == "__main__":
+    unittest.main(exit=False)
