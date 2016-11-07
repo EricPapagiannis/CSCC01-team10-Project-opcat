@@ -105,7 +105,7 @@ class Comparator():
         result_dict = []
 
         main_dictionary = self.starCompare()
-        '''
+
         # return list of proposed changes of the planets in star
         for planet in main_dictionary["planetDC"]:
             for field in main_dictionary["planetDC"][planet]:
@@ -117,7 +117,7 @@ class Comparator():
                                  main_dictionary["planetDC"][
                                      planet][field][1])
                 )
-        '''
+
         for planet in main_dictionary["planetA"]:
             result_dict.append(Addition(self.origin, main_dictionary["planetA"][
                 planet]))
