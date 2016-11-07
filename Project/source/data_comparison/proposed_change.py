@@ -20,8 +20,10 @@ class Addition(ProposedChange):
         ProposedChange.__init__(self, origin)
 
     def __str__(self):
-        s = "Proposed addition:\n"
-        s += "From : "
+        s = "Proposed addition:\n\n"
+        s += "Name of object added : "
+        s += self.object_ptr.name
+        s += "\nOrigin : "
         s += str(self.origin)
         s += "\n"
         s += "Type of object: "
@@ -68,15 +70,15 @@ class Modification(ProposedChange):
         ProposedChange.__init__(self, origin)
 
     def __str__(self):
-        s = "Proposed modification:\n"
-        s += "Origin : "
+        s = "Proposed modification:\n\n"
+        s += "Name of object modified: "
+        s += self.OEC_object.name        
+        s += "\nOrigin : "
         s += str(self.origin)
         s += "\n"
         s += "Type of object modified: "
         s += str(self.OEC_object.__class__.__name__)
         s += "\n"
-        s += "Name of object modified: "
-        s += self.OEC_object.name
         s += "\n"
         if self.OEC_object.__class__.__name__ != "System":
             s += "Part of System: "
