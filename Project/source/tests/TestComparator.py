@@ -6,6 +6,7 @@ Created on Sun Oct 30 20:20:42 2016
 """
 
 from data_comparison.Comparator import *
+from data_comparison.proposed_change import *
 from data_parsing.Planet import *
 from data_parsing.PlanetaryObject import *
 from data_parsing.Star import *
@@ -62,6 +63,15 @@ class TestComparator(unittest.TestCase):
         self.assertEqual(result["planetN"], {"left":[], "right":[self.planet4]})
         self.assertEqual(result["planetDN"], {})
         self.assertEqual(result["planetDC"], {})
+        self.assertEqual(result["planetA"], {"planet1":self.planet1, "planet3":self.planet3})
+        
+    def testproposedChangeStarCompare(self):
+        comparator = Comparator(self.Star1, self.Star2, "eu")
+        result = comparator.proposedChangeStarCompare();
+        answer = [self.planet1, self.planet3]
+        self.assertEqual(len(result), len(answer))
+        for i in range(0, len(result)-1):
+            self.assertEqual(result[i].get_object_name(), answer[i].name)
         
 if __name__ == "__main__":
     unittest.main(exit=False)

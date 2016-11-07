@@ -101,7 +101,7 @@ class Comparator():
         Similar to starCompare but returns a list of Addition
         and Modification Objects
         '''
-
+        # why is variable a list?
         result_dict = []
 
         main_dictionary = self.starCompare()

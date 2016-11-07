@@ -33,7 +33,7 @@ class Addition(ProposedChange):
         return s
 
 
-    def get_object_name():
+    def get_object_name(self):
         '''
         () -> str
         
