@@ -238,17 +238,15 @@ if __name__ == "__main__":
     import data_parsing.XML_data_parser as XML
     import data_parsing.CSV_data_parser as CSV
 
-    EXO_planets = CSV.buildListPlanets("exoplanetEU_csv",
+    EXO_planets = CSV.buildListPlanets("../storage/exoplanetEU_csv",
                                        ["mass", "radius", "period",
                                         "semimajoraxis"], "eu")
     a = XML.buildSystemFromXML()
     planets = a[5]
     for planet in EXO_planets:
-        if planet.name == "11 Com b":
-            b = planet
-    b.data["mass"] = 20
-    print(b)
-    p = planets["11 Com b"]
+        if planet.name.startswith("KOI"):
+            print(planet)
+    p = planets["KOI-2222"]
     print(p)
     c = Comparator(b, p, "eu")
     d = c.sqlJoin(True)
@@ -257,10 +255,10 @@ if __name__ == "__main__":
     print(e)
 
     stars = a[4]
-    xml = stars["11 Com"]
+    xml = stars["KOI-2222"]
     print(xml)
-    bob = CSV.buildDictStarExistingField("exoplanetEU_csv", "eu")
-    ayy = bob["11 Com"]
+    bob = CSV.buildDictStarExistingField("../storage/exoplanetEU_csv", "eu")
+    ayy = bob["KOI-0001"]
     ayy.planetObjects[0].data["mass"] = 21
     z = Comparator(ayy, xml, "eu")
     f = z.starCompare()

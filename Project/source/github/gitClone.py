@@ -1,11 +1,12 @@
 from subprocess import call
+import xml.etree.ElementTree as ET
 
 # 'static' vars
 files = [];
 direc = "gittut";
 
 def initGit():
-    link = input('https://github.com/OpenExoplanetCatalogue/open_exoplanet_catalogue.git')
+    link = 'https://github.com/OpenExoplanetCatalogue/open_exoplanet_catalogue.git'
     call(["git", "--bare", "clone", link])
     link = link.split('/')[-1][0:-4]
     call(["git", "push", "--set-upstream", "origin", "master"], cwd=link)
@@ -38,3 +39,20 @@ def UpdateRepo():
     #call(["git", "add", "."] + files, cwd=direc)
     #call(["git", "commit", "-m", "automated commit"], cwd=direc)
     #call(["git", "push"], cwd=direc)
+
+# later just take proposedChange, and get sysname from that using another method
+def modifyXML(sysName, proposedChange):
+    oec = ET.parse("open_exoplanet_catalogue/systems/" + sysName + ".xml")
+    for starXML in oec.findall(".//star"):
+        for planetXML in starXML.findall(".//planet"):
+            for child in planetXML.findall(".//mass"):
+                child.text="21"
+                oec.write("open_exoplanet_catalogue/systems/" + sysName + ".xml")
+                print(child.text)
+
+# def getSystemName(proposedChange):
+# def commitAndPull():
+
+if __name__ == "__main__":
+    # UpdateRepo()
+    modifyXML("11 Com", ("20", "19.4"))
