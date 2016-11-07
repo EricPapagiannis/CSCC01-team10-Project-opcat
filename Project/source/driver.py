@@ -6,6 +6,7 @@ import data_retrieval.apiGet as API
 import data_parsing.XML_data_parser as XML
 import data_parsing.CSV_data_parser as CSV
 import data_comparison.Comparator as COMP
+import data_comparison.proposed_change as PC
 
 help_string = "Opcat version 0.1\nBasic operation:\n$ driver --update   \
 Retrieves data from target catalogues (NASA, openexoplanet.eu) as a list of \
@@ -14,19 +15,23 @@ catalogue as a separate list of star systems. Compares the two lists, \
 building a list of proposed changes. (Not implemented yet) After update \
 is complete the user can view proposed changes. (Not implemented yet)\n\n"
 
-
+# link to NASA catalogue
 NASA_link = "http://exoplanetarchive.ipac.caltech.edu/cgi-bin/nsted\
 API/nph-nstedAPI?table=exoplanets"
 
+# link to exoplanet.eu catalogue
 exoplanetEU_link = "http://exoplanet.eu/catalog/csv/"
 
+# paths to NASA and EU csv files on local drive
 nasa_file = "storage/nasa_csv"
 EU_file = "storage/exoplanetEU_csv"
 
-all_tags = ["mass", "radius", "period", "semimajoraxis", "discoveryyear", \
-            "lastupdate", "discoverymethod", "eccentricity"]
+# path to XML .gz file
+XML_path = "storage/OEC_XML.gz"
 
+# list of all proposed changes (accumulated on update())
 CHANGES = []
+
 
 def usage():
     '''() -> NoneType
@@ -60,6 +65,7 @@ def show_all():
     Skeleton function
     '''
     update()
+    # sort the list of proposed changes    
     i = 0
     while i < len(CHANGES):
         show_number(i)
@@ -100,7 +106,8 @@ def update():
     Returns NoneType
     '''
     # open exoplanet catalogue
-    OEC_lists = XML.buildSystemFromXML()
+    XML.downloadXML(XML_path)
+    OEC_lists = XML.buildSystemFromXML(XML_path)
     OEC_systems = OEC_lists[0]
     OEC_stars = OEC_lists[1]
     OEC_planets = OEC_lists[2]
@@ -131,7 +138,7 @@ def update():
     # build the dict of stars from NASA
     NASA_stars = CSV.buildDictStarExistingField(nasa_file, "nasa")
     # build the dictionary of stars from Open Exoplanet Catalogue
-    OEC_stars = XML.buildSystemFromXML()[4]
+    OEC_stars = XML.buildSystemFromXML(XML_path)[4]
 
 
     # clean both dictionaries
@@ -150,7 +157,11 @@ def update():
     for key in NASA_stars.keys():
         if key in OEC_stars.keys() :
             C = COMP.Comparator(NASA_stars.get(key), OEC_stars.get(key), "nasa")
-            CHANGES.extend(C.proposedChangeStarCompare())   
+            CHANGES.extend(C.proposedChangeStarCompare())
+
+    # sort the list of proposed changes
+    PC.sort_changes(CHANGES)
+
 
 def main():
     '''() -> NoneType

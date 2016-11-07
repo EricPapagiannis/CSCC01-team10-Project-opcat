@@ -7,7 +7,7 @@ class TestbuildSystemFromXML(unittest.TestCase):
         super(TestbuildSystemFromXML, self).__init__(*args, **kwargs)
         (self.systems, self.stars, self.planets, self.allSystemsDict,
          self.allStarsDict,
-         self.allPlanetsDict) = buildSystemFromXML()
+         self.allPlanetsDict) = buildSystemFromXML("storage/OEC_XML.gz")
 
     def test_planets_type(self):
         self.assertTrue(isinstance(self.planets, list),
@@ -57,4 +57,4 @@ class TestbuildSystemFromXML(unittest.TestCase):
                           "incorrect number of systems")
 
 if __name__ == "__main__":
-    unittest.main(exit="false")
+    unittest.main(exit=False)
