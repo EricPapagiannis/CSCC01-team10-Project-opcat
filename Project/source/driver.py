@@ -14,21 +14,23 @@ catalogue as a separate list of star systems. Compares the two lists, \
 building a list of proposed changes. (Not implemented yet) After update \
 is complete the user can view proposed changes. (Not implemented yet)\n\n"
 
-
+# link to NASA catalogue
 NASA_link = "http://exoplanetarchive.ipac.caltech.edu/cgi-bin/nsted\
 API/nph-nstedAPI?table=exoplanets"
 
+# link to exoplanet.eu catalogue
 exoplanetEU_link = "http://exoplanet.eu/catalog/csv/"
 
+# paths to NASA and EU csv files on local drive
 nasa_file = "storage/nasa_csv"
 EU_file = "storage/exoplanetEU_csv"
 
-all_tags = ["mass", "radius", "period", "semimajoraxis", "discoveryyear", \
-            "lastupdate", "discoverymethod", "eccentricity"]
-
+# path to XML .gz file
 XML_path = "storage/OEC_XML.gz"
 
+# list of all proposed changes (accumulated on update())
 CHANGES = []
+
 
 def usage():
     '''() -> NoneType
