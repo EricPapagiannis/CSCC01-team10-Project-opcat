@@ -149,3 +149,11 @@ def merge_sort_changes(CHANGES):
     else:
         return CHANGES
 
+def sort_changes(changes_list):
+    '''
+    ([ProposedChange]) -> None
+    
+    In place sorting for the list of proposed changes. Relies on 
+    merge_sort_changes.
+    '''
+    changes_list = merge_sort_changes(changes_list)

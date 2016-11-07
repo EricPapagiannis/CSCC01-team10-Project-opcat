@@ -6,6 +6,7 @@ import data_retrieval.apiGet as API
 import data_parsing.XML_data_parser as XML
 import data_parsing.CSV_data_parser as CSV
 import data_comparison.Comparator as COMP
+import data_comparison.proposed_change as PC
 
 help_string = "Opcat version 0.1\nBasic operation:\n$ driver --update   \
 Retrieves data from target catalogues (NASA, openexoplanet.eu) as a list of \
@@ -64,6 +65,7 @@ def show_all():
     Skeleton function
     '''
     update()
+    # sort the list of proposed changes    
     i = 0
     while i < len(CHANGES):
         show_number(i)
@@ -155,7 +157,11 @@ def update():
     for key in NASA_stars.keys():
         if key in OEC_stars.keys() :
             C = COMP.Comparator(NASA_stars.get(key), OEC_stars.get(key), "nasa")
-            CHANGES.extend(C.proposedChangeStarCompare())   
+            CHANGES.extend(C.proposedChangeStarCompare())
+
+    # sort the list of proposed changes
+    PC.sort_changes(CHANGES)
+
 
 def main():
     '''() -> NoneType
