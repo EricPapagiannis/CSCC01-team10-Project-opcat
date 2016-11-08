@@ -23,6 +23,7 @@ class Comparator():
         else:
             raise ObjectTypeMismatchException
 
+
     def sqlJoin(self, left_join):
         '''(bool) -> Dictionary
         works similar to joins in sql
@@ -47,11 +48,19 @@ class Comparator():
         for key in left_data:
             if not (key in right_data):
                 missing_keys.append(key)
-            result_dict['data'].append(key)
+            if key == "":
+                left_data[key] = "N/A"
+                result_dict['data'].append("N/A")
+            else:
+                result_dict['data'].append(key)
 
         for key in result_dict['data']:
-            result_dict['left'].append(left_data[key])
-            if key in missing_keys:
+            if left_data[key] == "":
+                left_data[key] = "N/A"
+                result_dict['left'].append("N/A")
+            else:
+                result_dict['left'].append(left_data[key])
+            if key in missing_keys or key == "":
                 result_dict['right'].append("N/A")
             else:
                 result_dict['right'].append(right_data[key])
@@ -117,11 +126,21 @@ class Comparator():
                                  main_dictionary["planetDC"][
                                      planet][field][1])
                 )
-
+        '''
+        for star in main_dictionary["starC"]:
+            for field in main_dictionary["starC"][star]:
+                result_dict.append(
+                    Modification(self.origin,
+                                 self.obj2, field,
+                                 main_dictionary["starC"][star][field][0],
+                                 main_dictionary["starC"][star][field][1])
+                )
+        '''
         for planet in main_dictionary["planetA"]:
             result_dict.append(Addition(self.origin, main_dictionary["planetA"][
                 planet]))
         i = 0
+
         '''
         for data in main_dictionary["starN"]["right"]:
             if (data == "N/A"):
@@ -169,7 +188,7 @@ class Comparator():
             starDataChange = self.innerJoinDiff()
 
             # starN
-            starDataNew = self.sqlJoinNewOnly(True)
+            starDataNew = self.sqlJoin(True)
 
             # planetN
             newPlanets = {}
@@ -206,7 +225,7 @@ class Comparator():
                                                self.obj2.nameToPlanet[
                                                    planet.name], self.origin)
                     # get dictionary of new planet data for that planet
-                    newPlanetsData[planet.name] = planetCompare.sqlJoinNewOnly(
+                    newPlanetsData[planet.name] = planetCompare.sqlJoin(
                         True)
                     # get dictionary of changed planet data for that planet
                     planetsDataChange[planet.name] = \
@@ -238,15 +257,16 @@ if __name__ == "__main__":
     import data_parsing.XML_data_parser as XML
     import data_parsing.CSV_data_parser as CSV
 
-    EXO_planets = CSV.buildListPlanets("../storage/exoplanetEU_csv",
+    nasa_planets = CSV.buildListPlanets("../storage/nasa_csv",
                                        ["mass", "radius", "period",
-                                        "semimajoraxis"], "eu")
+                                        "semimajoraxis", "temperature"], "nasa")
     a = XML.buildSystemFromXML()
-    planets = a[5]
-    for planet in EXO_planets:
-        if planet.name.startswith("KOI"):
+    planets = a[4]
+    for planet in nasa_planets:
+        if planet.name == "11 Com b":
             print(planet)
-    p = planets["KOI-2222"]
+            b = planet
+    p = planets["11 Com"]
     print(p)
     c = Comparator(b, p, "eu")
     d = c.sqlJoin(True)
@@ -264,18 +284,10 @@ if __name__ == "__main__":
     f = z.starCompare()
     print("STAR COMPARE----------------------------------------")
 
-    print(f)
-    print(f["planetN"]["left"][0])
-    print(f["planetN"]["right"][0])
-
     print(ayy.planetObjects[0])
     print(xml.planetObjects[0])
     qq = z.proposedChangeStarCompare()
     print(qq)
     for proposed_change in qq:
         print(proposed_change)
-        # print(qq[0])
-    print(f)
-    print(f)
-    print(f["planetN"]["left"][0])
-    print(f["planetN"]["right"][0])
+
