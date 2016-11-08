@@ -3,7 +3,7 @@ from data_parsing.Star import Star
 #from Planet import Planet
 #from Star import star
 
-eu = {"name":"# name","mass": "mass", "radius":"radius", "period":"orbital_period", "semimajoraxis":"semi_major_axis",
+eu = {"name":"name","mass": "mass", "radius":"radius", "period":"orbital_period", "semimajoraxis":"semi_major_axis",
     "eccentricity":"eccentricity", "discoverymethod":"detection_type", "discoveryyear":"discovered",
     "lastupdate":"updated", "nameStar":"star_name"}
 nasa = {"name":"pl_hostname", "radius":"pl_radj", "eccentricity":"pl_orbeccen", "period":"pl_orbper",
@@ -23,7 +23,6 @@ def buildPlanet(line, heads, wanted, source):
         _actual = eu
     else:
         _actual = nasa
-
     for i in wanted:
         try:
             temp = _actual[i]
@@ -36,7 +35,6 @@ def buildPlanet(line, heads, wanted, source):
     if(source == "nasa"):
         _name += (" " + line[_name_index+1])
     planet = Planet(_name)
-
     for i in _data_field:
         try:
             planet.addVal(i, _fixVal(i, line[_data_field[i]], source))
@@ -52,8 +50,7 @@ def _fixVal(field, value, source):
         res = float(re)
     except:
         res = re
-    res = UnitConverter.convertToOpen(field, res, source)
-    return res
+    return UnitConverter.convertToOpen(field, res, source)
     #return re
 
 def buildDictionaryPlanets(filename, wanted, source):
@@ -86,7 +83,7 @@ def buildListPlanets(filename, wanted, source):
     return rlist
 
 def buildListPlanetsAllField(filename, source):
-    if(source == eu):
+    if(source == "eu"):
         heads = eu.keys()
     else:
         heads = nasa.keys()
