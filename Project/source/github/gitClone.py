@@ -104,7 +104,7 @@ def modifyStar(oec, proposedChange):
 
 def modifyPlanet(oec, proposedChange):
     path = "github/open_exoplanet_catalogue/systems/" + proposedChange.getSystemName() + ".xml"
-    # find the star we want
+    # find the planet we want
     for planetXML in oec.findall(".//planet"):
         for child in planetXML.findall(".//name"):
             if child.text == proposedChange.get_object_name():
