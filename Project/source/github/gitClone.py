@@ -76,10 +76,16 @@ def modifyXML(proposedChange):
 
 
         elif proposedChange.getOECType() == "Planet":
+            call(["git", "checkout" "-b" "opcat1"])
+            call(["git", "push", "upstream"])
+            # modify
             modifyPlanet(oec, proposedChange)
             # commit
-
+            call(["git", "add", path])
+            commitMessage = "\"" + str(proposedChange) + "\""
+            call(["git", "commit", "-m", commitMessage])
             # pull-request
+            call(["hub", "pull-request"], cwd=direc)
 
 
 def modifyStar(oec, proposedChange):
@@ -88,16 +94,26 @@ def modifyStar(oec, proposedChange):
     for starXML in oec.findall(".//star"):
         for child in starXML.findall(".//name"):
             if child.text == proposedChange.get_object_name():
-                specifixStarXML = starXML
+                specificStarXML = starXML
 
     # now modify our data field we want
-    child = specifixStarXML.find(".//" + proposedChange.field_modified)
+    child = specificStarXML.find(".//" + proposedChange.field_modified)
     child.text = proposedChange.value_in_origin_catalogue
     oec.write(path)
 
 
 def modifyPlanet(oec, proposedChange):
-    pass
+    path = "github/open_exoplanet_catalogue/systems/" + proposedChange.getSystemName() + ".xml"
+    # find the star we want
+    for planetXML in oec.findall(".//planet"):
+        for child in planetXML.findall(".//name"):
+            if child.text == proposedChange.get_object_name():
+                specificPlanetXML = planetXML
+
+    # now modify our data field we want
+    child = specificPlanetXML.find(".//" + proposedChange.field_modified)
+    child.text = proposedChange.value_in_origin_catalogue
+    oec.write(path)
 
 # def getSystemName(proposedChange):
 # def commitAndPull():
