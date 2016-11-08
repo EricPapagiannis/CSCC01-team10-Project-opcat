@@ -127,7 +127,7 @@ class Modification(ProposedChange):
         '''
         () -> str
         '''
-        return self.object_ptr.__class__.__name__
+        return self.OEC_object.__class__.__name__
 
 def merge_changes(first, second):
     '''

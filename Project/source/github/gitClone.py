@@ -50,7 +50,7 @@ def UpdateRepo():
 # later just take proposedChange, and get sysname from that using another method
 def modifyXML(proposedChange):
     if isinstance(proposedChange, PC.Modification):
-        path = "open_exoplanet_catalogue/systems/" + PC.getSystemName() + ".xml"
+        path = "github/open_exoplanet_catalogue/systems/" + proposedChange.getSystemName() + ".xml"
         oec = ET.parse(
             path)
         '''
@@ -83,7 +83,7 @@ def modifyXML(proposedChange):
 
 
 def modifyStar(oec, proposedChange):
-    path = "open_exoplanet_catalogue/systems/" + PC.getSystemName() + ".xml"
+    path = "github/open_exoplanet_catalogue/systems/" + proposedChange.getSystemName() + ".xml"
     # find the star we want
     for starXML in oec.findall(".//star"):
         for child in starXML.findall(".//name"):
@@ -98,7 +98,6 @@ def modifyStar(oec, proposedChange):
 
 def modifyPlanet(oec, proposedChange):
     pass
-
 
 # def getSystemName(proposedChange):
 # def commitAndPull():
@@ -116,6 +115,6 @@ def modifyPlanet(oec, proposedChange):
 # sudo ln -s /home/eric/Desktop/bob/hub/bin/hub /usr/local/bin/hub
 # sudo apt-install linuxbrew-wrapper
 # brew install hub
-#if __name__ == "__main__":
+# if __name__ == "__main__":
 # UpdateRepo()
 # modifyXML("11 Com", ("20", "19.4"))

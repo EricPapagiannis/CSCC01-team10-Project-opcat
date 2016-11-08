@@ -263,7 +263,7 @@ def main():
     show_flag = False
     all_flag = False
     accept_flag = False
-    accept_all = False
+    accept_all_flag = False
     accept_marker = None
 
     for o, a in opts:
@@ -305,7 +305,7 @@ def main():
 
 	# acceptall
         elif o in ("-" + shortOPT[3], "--" + longOPT[3]):
-            accept_all = True
+            accept_all_flag = True
 
         else:
             usage()
@@ -334,8 +334,9 @@ def main():
         accept(accept_marker)
 
     # accept all
-    if (accept_all):
+    if (accept_all_flag):
         accept_all()
+        print("Accepted all.")
 
     '''
     if (output):
