@@ -109,8 +109,6 @@ def accept_all():
     while i < len(CHANGES):
         accept(i)
         i += 1
-    print("\nAccepted all\n")
-
 
 def update():
     '''() -> NoneType
@@ -173,57 +171,7 @@ def update():
             CHANGES.extend(C.proposedChangeStarCompare())
 
     # sort the list of proposed changes
-    CHANGES = merge_sort_changes(CHANGES)
-
-
-def merge_changes(first, second):
-    '''
-    ([ProposedChange], [ProposedChange]) -> [ProposedChange]
-
-    Helper method for merge_sort_changes() method. Merges 2 sorted lists of
-    proposed changes; returns single sorted list.
-    '''
-    # List res will contain all the elements from both lists
-    res = []
-    # Append ProposedChange objects by lexicographical order of the name of the
-    # planetaryObject ProposedChanges are referring to
-    while len(first) != 0 and len(second) != 0:
-        if first[0].get_object_name() < second[0].get_object_name():
-            res.append(first.pop(0))
-        else:
-            res.append(second.pop(0))
-    # Add all the elements from the list that is not empty to the res
-    for i in [first, second]:
-        res.extend(i)
-    return res
-
-
-def merge_sort_changes(CHANGES):
-    '''
-    ([ProposedChange]) -> [ProposedChange]
-
-    Recursively sorts the list of proposed changes in lexicographical order by
-    the name of the object the change is referring to. Returns sorted list.
-    '''
-    if len(CHANGES) > 1:
-        mid = len(CHANGES) // 2
-        # Recursive calls on first and second halves.
-        first = merge_sort_changes(CHANGES[:mid])
-        second = merge_sort_changes(CHANGES[mid:])
-        # Merging and returning 2 sublists
-        return merge_changes(first, second)
-    else:
-        return CHANGES
-
-
-def sort_changes(changes_list):
-    '''
-    ([ProposedChange]) -> None
-
-    In place sorting for the list of proposed changes. Relies on
-    merge_sort_changes.
-    '''
-    changes_list = merge_sort_changes(changes_list)
+    CHANGES = PC.merge_sort_changes(CHANGES)
 
 
 def main():
