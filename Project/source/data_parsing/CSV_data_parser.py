@@ -45,11 +45,16 @@ def buildPlanet(line, heads, wanted, source):
     return planet
 
 def _fixVal(field, value, source):
+    re = value
     if(field in correction and value in correction[field].keys()):
         re = correction[field][value]
-    else:
-        re = value
-    return UnitConverter.convertToOpen(field, re, source)
+    try:
+        res = float(re)
+    except:
+        res = re
+    res = UnitConverter.convertToOpen(field, res, source)
+    return res
+    #return re
 
 def buildDictionaryPlanets(filename, wanted, source):
     file = open(filename, "r")
@@ -125,6 +130,8 @@ class UnitConverter:
     def convertToOpen(field, data, source):
         def convertDate(data):
             data = data.split('-')
+            if(len(data) != 3):
+                return ''
             re = ''
             re += data[0][2:] + '/'
             re += data[1] + '/'
