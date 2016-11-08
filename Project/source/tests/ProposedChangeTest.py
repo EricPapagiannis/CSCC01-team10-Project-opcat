@@ -120,7 +120,7 @@ class testing_sort(unittest.TestCase):
         super(testing_sort, self).__init__(*args, **kwargs)
         self.planet1 = Planet.Planet("A")
         self.planet2 = Planet.Planet("B")
-        self.planet3 = Planet.Planet("C")
+        self.p3 = Planet.Planet("C")
         self.planet4 = Planet.Planet("RR")
         self.planet5 = Planet.Planet("UU")
         self.planet6 = Planet.Planet("dddddd")
@@ -128,7 +128,7 @@ class testing_sort(unittest.TestCase):
     def test_sort1(self):
         a = Modification("aaa", self.planet1, "fieldname", 10, 11)
         b = Addition("source", self.planet2)
-        c = Addition("source", self.planet3)
+        c = Addition("source", self.p3)
         d = Modification("source", self.planet4, "field", 5, 6)
         e = Modification("source", self.planet5, "field", 1, 2)        
         L = [c, e, d, b, a]
@@ -141,14 +141,41 @@ class testing_sort(unittest.TestCase):
         self.assertEqual(result[3], d)
         self.assertEqual(result[4], e)        
 
+    def test_sort_order(self):
+        self.p1 = Planet.Planet("a")
+        self.p2 = Planet.Planet("b")
+        self.p3 = Planet.Planet("c")
+        self.p4 = Planet.Planet("d")
+        self.p5 = Planet.Planet("e")
+        self.p6 = Planet.Planet("f")
+        a = Modification("aaa", self.p1, "fieldname", 10, 11)
+        b = Addition("source", self.p2)
+        c = Addition("source", self.p3)
+        d = Modification("source", self.p4, "field", 5, 6)
+        e = Modification("source", self.p5, "field", 1, 2)
+        f = Modification("source", self.p6, "field", 3, 4)
+
+        L = [b, a, d, c, f, e]
+        result = merge_sort_changes(L)
+        self.assertTrue(isinstance(result, list))
+        self.assertEqual(len(result), 6)
+        self.assertEqual(result[0], a)
+        self.assertEqual(result[1], b)
+        self.assertEqual(result[2], c)
+        self.assertEqual(result[3], d)
+        self.assertEqual(result[4], e)
+        self.assertEqual(result[5], f)
+
+
     def test_sort2(self):
         a = Modification("aaa", self.planet1, "fieldname", 10, 11)
         b = Addition("source", self.planet2)
-        c = Addition("source", self.planet3)
+        c = Addition("source", self.p3)
         d = Modification("source", self.planet4, "field", 5, 6)
         e = Modification("source", self.planet5, "field", 1, 2)        
         L = [a, b, c, d, e]
         result = merge_sort_changes(L)
+        print(result)
         self.assertTrue(isinstance(result, list))
         self.assertEqual(len(result), 5)
         self.assertEqual(result[0], a)
@@ -160,7 +187,7 @@ class testing_sort(unittest.TestCase):
     def test_sort3(self):
         a = Modification("aaa", self.planet1, "fieldname", 10, 11)
         b = Addition("source", self.planet2)
-        c = Addition("source", self.planet3)
+        c = Addition("source", self.p3)
         d = Modification("source", self.planet4, "field", 5, 6)
         e = Modification("source", self.planet5, "field", 1, 2)        
         L = [a, b, e, d, c]

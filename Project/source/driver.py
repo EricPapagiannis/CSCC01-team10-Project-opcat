@@ -7,6 +7,7 @@ import data_parsing.XML_data_parser as XML
 import data_parsing.CSV_data_parser as CSV
 import data_comparison.Comparator as COMP
 import data_comparison.proposed_change as PC
+import github.gitClone as GIT
 
 help_string = "Opcat version 0.1\nBasic operation:\n$ driver --update   \
 Retrieves data from target catalogues (NASA, openexoplanet.eu) as a list of \
@@ -78,8 +79,8 @@ def show_number(n):
     '''
     if len(CHANGES) == 0:
         update()
-    if n < len(CHANGES) and n > 0:
-        print("\nShowing number : " + str(n) + "\n")
+    if n < len(CHANGES) and n >= 0:
+        print("\nShowing number : " + str(n+1) + "\n")
         print(CHANGES[n])
         print()
     else:
@@ -90,6 +91,12 @@ def accept(n):
     '''(int) -> NoneType
     Skeleton fuction
     '''
+    if len(CHANGES) == 0:
+        update()
+    if n < len(CHANGES) and n >= 0:
+        GIT.modifyXML(CHANGES[n])
+    else:
+        print("Out of range.")
     print("\nAccepted: \n" + str(n))
 
 
@@ -97,8 +104,11 @@ def accept_all():
     '''() -> NoneType
     Skeleton function
     '''
-    print("\nAccepted all\n")
-
+    update()
+    i = 0
+    while i < len(CHANGES):
+        accept(i)
+        i += 1
 
 def update():
     '''() -> NoneType
@@ -106,6 +116,7 @@ def update():
     Returns NoneType
     '''
     # open exoplanet catalogue
+    global CHANGES
     XML.downloadXML(XML_path)
     OEC_lists = XML.buildSystemFromXML(XML_path)
     OEC_systems = OEC_lists[0]
@@ -160,7 +171,7 @@ def update():
             CHANGES.extend(C.proposedChangeStarCompare())
 
     # sort the list of proposed changes
-    PC.sort_changes(CHANGES)
+    CHANGES = PC.merge_sort_changes(CHANGES)
 
 
 def main():
@@ -199,8 +210,8 @@ def main():
     update_flag = False
     show_flag = False
     all_flag = False
-    accept = False
-    accept_all = False
+    accept_flag = False
+    accept_all_flag = False
     accept_marker = None
 
     for o, a in opts:
@@ -237,12 +248,12 @@ def main():
 
 	# accept
         elif o in ("-" + shortARG[3], "--" + longARG[3]):
-            accept = True
+            accept_flag = True
             accept_marker = int(a)
 
 	# acceptall
         elif o in ("-" + shortOPT[3], "--" + longOPT[3]):
-            accept_all = True
+            accept_all_flag = True
 
         else:
             usage()
@@ -267,12 +278,13 @@ def main():
         print("Update complete.\n")
 
     # accept
-    if (accept):
+    if (accept_flag):
         accept(accept_marker)
 
     # accept all
-    if (accept_all):
+    if (accept_all_flag):
         accept_all()
+        print("Accepted all.")
 
     '''
     if (output):

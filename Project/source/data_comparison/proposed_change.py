@@ -34,7 +34,6 @@ class Addition(ProposedChange):
         s += "\n"
         return s
 
-
     def get_object_name(self):
         '''
         () -> str
@@ -42,7 +41,7 @@ class Addition(ProposedChange):
         Returns the name of the PlanetaryObject to which this instance of 
         proposed addition is referring.
         '''
-        if self.object_ptr is not None :
+        if self.object_ptr is not None:
             return self.object_ptr.name
         else:
             return ""
@@ -72,13 +71,12 @@ class Modification(ProposedChange):
     def __str__(self):
         s = "Proposed modification:\n\n"
         s += "Name of object modified: "
-        s += self.OEC_object.name        
+        s += self.OEC_object.name
         s += "\nOrigin : "
         s += str(self.origin)
         s += "\n"
         s += "Type of object modified: "
         s += str(self.OEC_object.__class__.__name__)
-        s += "\n"
         s += "\n"
         if self.OEC_object.__class__.__name__ != "System":
             s += "Part of System: "
@@ -98,19 +96,38 @@ class Modification(ProposedChange):
         s += str(self.value_in_OEC)
         s += "\n"
         return s
-    
+
     def get_object_name(self):
         '''
         () -> str
         
         Returns the name of the PlanetaryObject to which this instance of 
         proposed addition is referring.
-        '''        
-        if self.OEC_object is not None :
+        '''
+        if self.OEC_object is not None:
             return self.OEC_object.name
         else:
-            return ""    
+            return ""
 
+    def getSystemName(self):
+        '''
+        () -> str
+        '''
+        if self.OEC_object.__class__.__name__ != "System":
+            if self.OEC_object.__class__.__name__ == "Star":
+                sysName = self.OEC_object.nameSystem
+            elif self.OEC_object.__class__.__name__ == "Planet":
+                sysName = self.OEC_object.starObject.nameSystem
+        else:
+            sysName = self.OEC_object.name
+        return sysName
+
+
+    def getOECType(self):
+        '''
+        () -> str
+        '''
+        return self.OEC_object.__class__.__name__
 
 def merge_changes(first, second):
     '''
@@ -123,16 +140,16 @@ def merge_changes(first, second):
     res = []
     # Append ProposedChange objects by lexicographical order of the name of the
     # planetaryObject ProposedChanges are referring to
-    while len(first) != 0 and len(second) != 0 :
-        if first[0].get_object_name() < second[0].get_object_name() :
+    while len(first) != 0 and len(second) != 0:
+        if first[0].get_object_name() < second[0].get_object_name():
             res.append(first.pop(0))
         else:
             res.append(second.pop(0))
     # Add all the elements from the list that is not empty to the res
-    for i in [first, second] :
+    for i in [first, second]:
         res.extend(i)
     return res
-    
+
 
 def merge_sort_changes(CHANGES):
     '''
@@ -141,7 +158,7 @@ def merge_sort_changes(CHANGES):
     Recursively sorts the list of proposed changes in lexicographical order by
     the name of the object the change is referring to. Returns sorted list.
     '''
-    if len(CHANGES) > 1 :
+    if len(CHANGES) > 1:
         mid = len(CHANGES) // 2
         # Recursive calls on first and second halves.
         first = merge_sort_changes(CHANGES[:mid])
@@ -150,6 +167,7 @@ def merge_sort_changes(CHANGES):
         return merge_changes(first, second)
     else:
         return CHANGES
+
 
 def sort_changes(changes_list):
     '''

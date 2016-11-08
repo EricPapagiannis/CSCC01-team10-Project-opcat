@@ -19,6 +19,9 @@ class PlanetaryObject:
         s += "Object type : "
         s += self.__class__.__name__
         s += "\n"
+        s += "Name: "
+        s += self.name
+        s += "\n"
         for key in self.data.keys():
             s += str(key)
             s += " :   "
