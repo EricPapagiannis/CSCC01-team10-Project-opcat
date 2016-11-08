@@ -53,6 +53,19 @@ def modifyXML(sysName, proposedChange):
 # def getSystemName(proposedChange):
 # def commitAndPull():
 
+# INSTALL THIS STUFF TO TO PULL REQUESTS:
+# sudo apt-get install ruby-full
+# sudo curl -O https://storage.googleapis.com/golang/go1.6.linux-amd64.tar.gz
+# sudo tar -xvf go1.6.linux-amd64.tar.gz
+# sudo mv go /usr/local
+# vi ~/.profile
+# add export PATH=$PATH:/usr/local/go/bin to end of file
+# source ~/.profile
+# cd back to hub checkedout and then: make
+# git clone https://github.com/github/hub.git
+# sudo ln -s /home/eric/Desktop/bob/hub/bin/hub /usr/local/bin/hub
+# sudo apt-install linuxbrew-wrapper
+# brew install hub
 if __name__ == "__main__":
     # UpdateRepo()
     modifyXML("11 Com", ("20", "19.4"))
