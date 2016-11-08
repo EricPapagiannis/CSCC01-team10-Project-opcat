@@ -15,13 +15,13 @@ class Comparator():
         returns NoneType
         '''
 
-        # if (type(obj1)) == (type(obj2)):
-        self.obj1 = obj1
-        self.obj2 = obj2
-        self.working_type = type(obj1)
-        self.origin = origin
-        # else:
-            # raise ObjectTypeMismatchException
+        if (type(obj1)) == (type(obj2)):
+            self.obj1 = obj1
+            self.obj2 = obj2
+            self.working_type = type(obj1)
+            self.origin = origin
+        else:
+            raise ObjectTypeMismatchException
 
 
     def sqlJoin(self, left_join):
@@ -114,7 +114,7 @@ class Comparator():
         result_dict = []
 
         main_dictionary = self.starCompare()
-        ''''
+
         # return list of proposed changes of the planets in star
         for planet in main_dictionary["planetDC"]:
             for field in main_dictionary["planetDC"][planet]:
@@ -140,7 +140,7 @@ class Comparator():
             result_dict.append(Addition(self.origin, main_dictionary["planetA"][
                 planet]))
         i = 0
-        '''
+
         '''
         for data in main_dictionary["starN"]["right"]:
             if (data == "N/A"):
