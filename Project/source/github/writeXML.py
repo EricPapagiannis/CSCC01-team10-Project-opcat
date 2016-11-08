@@ -10,4 +10,5 @@ import urllib.request
 import xml.etree.ElementTree as ET
 
 class writeXML:
+    pass
     
