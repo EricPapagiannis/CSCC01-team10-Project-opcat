@@ -46,11 +46,9 @@ def _fixVal(field, value, source):
     re = value
     if(field in correction and value in correction[field].keys()):
         re = correction[field][value]
-    try:
-        res = float(re)
-    except:
-        res = re
-    return UnitConverter.convertToOpen(field, res, source)
+    else:
+        re = value
+    return UnitConverter.convertToOpen(field, re, source)
     #return re
 
 def buildDictionaryPlanets(filename, wanted, source):
