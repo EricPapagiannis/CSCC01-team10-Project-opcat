@@ -1,21 +1,26 @@
 from subprocess import call
 import xml.etree.ElementTree as ET
+import data_comparison.proposed_change as PC
 
 # 'static' vars
 files = [];
 direc = "gittut";
 
+
 def initGit():
-    link = 'https://github.com/OpenExoplanetCatalogue/open_exoplanet_catalogue.git'
+    # change to actual later
+    link = 'https://github.com/EricPapagiannis/open_exoplanet_catalogue.git'
     call(["git", "--bare", "clone", link])
     link = link.split('/')[-1][0:-4]
     call(["git", "push", "--set-upstream", "origin", "master"], cwd=link)
     return link
-    
+
+
 def saveDirName(direc):
     file = open('dirname', 'w')
     file.write(direc)
     file.close()
+
 
 def getDirName():
     try:
@@ -24,10 +29,11 @@ def getDirName():
     except IOError:
         return None
 
+
 def UpdateRepo():
     # check for local github repo
     direc = getDirName()
-    if(direc == None):
+    if (direc == None):
         direc = initGit()
         saveDirName(direc)
 
@@ -36,19 +42,63 @@ def UpdateRepo():
     call(["git", "pull"], cwd=direc)
     # commit process
     # require login info first
-    #call(["git", "add", "."] + files, cwd=direc)
-    #call(["git", "commit", "-m", "automated commit"], cwd=direc)
-    #call(["git", "push"], cwd=direc)
+    # call(["git", "add", "."] + files, cwd=direc)
+    # call(["git", "commit", "-m", "automated commit"], cwd=direc)
+    # call(["git", "push"], cwd=direc)
+
 
 # later just take proposedChange, and get sysname from that using another method
-def modifyXML(sysName, proposedChange):
-    oec = ET.parse("open_exoplanet_catalogue/systems/" + sysName + ".xml")
+def modifyXML(proposedChange):
+    if isinstance(proposedChange, PC.Modification):
+        path = "open_exoplanet_catalogue/systems/" + PC.getSystemName() + ".xml"
+        oec = ET.parse(
+            path)
+        '''
+        for starXML in oec.findall(".//star"):
+            for planetXML in starXML.findall(".//planet"):
+                for child in planetXML.findall(".//mass"):
+                    child.text = "21"
+                    oec.write(path)
+                    print(child.text)
+        '''
+        if proposedChange.getOECType() == "Star":
+            call(["git", "checkout" "-b" "opcat1"])
+            call(["git", "push", "upstream"])
+            # modify
+            modifyStar(oec, proposedChange)
+            # commit
+
+            call(["git", "add", path])
+            commitMessage = "\"" + str(proposedChange) + "\""
+            call(["git", "commit", "-m", commitMessage])
+            # pull-request
+            call(["hub", "pull-request"], cwd=direc)
+
+
+        elif proposedChange.getOECType() == "Planet":
+            modifyPlanet(oec, proposedChange)
+            # commit
+
+            # pull-request
+
+
+def modifyStar(oec, proposedChange):
+    path = "open_exoplanet_catalogue/systems/" + PC.getSystemName() + ".xml"
+    # find the star we want
     for starXML in oec.findall(".//star"):
-        for planetXML in starXML.findall(".//planet"):
-            for child in planetXML.findall(".//mass"):
-                child.text="21"
-                oec.write("open_exoplanet_catalogue/systems/" + sysName + ".xml")
-                print(child.text)
+        for child in starXML.findall(".//name"):
+            if child.text == proposedChange.get_object_name():
+                specifixStarXML = starXML
+
+    # now modify our data field we want
+    child = specifixStarXML.find(".//" + proposedChange.field_modified)
+    child.text = proposedChange.value_in_origin_catalogue
+    oec.write(path)
+
+
+def modifyPlanet(oec, proposedChange):
+    pass
+
 
 # def getSystemName(proposedChange):
 # def commitAndPull():
@@ -66,6 +116,6 @@ def modifyXML(sysName, proposedChange):
 # sudo ln -s /home/eric/Desktop/bob/hub/bin/hub /usr/local/bin/hub
 # sudo apt-install linuxbrew-wrapper
 # brew install hub
-if __name__ == "__main__":
-    # UpdateRepo()
-    modifyXML("11 Com", ("20", "19.4"))
+#if __name__ == "__main__":
+# UpdateRepo()
+# modifyXML("11 Com", ("20", "19.4"))

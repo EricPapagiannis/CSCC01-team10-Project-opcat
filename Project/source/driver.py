@@ -7,6 +7,7 @@ import data_parsing.XML_data_parser as XML
 import data_parsing.CSV_data_parser as CSV
 import data_comparison.Comparator as COMP
 import data_comparison.proposed_change as PC
+import github.gitClone as GIT
 
 help_string = "Opcat version 0.1\nBasic operation:\n$ driver --update   \
 Retrieves data from target catalogues (NASA, openexoplanet.eu) as a list of \
@@ -78,8 +79,8 @@ def show_number(n):
     '''
     if len(CHANGES) == 0:
         update()
-    if n < len(CHANGES) and n > 0:
-        print("\nShowing number : " + str(n) + "\n")
+    if n < len(CHANGES) and n >= 0:
+        print("\nShowing number : " + str(n+1) + "\n")
         print(CHANGES[n])
         print()
     else:
@@ -90,6 +91,12 @@ def accept(n):
     '''(int) -> NoneType
     Skeleton fuction
     '''
+    if len(CHANGES) == 0:
+        update()
+    if n < len(CHANGES) and n >= 0:
+        GIT.modifyXML(CHANGES[n])
+    else:
+        print("Out of range.")
     print("\nAccepted: \n" + str(n))
 
 
@@ -97,6 +104,11 @@ def accept_all():
     '''() -> NoneType
     Skeleton function
     '''
+    update()
+    i = 0
+    while i < len(CHANGES):
+        accept(i)
+        i += 1
     print("\nAccepted all\n")
 
 
