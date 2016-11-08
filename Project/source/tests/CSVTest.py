@@ -11,8 +11,8 @@ class TestCSV_parser(unittest.TestCase):
     def testFullPlanetParsingEU(self):
             planets = buildListPlanetsAllField(self.exo, "eu")
             planet = planets[0]
-            self.assertEqual(planet.data["semimajoraxis"],.5)
-            self.assertEqual(planet.data["discoveryyear"], 2001)
+            self.assertEqual(planet.data["semimajoraxis"],'0.5')
+            self.assertEqual(planet.data["discoveryyear"], '2001')
             self.assertEqual(planet.name, "mars")
             self.verifyPlanet(planet)
 
@@ -42,10 +42,10 @@ class TestCSV_parser(unittest.TestCase):
 
     def verifyPlanet(self, planet):
         data = planet.getData()
-        self.assertEqual(data["mass"], 10)
-        self.assertEqual(data["radius"], 3.14)
-        self.assertEqual(data["period"],0.7)
-        self.assertEqual(data["eccentricity"],1)
+        self.assertEqual(data["mass"], '10')
+        self.assertEqual(data["radius"], '3.14')
+        self.assertEqual(data["period"],'0.7')
+        self.assertEqual(data["eccentricity"], '1')
         self.assertEqual(data["discoverymethod"], "RV")
         self.assertEqual(data["lastupdate"],"04/05/16")
 
