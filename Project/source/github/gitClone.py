@@ -9,6 +9,9 @@ direc = "github/open_exoplanet_catalogue"
 
 
 def initGit():
+    '''
+
+    '''
     # change to actual later
     link = 'https://github.com/EricPapagiannis/open_exoplanet_catalogue.git'
     call(["git", "--bare", "clone", link], cwd="github")
@@ -145,6 +148,3 @@ def modifyPlanet(oec, proposedChange):
 # sudo ln -s /home/eric/Desktop/bob/hub/bin/hub /usr/local/bin/hub
 # sudo apt-install linuxbrew-wrapper
 # brew install hub
-# if __name__ == "__main__":
-# UpdateRepo()
-# modifyXML("11 Com", ("20", "19.4"))
