@@ -1,6 +1,8 @@
 class PlanetaryObject:
     def __init__(self, name=None):
-        self.name = name
+        if isinstance(name, str):
+            self.data[name] = self._fixStr(name)
+        self.name = self._fixStr(name)
         if name is None:
             self.data = dict()
         else:
@@ -17,12 +19,17 @@ class PlanetaryObject:
         s += "Object type : "
         s += self.__class__.__name__
         s += "\n"
+        s += "Name: "
+        s += self.name
+        s += "\n"
         for key in self.data.keys():
             s += str(key)
             s += " :   "
             if self.data[key].__class__.__name__ in list_objects :
                 s += "Points to an instance of class "
                 s += self.data[key].__class__.__name__
+            elif str(self.data[key]) == "":
+                s += 'N/A'
             else:
                 s += str(self.data[key])
             s += "\n"
@@ -30,22 +37,37 @@ class PlanetaryObject:
         return s
 
     def addVal(self, name, val):
+        if isinstance(name, str):
+            name = self._fixStr(name)
+
         if isinstance(val, PlanetaryObject):
             self.data[name] = val
+        elif isinstance(val, str):
+            self.data[name] = self._fixStr(val)
         else:
             val = self._fixVal(val)
             self.data[name] = val
 
     def addValList(self, name, val):
+        if isinstance(name, str):
+            name = self._fixStr(name)
+
         if isinstance(val, list):
             self.data[name] = val
+        elif isinstance(val, str):
+            self.data[name] = [self._fixStr(val)]
         else:
             val = self._fixVal(val)
             self.data[name] = [val]
         return self
 
     def addToValList(self, name, val):
-        val = self._fixVal(val)
+        if isinstance(name, str):
+            name = self._fixStr(name)
+        if isinstance(val, str):
+            val = self._fixStr(val)
+        else:
+            val = self._fixVal(val)
         self.data[name] += [val]
         return self
 
@@ -67,3 +89,12 @@ class PlanetaryObject:
         else:
             temp = "N/A"
         return temp
+
+    def _fixStr(self, val):
+        if isinstance(val, str):
+            return val.replace("\"", "").strip()
+        else:
+            return val
+
+if __name__ == "__main__":
+    print("\"CH4".replace("\"", "").strip())

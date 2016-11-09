@@ -6,6 +6,8 @@ import data_retrieval.apiGet as API
 import data_parsing.XML_data_parser as XML
 import data_parsing.CSV_data_parser as CSV
 import data_comparison.Comparator as COMP
+import data_comparison.proposed_change as PC
+import github.gitClone as GIT
 
 help_string = "Opcat version 0.1\nBasic operation:\n$ driver --update   \
 Retrieves data from target catalogues (NASA, openexoplanet.eu) as a list of \
@@ -14,19 +16,23 @@ catalogue as a separate list of star systems. Compares the two lists, \
 building a list of proposed changes. (Not implemented yet) After update \
 is complete the user can view proposed changes. (Not implemented yet)\n\n"
 
-
+# link to NASA catalogue
 NASA_link = "http://exoplanetarchive.ipac.caltech.edu/cgi-bin/nsted\
 API/nph-nstedAPI?table=exoplanets"
 
+# link to exoplanet.eu catalogue
 exoplanetEU_link = "http://exoplanet.eu/catalog/csv/"
 
-nasa_file = "nasa_csv"
-EU_file = "exoplanetEU_csv"
+# paths to NASA and EU csv files on local drive
+nasa_file = "storage/nasa_csv"
+EU_file = "storage/exoplanetEU_csv"
 
-all_tags = ["mass", "radius", "period", "semimajoraxis", "discoveryyear", \
-            "lastupdate", "discoverymethod", "eccentricity"]
+# path to XML .gz file
+XML_path = "storage/OEC_XML.gz"
 
+# list of all proposed changes (accumulated on update())
 CHANGES = []
+
 
 def usage():
     '''() -> NoneType
@@ -60,6 +66,7 @@ def show_all():
     Skeleton function
     '''
     update()
+    # sort the list of proposed changes    
     i = 0
     while i < len(CHANGES):
         show_number(i)
@@ -72,8 +79,8 @@ def show_number(n):
     '''
     if len(CHANGES) == 0:
         update()
-    if n < len(CHANGES) and n > 0:
-        print("\nShowing number : " + str(n) + "\n")
+    if n < len(CHANGES) and n >= 0:
+        print("\nShowing number : " + str(n+1) + "\n")
         print(CHANGES[n])
         print()
     else:
@@ -84,6 +91,12 @@ def accept(n):
     '''(int) -> NoneType
     Skeleton fuction
     '''
+    if len(CHANGES) == 0:
+        update()
+    if n < len(CHANGES) and n >= 0:
+        GIT.modifyXML(CHANGES[n])
+    else:
+        print("Out of range.")
     print("\nAccepted: \n" + str(n))
 
 
@@ -91,8 +104,11 @@ def accept_all():
     '''() -> NoneType
     Skeleton function
     '''
-    print("\nAccepted all\n")
-
+    update()
+    i = 0
+    while i < len(CHANGES):
+        accept(i)
+        i += 1
 
 def update():
     '''() -> NoneType
@@ -100,39 +116,40 @@ def update():
     Returns NoneType
     '''
     # open exoplanet catalogue
-    OEC_lists = XML.buildSystemFromXML()
+    global CHANGES
+    XML.downloadXML(XML_path)
+    OEC_lists = XML.buildSystemFromXML(XML_path)
     OEC_systems = OEC_lists[0]
     OEC_stars = OEC_lists[1]
     OEC_planets = OEC_lists[2]
     
     
     # delete text files from previous update
-    #clean_files()
+    clean_files()
     
-    
-    '''
     # targets:
     # Saves nasa database into a text file named nasa_file
     NASA_getter = API.apiGet(NASA_link, nasa_file)
     try:
-        #NASA_getter.getFromAPI("&table=planets")
-	NASA_getter.getFromAPI("")
+        NASA_getter.getFromAPI("&table=planets")
+	#NASA_getter.getFromAPI("")
     except (TimeoutError, API.CannotRetrieveDataException) as e:
         print("NASA archive is unreacheable.\n")
+    
     # Saves exoplanetEU database into a text file named exo_file
     exoplanetEU_getter = API.apiGet(exoplanetEU_link, EU_file)
     try:
         exoplanetEU_getter.getFromAPI("")
     except (TimeoutError, API.CannotRetrieveDataException) as e:
         print("exoplanet.eu is unreacheable.\n")
-    '''
+    
     
     # build the dict of stars from exoplanet.eu
     EU_stars = CSV.buildDictStarExistingField(EU_file, "eu")
     # build the dict of stars from NASA
     NASA_stars = CSV.buildDictStarExistingField(nasa_file, "nasa")
     # build the dictionary of stars from Open Exoplanet Catalogue
-    OEC_stars = XML.buildSystemFromXML()[4]
+    OEC_stars = XML.buildSystemFromXML(XML_path)[4]
 
 
     # clean both dictionaries
@@ -151,23 +168,10 @@ def update():
     for key in NASA_stars.keys():
         if key in OEC_stars.keys() :
             C = COMP.Comparator(NASA_stars.get(key), OEC_stars.get(key), "nasa")
-            CHANGES.extend(C.proposedChangeStarCompare())   
+            CHANGES.extend(C.proposedChangeStarCompare())
 
-
-    '''
-    for curr in [EU_stars, NASA_stars] :
-        print(curr.keys())
-        print()
-	
-    for i in OEC_stars.keys() :
-        try:
-            print(i, " : ")
-            #print(OEC_stars.get(i))
-        except:
-            pass
-        print()
-	
-    '''
+    # sort the list of proposed changes
+    CHANGES = PC.merge_sort_changes(CHANGES)
 
 
 def main():
@@ -206,8 +210,8 @@ def main():
     update_flag = False
     show_flag = False
     all_flag = False
-    accept = False
-    accept_all = False
+    accept_flag = False
+    accept_all_flag = False
     accept_marker = None
 
     for o, a in opts:
@@ -244,12 +248,12 @@ def main():
 
 	# accept
         elif o in ("-" + shortARG[3], "--" + longARG[3]):
-            accept = True
+            accept_flag = True
             accept_marker = int(a)
 
 	# acceptall
         elif o in ("-" + shortOPT[3], "--" + longOPT[3]):
-            accept_all = True
+            accept_all_flag = True
 
         else:
             usage()
@@ -274,12 +278,13 @@ def main():
         print("Update complete.\n")
 
     # accept
-    if (accept):
+    if (accept_flag):
         accept(accept_marker)
 
     # accept all
-    if (accept_all):
+    if (accept_all_flag):
         accept_all()
+        print("Accepted all.")
 
     '''
     if (output):
