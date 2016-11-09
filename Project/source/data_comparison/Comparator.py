@@ -23,7 +23,6 @@ class Comparator():
         else:
             raise ObjectTypeMismatchException
 
-
     def sqlJoin(self, left_join):
         '''(bool) -> Dictionary
         works similar to joins in sql
@@ -102,7 +101,8 @@ class Comparator():
                         result_dict[key] = (left_data[key], right_data[key])
                 elif (left_data[key] != right_data[key]):
                     try:
-                        result_dict[key] = (float(left_data[key]), float(right_data[key]))
+                        result_dict[key] = (
+                        float(left_data[key]), float(right_data[key]))
                     except ValueError:
                         result_dict[key] = (left_data[key], right_data[key])
 
@@ -206,18 +206,6 @@ class Comparator():
             planetsDataChange = {}
 
             # examine all planets attached to system
-            '''
-            print("+++++++++++++++++++++++++++++")
-            print(self.obj1.planetObjects)
-            print(self.obj1.planetObjects[0])
-            print(self.obj1.nameToPlanet)
-
-            print(self.obj2.planetObjects)
-            print(self.obj2.planetObjects[0])
-            print(self.obj2.nameToPlanet)
-
-            print("+++++++++++++++++++++++++++++")
-            '''
             planetsAddition = {}
 
             for planet in self.obj1.planetObjects:
@@ -261,8 +249,9 @@ if __name__ == "__main__":
     import data_parsing.CSV_data_parser as CSV
 
     nasa_planets = CSV.buildListPlanets("../storage/nasa_csv",
-                                       ["mass", "radius", "period",
-                                        "semimajoraxis", "temperature"], "nasa")
+                                        ["mass", "radius", "period",
+                                         "semimajoraxis", "temperature"],
+                                        "nasa")
     a = XML.buildSystemFromXML()
     planets = a[4]
     for planet in nasa_planets:
@@ -293,4 +282,3 @@ if __name__ == "__main__":
     print(qq)
     for proposed_change in qq:
         print(proposed_change)
-

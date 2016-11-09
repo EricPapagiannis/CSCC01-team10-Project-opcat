@@ -94,7 +94,7 @@ def accept(n):
     if len(CHANGES) == 0:
         update()
     if n < len(CHANGES) and n >= 0:
-        GIT.modifyXML(CHANGES[n])
+        GIT.modifyXML(CHANGES[n], n)
     else:
         print("Out of range.")
     print("\nAccepted: \n" + str(n))
@@ -104,6 +104,7 @@ def accept_all():
     '''() -> NoneType
     Skeleton function
     '''
+    GIT.initGit()
     update()
     i = 0
     while i < len(CHANGES):
