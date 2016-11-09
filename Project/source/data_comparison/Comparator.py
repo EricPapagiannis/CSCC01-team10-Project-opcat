@@ -97,14 +97,13 @@ class Comparator():
             if key in right_data:
                 if (isinstance(left_data[key], str) and isinstance(
                         right_data[key], str)):
-                    if (left_data[key].lower() != right_data[key].lower()):
-                        result_dict[key] = (left_data[key], right_data[key])
-                elif (left_data[key] != right_data[key]):
                     try:
-                        result_dict[key] = (
-                        float(left_data[key]), float(right_data[key]))
+                        if (float(left_data[key]) != float(right_data[key])):
+                            result_dict[key] = (
+                                float(left_data[key]), float(right_data[key]))
                     except ValueError:
-                        result_dict[key] = (left_data[key], right_data[key])
+                        if (left_data[key] != right_data[key]):
+                            result_dict[key] = (left_data[key], right_data[key])
 
         return result_dict
 
