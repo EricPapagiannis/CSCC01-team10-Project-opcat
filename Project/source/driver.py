@@ -111,6 +111,34 @@ def accept_all():
         accept(i)
         i += 1
 
+
+
+def accept2(n):
+    '''(int) -> NoneType
+    Skeleton fuction
+    '''
+    if len(CHANGES) == 0:
+        update()
+    if n < len(CHANGES) and n >= 0:
+        GIT.modifyXML(CHANGES[n], n, mode=True)
+    else:
+        print("Out of range.")
+    print("\nAccepted: \n" + str(n))
+
+
+def accept_all2():
+    '''() -> NoneType
+    Skeleton function
+    '''
+    GIT.initGit2()
+    update()
+    i = 0
+    #while i < len(CHANGES):
+    while i < 25:
+        accept2(i)
+        i += 1
+    GIT.finalizeGit2()
+
 def update():
     '''() -> NoneType
     Example called method
@@ -123,11 +151,11 @@ def update():
     OEC_systems = OEC_lists[0]
     OEC_stars = OEC_lists[1]
     OEC_planets = OEC_lists[2]
-    
-    
+
+
     # delete text files from previous update
     clean_files()
-    
+
     # targets:
     # Saves nasa database into a text file named nasa_file
     NASA_getter = API.apiGet(NASA_link, nasa_file)
@@ -136,15 +164,15 @@ def update():
 	#NASA_getter.getFromAPI("")
     except (TimeoutError, API.CannotRetrieveDataException) as e:
         print("NASA archive is unreacheable.\n")
-    
+
     # Saves exoplanetEU database into a text file named exo_file
     exoplanetEU_getter = API.apiGet(exoplanetEU_link, EU_file)
     try:
         exoplanetEU_getter.getFromAPI("")
     except (TimeoutError, API.CannotRetrieveDataException) as e:
         print("exoplanet.eu is unreacheable.\n")
-    
-    
+
+
     # build the dict of stars from exoplanet.eu
     EU_stars = CSV.buildDictStarExistingField(EU_file, "eu")
     # build the dict of stars from NASA
@@ -165,7 +193,7 @@ def update():
             C = COMP.Comparator(EU_stars.get(key), OEC_stars.get(key), "eu")
             CHANGES.extend(C.proposedChangeStarCompare())
 
-    # add chages from NASA to the list    
+    # add chages from NASA to the list
     for key in NASA_stars.keys():
         if key in OEC_stars.keys() :
             C = COMP.Comparator(NASA_stars.get(key), OEC_stars.get(key), "nasa")
@@ -183,15 +211,15 @@ def main():
     '''
     # flags which do not expect parameter (--help for example)
     # short opts are single characters, add onto shortOPT to include
-    shortOPT = "huac"
+    shortOPT = "huace"
     # log opts are phrases, add onto longOPT to include
-    longOPT = ["help", "update", "showall", "acceptall"]
+    longOPT = ["help", "update", "showall", "acceptall", "acceptall2"]
 
     # flags that do expect a parameter (--output file.txt for example)
     # similar to shortOPT
-    shortARG = "opsn"
+    shortARG = "opsnt"
     # similar to longOTP
-    longARG = ["output", "planet", "shownumber", "accept"]
+    longARG = ["output", "planet", "shownumber", "accept", "accept2"]
 
     # arg, opt pre-processor, do not edit
     short = ':'.join([shortARG[i:i + 1] for i in range(0, len(shortARG), 1)]) \
@@ -213,7 +241,10 @@ def main():
     all_flag = False
     accept_flag = False
     accept_all_flag = False
+    accept_all2_flag = False
     accept_marker = None
+    accept2_flag = False
+    accept2_marker = None
 
     for o, a in opts:
 
@@ -252,9 +283,18 @@ def main():
             accept_flag = True
             accept_marker = int(a)
 
+        # accept
+        elif o in ("-" + shortARG[4], "--" + longARG[4]):
+            accept2_flag = True
+            accept2_marker = int(a)
+
 	# acceptall
         elif o in ("-" + shortOPT[3], "--" + longOPT[3]):
             accept_all_flag = True
+
+        # acceptall
+        elif o in ("-" + shortOPT[4], "--" + longOPT[4]):
+            accept_all2_flag = True
 
         else:
             usage()
@@ -271,7 +311,7 @@ def main():
                 show_parameter = int(show_parameter)
                 show_number(show_parameter)
             except ValueError:
-                print("Invalid Parameter to shownumber.")    
+                print("Invalid Parameter to shownumber.")
 
     # update
     if (update_flag):
@@ -286,6 +326,15 @@ def main():
     if (accept_all_flag):
         accept_all()
         print("Accepted all.")
+
+    # accept
+    if (accept2_flag):
+        accept2(accept2_marker)
+
+    # accept all
+    if (accept_all2_flag):
+        accept_all2()
+        print("Accepted all2")
 
     '''
     if (output):
