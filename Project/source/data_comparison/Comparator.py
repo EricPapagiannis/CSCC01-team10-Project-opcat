@@ -5,6 +5,7 @@ from data_comparison.proposed_change import *
 
 
 class Comparator():
+
     def __init__(self, obj1, obj2, origin):
         '''(PlanetaryObject, PlanetaryObject, str) -> NoneTye
         sets up the comparator with two objects of PlanetaryObject
@@ -34,6 +35,7 @@ class Comparator():
         SQL join logic will determine what is included
         '''
 
+        # config of whether to run left join or right join
         if (left_join):
             left_data = self.obj1.getData()
             right_data = self.obj2.getData()
@@ -42,10 +44,13 @@ class Comparator():
             right_data = self.obj1.getData()
 
         missing_keys = []
+        # entries are linked using indices
         result_dict = {'data': [], 'left': [], 'right': []}
 
+        # set up the list of data fields
         for key in left_data:
             if not (key in right_data):
+                # fields not appearing in either data set
                 missing_keys.append(key)
             if key == "":
                 left_data[key] = "N/A"
@@ -53,18 +58,24 @@ class Comparator():
             else:
                 result_dict['data'].append(key)
 
+        # generate entries of left and right based on sql join logic
         for key in result_dict['data']:
             if left_data[key] == "":
+                # left missing
                 left_data[key] = "N/A"
                 result_dict['left'].append("N/A")
             else:
+                # exists in left
                 result_dict['left'].append(left_data[key])
             if key in missing_keys or key == "":
+                # right missing
                 result_dict['right'].append("N/A")
             else:
+                # exists in right
                 result_dict['right'].append(right_data[key])
 
         return result_dict
+
 
     def sqlJoinNewOnly(self, left_join):
         '''(bool) -> Dictionary
@@ -74,12 +85,15 @@ class Comparator():
         '''
         raw_dict = self.sqlJoin(left_join)
         entry_count = len(raw_dict['data'])
+
+        # remove entries not including new or missing fields
         for i in range(0, entry_count):
             if ((raw_dict['right'] == "N/A") or (raw_dict['left'] == "N/A")):
                 raw_dict['data'].pop(i)
                 raw_dict['left'].pop(i)
                 raw_dict['right'].pop(i)
         return raw_dict
+
 
     def innerJoinDiff(self):
         '''() -> Dictionary
@@ -94,18 +108,23 @@ class Comparator():
         result_dict = {}
 
         for key in left_data:
+            # this only gets data in both sets
             if key in right_data:
                 if (isinstance(left_data[key], str) and isinstance(
+                    # fields are of the same type
                         right_data[key], str)):
+                    if (left_data[key].lower() != right_data[key].lower()):
+                        result_dict[key] = (left_data[key], right_data[key])
+                elif (left_data[key] != right_data[key]):
+                    # fields are not exactly of the same type
                     try:
-                        if (float(left_data[key]) != float(right_data[key])):
-                            result_dict[key] = (
-                                float(left_data[key]), float(right_data[key]))
+                        result_dict[key] = (
+                        float(left_data[key]), float(right_data[key]))
                     except ValueError:
-                        if (left_data[key] != right_data[key]):
-                            result_dict[key] = (left_data[key], right_data[key])
+                        result_dict[key] = (left_data[key], right_data[key])
 
         return result_dict
+
 
     def proposedChangeStarCompare(self):
         '''() -> list
@@ -153,6 +172,7 @@ class Comparator():
                 main_dictionary["starN"]["right"][i]))
         '''
         return result_dict
+
 
     def starCompare(self):
         '''() -> Dictionary
