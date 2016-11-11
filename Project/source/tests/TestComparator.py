@@ -41,9 +41,14 @@ class TestComparator(unittest.TestCase):
     def testSQLjoin(self):
         comparator = Comparator(self.planet2, self.planet1, "eu")
         result = comparator.sqlJoin(True)
-        self.assertEqual(result["data"], ["mass", "temperature"])
-        self.assertEqual(result["left"], [12, 145])
-        self.assertEqual(result["right"], [10, "N/A"])
+        try:
+            self.assertEqual(result["data"], ["mass", "temperature"])
+            self.assertEqual(result["left"], [12, 145])
+            self.assertEqual(result["right"], [10, "N/A"])
+        except:
+            self.assertEqual(result["data"], ["temperature", "mass"])
+            self.assertEqual(result["left"], [145, 12])
+            self.assertEqual(result["right"], ["N/A", 10])
         
     def testInnerJoinDiffFieldMatch(self):
         comparator = Comparator(self.Star1, self.Star2, "eu")
