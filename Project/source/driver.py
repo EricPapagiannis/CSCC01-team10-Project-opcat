@@ -239,9 +239,9 @@ def main():
 
     # flags that do expect a parameter (--output file.txt for example)
     # similar to shortOPT
-    shortARG = "opsnt"
+    shortARG = "opsntr"
     # similar to longOTP
-    longARG = ["output", "planet", "shownumber", "accept", "accept2"]
+    longARG = ["output", "planet", "shownumber", "accept", "accept2", "showrange"]
 
     # arg, opt pre-processor, do not edit
     short = ':'.join([shortARG[i:i + 1] for i in range(0, len(shortARG), 1)]) \
@@ -258,6 +258,8 @@ def main():
     output = None
     planet = None
     show_parameter = None
+    show_range_flag = False
+    show_range_parameter = None
     update_flag = False
     show_flag = False
     all_flag = False
@@ -318,6 +320,12 @@ def main():
         elif o in ("-" + shortOPT[4], "--" + longOPT[4]):
             accept_all2_flag = True
 
+        # showrange
+        elif o in ("-" + shortARG[5], "--" + longARG[5]):
+            show_flag = True
+            show_range_flag = True
+            show_range_parameter = a
+
         else:
             usage()
             assert False, "unhandled option"
@@ -329,11 +337,20 @@ def main():
         elif (all_flag):
             show_all()
         else:
-            try:
-                show_parameter = int(show_parameter)
-                show_number(show_parameter)
-            except ValueError:
-                print("Invalid Parameter to shownumber.")
+            if show_range_flag:
+                try:
+                    startend = show_range_parameter.split("-")
+                    start = int(startend[0])
+                    end = int(startend[1])
+                    show_range(start, end)
+                except:
+                    print("Invalid Range")
+            else:
+                try:
+                    show_parameter = int(show_parameter)
+                    show_number(show_parameter)
+                except ValueError:
+                    print("Invalid Parameter to shownumber.")
 
     # update
     if (update_flag):
