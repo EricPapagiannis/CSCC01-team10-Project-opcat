@@ -3,10 +3,11 @@ import unittest
 
 
 class TestbuildSystemFromXML(unittest.TestCase):
-
     def __init__(self, *args, **kwargs):
         super(TestbuildSystemFromXML, self).__init__(*args, **kwargs)
-        (self.systems, self.stars, self.planets) = buildSystemFromXML()
+        (self.systems, self.stars, self.planets, self.allSystemsDict,
+         self.allStarsDict,
+         self.allPlanetsDict) = buildSystemFromXML("storage/OEC_XML.gz")
 
     def test_planets_type(self):
         self.assertTrue(isinstance(self.planets, list),
@@ -23,13 +24,15 @@ class TestbuildSystemFromXML(unittest.TestCase):
     def test_planet_fields(self):
         self.assertEquals(self.planets[0].data["namePlanet"], "11 Com b",
                           "incorrect name")
-        self.assertEquals(self.planets[0].data["period"], 326.03, "incorrect period")
+        self.assertEquals(self.planets[0].data["period"], 326.03,
+                          "incorrect period")
         self.assertEquals(self.planets[0].data["mass"], 19.4, "incorrect mass")
 
     def test_star_fields(self):
         self.assertEquals(self.stars[0].data["nameStar"], "11 Com",
                           "incorrect name")
-        self.assertEquals(self.stars[0].data["radius"], 19.0, "incorrect radius")
+        self.assertEquals(self.stars[0].data["radius"], 19.0,
+                          "incorrect radius")
         self.assertEquals(self.stars[0].data["temperature"], 4742.0,
                           "incorrect temperature")
 
@@ -52,3 +55,6 @@ class TestbuildSystemFromXML(unittest.TestCase):
     def test_number_of_systems(self):
         self.assertEquals(len(self.systems), 2500,
                           "incorrect number of systems")
+
+if __name__ == "__main__":
+    unittest.main(exit=False)
