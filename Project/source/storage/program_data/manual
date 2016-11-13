@@ -1,0 +1,12 @@
+** user manual goes here **
+
+Opcat version 0.1
+
+Basic operation:
+
+opcat --status
+opcat --update
+opcat --showall
+opcat --shownumber #
+opcat --acceptall
+opcat --acceptnumber #
