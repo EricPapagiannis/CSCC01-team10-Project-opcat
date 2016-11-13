@@ -2,6 +2,7 @@ import sys
 sys.path.append('../')
 from data_parsing.Planet import Planet
 from data_parsing.Star import Star
+from csv import reader
 
 # tags
 eu = {"name":"name","mass": "mass", "radius":"radius", "period":"orbital_period", "semimajoraxis":"semi_major_axis",
@@ -92,7 +93,7 @@ def buildDictionaryPlanets(filename, wanted, source):
     planets = dict()
 
     while(line):
-        line = line.split(',')
+        line = next(reader(line.splitlines()))
         planet = buildPlanet(line, heads, wanted, source)
         planets[planet.name] = planet
         # might as well take advantage of the retardation
@@ -160,7 +161,7 @@ def buildDictStarExistingField(filename, source):
         line = file.readline()
 
     while(line):
-        line = line.split(',')
+        line = next(reader(line.splitlines()))
         planet = buildPlanet(line, heads, wanted, source)
         star = buildStar(line, heads, source)
         stars[star.name] = star
@@ -190,7 +191,7 @@ def buildStar(line, heads, source):
     for i in _data_field:
         try:
             star.addVal(i, _fixVal(i, line[_data_field[i]], source))
-        except keyError:
+        except KeyError:
             planet.addVal(i, '')
     return star
 
@@ -222,9 +223,43 @@ class UnitConverter:
             re += data[2]
             return re
 
+        def convertEURA(data):
+            deg = float(data)
+            hour = deg / 15.0
+            hours = int(hour)
+            minute = (hour - float(hours))*60
+            minutes = int(minute)
+            second = (minute - float(minutes))*60
+            re = str(hours) + ' ' + str(minutes) + ' ' + str(second)
+            return re
+
+        def convertNASARA(data):
+            re = ''
+            re += data[:2] + ' '
+            re += data[3:5] + ' '
+            re += data[6:-1]
+            return re
+
+        def convertNASADEC(data):
+            re = ''
+            re += data[:3] + ' '
+            re += data[4:6] + ' '
+            re += data[7:-1]
+            return re
+
+        def convertEUDEC(data):
+            deg = float(data)
+            hour = deg / 15.0
+            hours = int(hour)
+            minute = (hour - float(hours))*60
+            minutes = int(minute)
+            second = (minute - float(minutes))*60
+            re = str(hours) + ' ' + str(minutes) + ' ' + str(second)
+            return re
+
         # dict of functions for ea source's proper conversion
-        eufunc = {'lastupdate':convertDate}
-        nasafunc = {'lastupdate':convertDate}
+        eufunc = {'lastupdate':convertDate, 'rightascension':convertEURA, 'declination':convertEUDEC}
+        nasafunc = {'lastupdate':convertDate, 'rightascension':convertNASARA, 'declination':convertNASADEC}
         if source == "eu":
             # don't need to convert
             if field not in eufunc.keys():
