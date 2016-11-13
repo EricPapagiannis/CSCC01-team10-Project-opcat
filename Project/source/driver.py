@@ -39,8 +39,7 @@ def usage():
     Example called method
     Returns NoneType
     '''
-    print("usage: driver [--help] [--update] [--output string] " +
-          "[--planet string] [--showall | --shownumber int]\n")
+    print(usage_str)
 
 
 def print_help():
@@ -71,13 +70,19 @@ def show_all():
     while i < len(CHANGES):
         show_number(i)
         i += 1
-    print("\nChanges shown : " + str(len(CHANGES)) + "\nEnd.\n")
+    print("\nNumber of changes shown : " + str(len(CHANGES)))
+    print("Last update : " + str(STORAGE.config_get("last_update")))
+    # to reset last update time to default state ("Never"), and config file in
+    # general : STORAGE.clean_config_file()
+    print("End.\n")
+
+
 
 def show_range(start, end):
     '''() -> NoneType
     Skeleton function
     '''
-    update()
+    unpack_changes()
     # sort the list of proposed changes
     bothInts = isinstance(start, int) and isinstance(end, int)
     validRange = 0 <= start <= len(CHANGES) and end >= 0 and end <= len(CHANGES)
@@ -142,6 +147,7 @@ def accept_all():
         accept(i)
         i += 1
 
+
 def accept_all2():
     '''() -> NoneType
     Skeleton function
@@ -155,12 +161,19 @@ def accept_all2():
         i += 1
     GIT.finalizeGit2()
 
+
 def deny(n):
     print("denied ", n)
 
 
 def deny_all():
     print("denied all")
+
+
+def unpack_changes():
+    # TODO : check that the last time of the update is not "Never"
+    global CHANGES
+    CHANGES = STORAGE.read_changes_from_memory()
 
 
 def update():
@@ -227,6 +240,7 @@ def update():
     # calculate current time
     curr_time = datetime.datetime.strftime(datetime.datetime.now(),
                                            '%Y-%m-%d %H:%M:%S')
+    STORAGE.config_set("last_update", curr_time)
     print("\nNumber of differences discovered : " + str(len(CHANGES)))
     print("Current time : " + curr_time)
     print("Update complete.\n")
@@ -382,7 +396,6 @@ def main():
     # update
     if (update_flag):
         update()
-
 
     # accept
     if (accept_flag):

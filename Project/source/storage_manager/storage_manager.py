@@ -108,6 +108,7 @@ if __name__ == "__main__" :
         #print(changes_list[i])
         #print()
         i += 1
-    '''  
+    '''
+    CONFIG_PATH = "../" + CONFIG_PATH
     clean_config_file()
     
