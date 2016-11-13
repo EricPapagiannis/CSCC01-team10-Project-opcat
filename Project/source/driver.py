@@ -59,7 +59,7 @@ def clean_files():
             os.remove(name)
         except:
             pass
-	
+    
 
 def show_all():
     '''() -> NoneType
@@ -87,14 +87,20 @@ def show_number(n):
         print("Out of range.")
 
 
-def accept(n):
-    '''(int) -> NoneType
-    Skeleton fuction
+def accept(n, strategy):
+    '''(int, int) -> NoneType
+    Function for accepting a specific change/addition
+    n argument is that change number to accept
+    strategy argument accepts "1" or "2"
+    Returns NoneType
     '''
     if len(CHANGES) == 0:
         update()
     if n < len(CHANGES) and n >= 0:
-        GIT.modifyXML(CHANGES[n], n)
+        if (strategy == 1):
+            GIT.modifyXML(CHANGES[n], n)
+        else:
+            GIT.modifyXML(CHANGES[n], n, mode=True)
     else:
         print("Out of range.")
     print("\nAccepted: \n" + str(n))
@@ -108,22 +114,8 @@ def accept_all():
     update()
     i = 0
     while i < len(CHANGES):
-        accept(i)
+        accept(i, 1)
         i += 1
-
-
-
-def accept2(n):
-    '''(int) -> NoneType
-    Skeleton fuction
-    '''
-    if len(CHANGES) == 0:
-        update()
-    if n < len(CHANGES) and n >= 0:
-        GIT.modifyXML(CHANGES[n], n, mode=True)
-    else:
-        print("Out of range.")
-    print("\nAccepted: \n" + str(n))
 
 
 def accept_all2():
@@ -135,9 +127,15 @@ def accept_all2():
     i = 0
     #while i < len(CHANGES):
     while i < 25:
-        accept2(i)
+        accept(i, 2)
         i += 1
     GIT.finalizeGit2()
+    
+def deny(n):
+    print ("denied ", n)
+    
+def deny_all():
+    print ("denied all")
 
 def update():
     '''() -> NoneType
@@ -161,7 +159,7 @@ def update():
     NASA_getter = API.apiGet(NASA_link, nasa_file)
     try:
         NASA_getter.getFromAPI("&table=planets")
-	#NASA_getter.getFromAPI("")
+    #NASA_getter.getFromAPI("")
     except (TimeoutError, API.CannotRetrieveDataException) as e:
         print("NASA archive is unreacheable.\n")
 
@@ -211,15 +209,15 @@ def main():
     '''
     # flags which do not expect parameter (--help for example)
     # short opts are single characters, add onto shortOPT to include
-    shortOPT = "huace"
+    shortOPT = "huacel"
     # log opts are phrases, add onto longOPT to include
-    longOPT = ["help", "update", "showall", "acceptall", "acceptall2"]
+    longOPT = ["help", "update", "showall", "acceptall", "acceptall2", "denyall"]
 
     # flags that do expect a parameter (--output file.txt for example)
     # similar to shortOPT
-    shortARG = "opsnt"
+    shortARG = "opsntd"
     # similar to longOTP
-    longARG = ["output", "planet", "shownumber", "accept", "accept2"]
+    longARG = ["output", "planet", "shownumber", "accept", "accept2", "deny"]
 
     # arg, opt pre-processor, do not edit
     short = ':'.join([shortARG[i:i + 1] for i in range(0, len(shortARG), 1)]) \
@@ -245,26 +243,28 @@ def main():
     accept_marker = None
     accept2_flag = False
     accept2_marker = None
+    deny_flag = None
+    deny_all_flag = None
 
     for o, a in opts:
 
         # handles args and opts
         # a contains parameter for ARGs, not OPTs
 
-	# help
+    # help
         if o in ("-" + shortOPT[0], "--" + longOPT[0]):
             print_help()
             sys.exit()
 
-	# update
+    # update
         elif o in ("-" + shortOPT[1], "--" + longOPT[1]):
             update_flag = True
 
-	# output
+    # output
         elif o in ("-" + shortARG[0], "--" + longARG[0]):
             output = a
 
-	# planet
+    # planet
         elif o in ("-" + shortARG[1], "--" + longARG[1]):
             planet = a
 
@@ -278,7 +278,7 @@ def main():
             show_flag = True
             all_flag = True
 
-	# accept
+    # accept
         elif o in ("-" + shortARG[3], "--" + longARG[3]):
             accept_flag = True
             accept_marker = int(a)
@@ -288,13 +288,22 @@ def main():
             accept2_flag = True
             accept2_marker = int(a)
 
-	# acceptall
+    # acceptall
         elif o in ("-" + shortOPT[3], "--" + longOPT[3]):
             accept_all_flag = True
 
         # acceptall
         elif o in ("-" + shortOPT[4], "--" + longOPT[4]):
             accept_all2_flag = True
+            
+    # deny
+        elif o in ("-" + shortARG[5], "--" + longARG[5]):
+            deny_flag = True
+            deny_marker = int(a)
+    
+    # denyall
+        elif o in ("-" + shortOPT[5], "--" + longOPT[5]):
+            deny_all_flag = True
 
         else:
             usage()
@@ -320,7 +329,7 @@ def main():
 
     # accept
     if (accept_flag):
-        accept(accept_marker)
+        accept(accept_marker, 1)
 
     # accept all
     if (accept_all_flag):
@@ -329,19 +338,20 @@ def main():
 
     # accept
     if (accept2_flag):
-        accept2(accept2_marker)
+        accept(accept2_marker, 2)
 
     # accept all
     if (accept_all2_flag):
         accept_all2()
         print("Accepted all2")
 
-    '''
-    if (output):
-        print("output: " + output)
-    if (planet):
-        print("planet specified: " + planet)
-    '''
+    # deny
+    if (deny_flag):
+        deny(deny_marker)
+
+    # deny all
+    if (deny_all_flag):
+        deny_all()
 
 
 if __name__ == "__main__":
