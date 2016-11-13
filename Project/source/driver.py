@@ -33,6 +33,21 @@ XML_path = "storage/OEC_XML.gz"
 # list of all proposed changes (accumulated on update())
 CHANGES = []
 
+def status():
+    '''() -> NoneType
+    Prints the current status of the updates, including the following
+    relevant information: time of last update, current auto-update settings and
+    the number of changes pending to be reviewed.
+    '''
+    unpack_changes()
+    last_update = STORAGE.config_get("last_update")
+    num_changes = len(CHANGES)
+    if last_update == "Never":
+        print("Last Update: Never" + "\n")
+    else:
+        print("\nLast Update: " + str(last_update))
+        print("Number of changes shown : " + str(num_changes) + "\n")
+        
 
 def usage():
     '''() -> NoneType
@@ -257,7 +272,7 @@ def main():
     shortOPT = "huacel"
     # log opts are phrases, add onto longOPT to include
     longOPT = ["help", "update", "showall", "acceptall", "acceptall2",
-               "denyall"]
+               "denyall", "status"]
 
     # flags that do expect a parameter (--output file.txt for example)
     # similar to shortOPT
@@ -354,6 +369,9 @@ def main():
             # denyall
         elif o in ("-" + shortOPT[5], "--" + longOPT[5]):
             deny_all_flag = True
+            # status
+        elif o in ("--" + longOPT[6]):
+            status()
 
             # showrange
         elif o in ("-" + shortARG[6], "--" + longARG[6]):
