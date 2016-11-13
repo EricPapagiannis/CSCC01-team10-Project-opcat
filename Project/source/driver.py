@@ -389,25 +389,21 @@ def main():
         elif o in ("-" + shortOPT[4], "--" + longOPT[4]):
             accept_all2_flag = True
 
-            # deny
+        # deny
         elif o in ("-" + shortARG[5], "--" + longARG[5]):
             deny_flag = True
             deny_marker = int(a)
 
-            # denyall
+        # denyall
         elif o in ("-" + shortOPT[5], "--" + longOPT[5]):
             deny_all_flag = True
-            # status
+
+        # status
         elif o in ("--" + longOPT[6]):
             status()
 
-            # showrange
-        elif o in ("-" + shortARG[6], "--" + longARG[6]):
-            show_flag = True
-            show_range_flag = True
-            show_range_parameter = a
         # showrange
-        elif o in ("-" + shortARG[5], "--" + longARG[5]):
+        elif o in ("-" + shortARG[6], "--" + longARG[6]):
             show_flag = True
             show_range_flag = True
             show_range_parameter = a
