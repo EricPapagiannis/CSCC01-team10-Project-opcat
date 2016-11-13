@@ -8,13 +8,13 @@ import data_parsing.CSV_data_parser as CSV
 import data_comparison.Comparator as COMP
 import data_comparison.proposed_change as PC
 import github.gitClone as GIT
+import storage_manager.storage_manager as STORAGE
+import datetime
 
-help_string = "Opcat version 0.1\nBasic operation:\n$ driver --update   \
-Retrieves data from target catalogues (NASA, openexoplanet.eu) as a list of \
-starsystems. Retrieves data from the github database of Open Exoplanet \
-catalogue as a separate list of star systems. Compares the two lists, \
-building a list of proposed changes. (Not implemented yet) After update \
-is complete the user can view proposed changes. (Not implemented yet)\n\n"
+
+# usage string
+usage_str = "usage: driver [--help] [--update] [--output string] [--planet " \
+    + "string] [--showall | --shownumber int]\n"
 
 # link to NASA catalogue
 NASA_link = "http://exoplanetarchive.ipac.caltech.edu/cgi-bin/nsted\
@@ -39,14 +39,13 @@ def usage():
     Example called method
     Returns NoneType
     '''
-    print("usage: driver [--help] [--update] [--output string] " +
-    "[--planet string] [--showall | --shownumber int]\n")
+    print(usage_str)
 
 
 def print_help():
     '''() -> NoneType
     '''
-    print(help_string)
+    print(STORAGE.manual())
 
 
 def clean_files():
@@ -65,20 +64,20 @@ def show_all():
     '''() -> NoneType
     Skeleton function
     '''
-    update()
+    unpack_changes()
     # sort the list of proposed changes    
     i = 0
     while i < len(CHANGES):
         show_number(i)
         i += 1
-
+    print("\nChanges shown : " + str(len(CHANGES)) + "\nEnd.\n")
 
 def show_number(n):
     '''(int) -> NoneType
     Skeleton function
     '''
     if len(CHANGES) == 0:
-        update()
+        unpack_changes()
     if n < len(CHANGES) and n >= 0:
         print("\nShowing number : " + str(n+1) + "\n")
         print(CHANGES[n])
@@ -92,7 +91,7 @@ def accept(n):
     Skeleton fuction
     '''
     if len(CHANGES) == 0:
-        update()
+        unpack_changes()
     if n < len(CHANGES) and n >= 0:
         GIT.modifyXML(CHANGES[n], n)
     else:
@@ -105,12 +104,11 @@ def accept_all():
     Skeleton function
     '''
     GIT.initGit()
-    update()
+    unpack_changes()
     i = 0
     while i < len(CHANGES):
         accept(i)
         i += 1
-
 
 
 def accept2(n):
@@ -118,7 +116,7 @@ def accept2(n):
     Skeleton fuction
     '''
     if len(CHANGES) == 0:
-        update()
+        unpack_changes()
     if n < len(CHANGES) and n >= 0:
         GIT.modifyXML(CHANGES[n], n, mode=True)
     else:
@@ -131,13 +129,20 @@ def accept_all2():
     Skeleton function
     '''
     GIT.initGit2()
-    update()
+    unpack_changes()
     i = 0
     #while i < len(CHANGES):
     while i < 25:
         accept2(i)
         i += 1
     GIT.finalizeGit2()
+
+
+def unpack_changes():
+    # TODO : check that the last time of the update is not "Never"
+    global CHANGES
+    CHANGES = STORAGE.read_changes_from_memory()
+
 
 def update():
     '''() -> NoneType
@@ -201,6 +206,14 @@ def update():
 
     # sort the list of proposed changes
     CHANGES = PC.merge_sort_changes(CHANGES)
+    # write the list of proposed changes to memory using storage_manager
+    STORAGE.write_changes_to_memory(CHANGES)
+    # calculate current time
+    curr_time = datetime.datetime.strftime(datetime.datetime.now(),
+                                           '%Y-%m-%d %H:%M:%S')
+    print("\nNumber of differences discovered : " + str(len(CHANGES)))
+    print("Current time : " + curr_time)
+    print("Update complete.\n")
 
 
 def main():
@@ -316,7 +329,7 @@ def main():
     # update
     if (update_flag):
         update()
-        print("Update complete.\n")
+
 
     # accept
     if (accept_flag):
