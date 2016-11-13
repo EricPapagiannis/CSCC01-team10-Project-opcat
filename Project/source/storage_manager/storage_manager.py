@@ -103,12 +103,15 @@ if __name__ == "__main__" :
     changes_list = read_changes_from_memory()
     print(len(changes_list))
     i = 0
-    while i < len(changes_list):
-        #print("\nShowing number : " + str(i + 1) + "\n")
-        #print(changes_list[i])
-        #print()
+    while i < 50:
+        print("\nShowing number : " + str(i + 1) + "\n")
+        print(changes_list[i])
+        print()
         i += 1
-    '''
+    
     CONFIG_PATH = "../" + CONFIG_PATH
     clean_config_file()
+    '''
+    PROPOSED_CHANGES_PATH = "../" + PROPOSED_CHANGES_PATH
+    write_changes_to_memory([])
     

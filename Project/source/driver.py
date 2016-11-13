@@ -46,7 +46,7 @@ def status():
         print("Last Update: Never" + "\n")
     else:
         print("\nLast Update: " + str(last_update))
-        print("Number of changes shown : " + str(num_changes) + "\n")
+        print("Number of proposed changes stored : " + str(num_changes) + "\n")
         
 
 def usage():
@@ -81,8 +81,8 @@ def show_all():
     '''
     unpack_changes()
     # sort the list of proposed changes    
-    i = 0
-    while i < len(CHANGES):
+    i = 1
+    while i <= len(CHANGES):
         show_number(i)
         i += 1
     print("\nNumber of changes shown : " + str(len(CHANGES)))
@@ -113,7 +113,6 @@ def show_range(start, end):
             while i >= start:
                 show_number(i)
                 i -= 1
-
     else:
         print("Invalid range")
 
@@ -124,9 +123,9 @@ def show_number(n):
     '''
     if len(CHANGES) == 0:
         unpack_changes()
-    if n < len(CHANGES) and n >= 0:
-        print("\nShowing number : " + str(n + 1) + "\n")
-        print(CHANGES[n])
+    if n <= len(CHANGES) and n > 0:
+        print("\nShowing number : " + str(n) + "\n")
+        print(CHANGES[n-1])
         print()
     else:
         print("Out of range.")
@@ -177,12 +176,40 @@ def accept_all2():
     GIT.finalizeGit2()
 
 
-def deny(n):
+def deny_number(n):
+    # TODO
     print("denied ", n)
 
 
 def deny_all():
-    print("denied all")
+    unpack_changes()    
+    i = 1
+    while i <= len(CHANGES):
+        deny_number(i)
+        i += 1    
+    print("Done.")
+
+
+def postpone_number(n):
+    global CHANGES
+    if len(CHANGES) == 0:
+        unpack_changes()
+    length = len(CHANGES)
+    if n > 0 and n <= length :
+        CHANGES.pop(n-1)
+        STORAGE.write_changes_to_memory(CHANGES)
+    else:
+        print("Out of range.")
+
+
+def postpone_all():
+    unpack_changes()
+    i = 1
+    while i <= len(CHANGES):
+        postpone_number(i)
+        i += 1
+    print("Done.")
+    
 
 
 def unpack_changes():
@@ -198,6 +225,7 @@ def update():
     '''
     # open exoplanet catalogue
     global CHANGES
+    CHANGES = []
     XML.downloadXML(XML_path)
     OEC_lists = XML.buildSystemFromXML(XML_path)
     OEC_systems = OEC_lists[0]
@@ -435,7 +463,7 @@ def main():
 
     # deny
     if (deny_flag):
-        deny(deny_marker)
+        deny_number(deny_marker)
 
     # deny all
     if (deny_all_flag):
