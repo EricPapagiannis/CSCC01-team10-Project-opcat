@@ -152,8 +152,24 @@ def accept(n, strategy):
 
 def accept_all(strategy):
     '''() -> NoneType
+<<<<<<< HEAD
     Function for accepting all changes/additions
     strategy argument accepts "1" or "2"
+=======
+    Skeleton function
+    '''
+    GIT.initGit()
+    unpack_changes()
+    i = 0
+    while i < len(CHANGES):
+        accept(i, 1)
+        i += 1
+
+
+def accept_all2():
+    '''() -> NoneType
+    Skeleton function
+>>>>>>> refs/remotes/origin/master
     '''
     if (strategy == 1):
         GIT.initGit()

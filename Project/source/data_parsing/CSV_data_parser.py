@@ -7,9 +7,10 @@ from csv import reader
 # tags
 eu = {"name":"name","mass": "mass", "radius":"radius", "period":"orbital_period", "semimajoraxis":"semi_major_axis",
     "eccentricity":"eccentricity", "discoverymethod":"detection_type", "discoveryyear":"discovered",
-    "lastupdate":"updated", "nameStar":"star_name"}
+    "lastupdate":"updated", "nameStar":"star_name", "impactparameter":'impact_parameter', 'transittime':'tzero_vr'}
 nasa = {"name":"pl_hostname", "radius":"pl_radj", "eccentricity":"pl_orbeccen", "period":"pl_orbper",
-    "lastupdate":"rowupdate", "discoverymethod":"pl_discmethod", "mass":"pl_bmassj","nameStar":"pl_hostname"}
+    "lastupdate":"rowupdate", "discoverymethod":"pl_discmethod", "mass":"pl_bmassj","nameStar":"pl_hostname",
+    'semimajoraxis':'pl_orbsmax', 'inclination':'pl_orbincl'}
 
 eustar = {'rightascension':'ra', 'declination':'dec', 'distance':'star_distance', 'name':'star_name', 'mass':'star_mass', 'radius':'star_radius', 'magV':'mag_v', 'magB':'', 'magI':'mag_i', 'magJ':'mag_j', 'magH':'mag_h', 'magK':'mag_k', 'temperature':'star_teff', 'metallicity':'star_metallicity', 'spectraltype':'star_sp_type'}
 nasastar = {'rightascension':'ra_str', 'declination':'dec_str', 'distance':'st_dist', 'name':'pl_hostname', 'mass':'st_mass', 'radius':'st_rad', 'magV':'st_optmag', 'magB':'', 'magJ':'', 'magH':'', 'magK':'', 'temperature':'st_teff', 'metallicity':'', 'spectraltype':''}
