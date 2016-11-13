@@ -40,7 +40,7 @@ def usage():
     Returns NoneType
     '''
     print("usage: driver [--help] [--update] [--output string] " +
-    "[--planet string] [--showall | --shownumber int]\n")
+          "[--planet string] [--showall | --shownumber int]\n")
 
 
 def print_help():
@@ -59,7 +59,7 @@ def clean_files():
             os.remove(name)
         except:
             pass
-	
+
 
 def show_all():
     '''() -> NoneType
@@ -87,7 +87,7 @@ def show_range(start, end):
             while i <= end:
                 show_number(i)
                 i += 1
-        else: # start > end
+        else:  # start > end
             # reverse range
             i = end
             while i >= start:
@@ -150,17 +150,20 @@ def accept_all2():
     GIT.initGit2()
     update()
     i = 0
-    #while i < len(CHANGES):
+    # while i < len(CHANGES):
     while i < 25:
         accept(i, 2)
         i += 1
     GIT.finalizeGit2()
 
+
 def deny(n):
-    print ("denied ", n)
+    print("denied ", n)
+
 
 def deny_all():
-    print ("denied all")
+    print("denied all")
+
 
 def update():
     '''() -> NoneType
@@ -175,7 +178,6 @@ def update():
     OEC_stars = OEC_lists[1]
     OEC_planets = OEC_lists[2]
 
-
     # delete text files from previous update
     clean_files()
 
@@ -184,7 +186,7 @@ def update():
     NASA_getter = API.apiGet(NASA_link, nasa_file)
     try:
         NASA_getter.getFromAPI("&table=planets")
-	#NASA_getter.getFromAPI("")
+    # NASA_getter.getFromAPI("")
     except (TimeoutError, API.CannotRetrieveDataException) as e:
         print("NASA archive is unreacheable.\n")
 
@@ -195,14 +197,12 @@ def update():
     except (TimeoutError, API.CannotRetrieveDataException) as e:
         print("exoplanet.eu is unreacheable.\n")
 
-
     # build the dict of stars from exoplanet.eu
     EU_stars = CSV.buildDictStarExistingField(EU_file, "eu")
     # build the dict of stars from NASA
     NASA_stars = CSV.buildDictStarExistingField(nasa_file, "nasa")
     # build the dictionary of stars from Open Exoplanet Catalogue
     OEC_stars = XML.buildSystemFromXML(XML_path)[4]
-
 
     # clean both dictionaries
     for d in [EU_stars, NASA_stars]:
@@ -236,14 +236,15 @@ def main():
     # short opts are single characters, add onto shortOPT to include
     shortOPT = "huacel"
     # log opts are phrases, add onto longOPT to include
-    longOPT = ["help", "update", "showall", "acceptall", "acceptall2", "denyall"]
+    longOPT = ["help", "update", "showall", "acceptall", "acceptall2",
+               "denyall"]
 
     # flags that do expect a parameter (--output file.txt for example)
     # similar to shortOPT
     shortARG = "opsntdr"
     # similar to longOTP
-    longARG = ["output", "planet", "shownumber", "accept", "accept2", "deny", "showrange"]]
-    longARG = ["output", "planet", "shownumber", "accept", "accept2", "showrange"]
+    longARG = ["output", "planet", "shownumber", "accept", "accept2", "deny",
+               "showrange"]
 
     # arg, opt pre-processor, do not edit
     short = ':'.join([shortARG[i:i + 1] for i in range(0, len(shortARG), 1)]) \
@@ -273,26 +274,27 @@ def main():
     accept2_marker = None
     deny_flag = None
     deny_all_flag = None
+    deny_marker = None
 
     for o, a in opts:
 
         # handles args and opts
         # a contains parameter for ARGs, not OPTs
 
-	# help
+        # help
         if o in ("-" + shortOPT[0], "--" + longOPT[0]):
             print_help()
             sys.exit()
 
-	# update
+        # update
         elif o in ("-" + shortOPT[1], "--" + longOPT[1]):
             update_flag = True
 
-	# output
+        # output
         elif o in ("-" + shortARG[0], "--" + longARG[0]):
             output = a
 
-	# planet
+        # planet
         elif o in ("-" + shortARG[1], "--" + longARG[1]):
             planet = a
 
@@ -306,7 +308,7 @@ def main():
             show_flag = True
             all_flag = True
 
-	# accept
+        # accept
         elif o in ("-" + shortARG[3], "--" + longARG[3]):
             accept_flag = True
             accept_marker = int(a)
@@ -316,7 +318,7 @@ def main():
             accept2_flag = True
             accept2_marker = int(a)
 
-	# acceptall
+        # acceptall
         elif o in ("-" + shortOPT[3], "--" + longOPT[3]):
             accept_all_flag = True
 
@@ -324,12 +326,12 @@ def main():
         elif o in ("-" + shortOPT[4], "--" + longOPT[4]):
             accept_all2_flag = True
 
-    # deny
+            # deny
         elif o in ("-" + shortARG[5], "--" + longARG[5]):
             deny_flag = True
             deny_marker = int(a)
 
-    # denyall
+            # denyall
         elif o in ("-" + shortOPT[5], "--" + longOPT[5]):
             deny_all_flag = True
 
