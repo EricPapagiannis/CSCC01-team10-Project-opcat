@@ -87,14 +87,20 @@ def show_number(n):
         print("Out of range.")
 
 
-def accept(n):
-    '''(int) -> NoneType
-    Skeleton fuction
+def accept(n, strategy):
+    '''(int, int) -> NoneType
+    Function for accepting a specific change/addition
+    n argument is that change number to accept
+    strategy argument accepts "1" or "2"
+    Returns NoneType
     '''
     if len(CHANGES) == 0:
         update()
     if n < len(CHANGES) and n >= 0:
-        GIT.modifyXML(CHANGES[n], n)
+        if (strategy == 1):
+            GIT.modifyXML(CHANGES[n], n)
+        else:
+            GIT.modifyXML(CHANGES[n], n, mode=True)
     else:
         print("Out of range.")
     print("\nAccepted: \n" + str(n))
@@ -108,22 +114,8 @@ def accept_all():
     update()
     i = 0
     while i < len(CHANGES):
-        accept(i)
+        accept(i, 1)
         i += 1
-
-
-
-def accept2(n):
-    '''(int) -> NoneType
-    Skeleton fuction
-    '''
-    if len(CHANGES) == 0:
-        update()
-    if n < len(CHANGES) and n >= 0:
-        GIT.modifyXML(CHANGES[n], n, mode=True)
-    else:
-        print("Out of range.")
-    print("\nAccepted: \n" + str(n))
 
 
 def accept_all2():
@@ -135,7 +127,7 @@ def accept_all2():
     i = 0
     #while i < len(CHANGES):
     while i < 25:
-        accept2(i)
+        accept(i, 2)
         i += 1
     GIT.finalizeGit2()
     
@@ -337,7 +329,7 @@ def main():
 
     # accept
     if (accept_flag):
-        accept(accept_marker)
+        accept(accept_marker, 1)
 
     # accept all
     if (accept_all_flag):
@@ -346,7 +338,7 @@ def main():
 
     # accept
     if (accept2_flag):
-        accept2(accept2_marker)
+        accept(accept2_marker, 2)
 
     # accept all
     if (accept_all2_flag):
