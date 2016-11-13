@@ -1,3 +1,4 @@
+
 from data_parsing.Planet import *
 from data_parsing.Star import *
 from data_parsing.System import *
@@ -104,24 +105,19 @@ class Comparator():
         '''
         left_data = self.obj1.getData()
         right_data = self.obj2.getData()
-
         result_dict = {}
-
         for key in left_data:
             # this only gets data in both sets
             if key in right_data:
-                if (isinstance(left_data[key], str) and isinstance(
-                        right_data[key], str)):
-                    # try to numerical compare
-                    try:
-                        if (float(left_data[key]) != float(right_data[key])):
-                            result_dict[key] = (
-                                float(left_data[key]), float(right_data[key]))
+                # try to numerical compare                    
+                try:
+                    if (float(left_data[key]) != float(right_data[key])):
+                        result_dict[key] = (
+                        float(left_data[key]), float(right_data[key]))
                     # otherwise just normal compare
-                    except ValueError:
-                        if (left_data[key] != right_data[key]):
-                            result_dict[key] = (left_data[key], right_data[key])
-
+                except ValueError:
+                    if (left_data[key] != right_data[key]):
+                        result_dict[key] = (left_data[key], right_data[key])
         return result_dict
 
 
