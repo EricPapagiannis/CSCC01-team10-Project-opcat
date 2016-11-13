@@ -359,9 +359,10 @@ def main():
         else:
             if show_range_flag:
                 try:
+                    print(show_range_parameter)
                     startend = show_range_parameter.split("-")
-                    start = int(startend[0])
-                    end = int(startend[1])
+                    start = int(startend[0]) - 1
+                    end = int(startend[1]) - 1
                     show_range(start, end)
                 except:
                     print("Invalid Range")
