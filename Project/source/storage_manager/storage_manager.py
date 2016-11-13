@@ -54,7 +54,26 @@ def clean_config_file():
 
 
 def config_set(key, val):
-    pass
+    '''
+    If the config file is empty or unreadable for any reason, returns None and
+    calls clean_config_file() to reset it to default state.
+    '''
+    reset = False
+    with open(CONFIG_PATH, "rb") as File:
+        try:
+            config_dict = pickle.load(File, encoding=ENCODING)
+        # if the storage file is unreadable, reset the file to default state
+        except EOFError:
+            reset = True
+            config_dict = None
+    if reset:
+        clean_config_file()
+        with open(CONFIG_PATH, "rb") as File:
+            config_dict = pickle.load(File, encoding=ENCODING)
+    config_dict[key] = val
+    with open(CONFIG_PATH, "wb") as File:
+        pickle.dump(config_dict, File)
+
 
 def config_get(key):
     '''
@@ -67,7 +86,7 @@ def config_get(key):
             config_dict = pickle.load(File, encoding=ENCODING)
             result = config_dict.get(key)
         # if the storage file is unreadable, return None, reset the file to
-        # default
+        # default state
         except EOFError:
             result = None
             reset = True
