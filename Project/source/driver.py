@@ -158,7 +158,7 @@ def accept_all():
     unpack_changes()
     i = 0
     while i < len(CHANGES):
-        accept(i)
+        accept(i, 1)
         i += 1
 
 
