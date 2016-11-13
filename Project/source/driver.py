@@ -150,8 +150,12 @@ def accept(n, strategy):
     print("\nAccepted: \n" + str(n))
 
 
-def accept_all():
+def accept_all(strategy):
     '''() -> NoneType
+<<<<<<< HEAD
+    Function for accepting all changes/additions
+    strategy argument accepts "1" or "2"
+=======
     Skeleton function
     '''
     GIT.initGit()
@@ -165,15 +169,23 @@ def accept_all():
 def accept_all2():
     '''() -> NoneType
     Skeleton function
+>>>>>>> refs/remotes/origin/master
     '''
-    GIT.initGit2()
+    if (strategy == 1):
+        GIT.initGit()
+    else:
+        GIT.initGit2()
     unpack_changes()
     i = 0
-    # while i < len(CHANGES):
-    while i < 25:
-        accept(i, 2)
-        i += 1
-    GIT.finalizeGit2()
+    if (strategy == 1):
+        while i < len(CHANGES):
+            accept(i)
+            i += 1
+    else:
+        while i < 25:
+            accept(i, 2)
+            i += 1
+        GIT.finalizeGit2()                
 
 
 def deny_number(n):
@@ -210,7 +222,6 @@ def postpone_all():
         i += 1
     print("Done.")
     
-
 
 def unpack_changes():
     # TODO : check that the last time of the update is not "Never"
@@ -300,14 +311,14 @@ def main():
     shortOPT = "huacel"
     # log opts are phrases, add onto longOPT to include
     longOPT = ["help", "update", "showall", "acceptall", "acceptall2",
-               "denyall", "status"]
+               "denyall", "status", "postponeall"]
 
     # flags that do expect a parameter (--output file.txt for example)
     # similar to shortOPT
     shortARG = "opsntdr"
     # similar to longOTP
     longARG = ["output", "planet", "shownumber", "accept", "accept2", "deny",
-               "showrange"]
+               "showrange", "postpone"]
 
     # arg, opt pre-processor, do not edit
     short = ':'.join([shortARG[i:i + 1] for i in range(0, len(shortARG), 1)]) \
@@ -338,6 +349,9 @@ def main():
     deny_flag = None
     deny_all_flag = None
     deny_marker = None
+    postpone_flag = None
+    postpone_marker = None
+    postponeall_flag = None
 
     for o, a in opts:
 
@@ -408,6 +422,15 @@ def main():
             show_range_flag = True
             show_range_parameter = a
 
+        # postpone
+        elif o in ("--" + longARG[7]):
+            postpone_flag = True
+            postpone_marker = int(a)    
+
+        # postponeall
+        elif o in ("--" + longOPT[7]):
+            postponeall_flag = True
+
         else:
             usage()
             assert False, "unhandled option"
@@ -418,22 +441,21 @@ def main():
             return 1
         elif (all_flag):
             show_all()
+        elif show_range_flag:
+            try:
+                print(show_range_parameter)
+                startend = show_range_parameter.split("-")
+                start = int(startend[0]) - 1
+                end = int(startend[1]) - 1
+                show_range(start, end)
+            except:
+                print("Invalid Range")
         else:
-            if show_range_flag:
-                try:
-                    print(show_range_parameter)
-                    startend = show_range_parameter.split("-")
-                    start = int(startend[0]) - 1
-                    end = int(startend[1]) - 1
-                    show_range(start, end)
-                except:
-                    print("Invalid Range")
-            else:
-                try:
-                    show_parameter = int(show_parameter)
-                    show_number(show_parameter)
-                except ValueError:
-                    print("Invalid Parameter to shownumber.")
+            try:
+                show_parameter = int(show_parameter)
+                show_number(show_parameter)
+            except ValueError:
+                print("Invalid Parameter to shownumber.")
 
     # update
     if (update_flag):
@@ -445,7 +467,7 @@ def main():
 
     # accept all
     if (accept_all_flag):
-        accept_all()
+        accept_all(1)
         print("Accepted all.")
 
     # accept
@@ -454,7 +476,7 @@ def main():
 
     # accept all
     if (accept_all2_flag):
-        accept_all2()
+        accept_all(2)
         print("Accepted all2")
 
     # deny
@@ -464,7 +486,14 @@ def main():
     # deny all
     if (deny_all_flag):
         deny_all()
+        
+    # postpone
+    if (postpone_flag):
+        postpone_number(postpone_marker)
 
+    # postponeall
+    if (postponeall_flag):
+        postpone_all()
 
 if __name__ == "__main__":
     main()
