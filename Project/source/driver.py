@@ -150,30 +150,26 @@ def accept(n, strategy):
     print("\nAccepted: \n" + str(n))
 
 
-def accept_all():
+def accept_all(strategy):
     '''() -> NoneType
-    Skeleton function
+    Function for accepting all changes/additions
+    strategy argument accepts "1" or "2"
     '''
-    GIT.initGit()
+    if (strategy == 1):
+        GIT.initGit()
+    else:
+        GIT.initGit2()
     unpack_changes()
     i = 0
-    while i < len(CHANGES):
-        accept(i)
-        i += 1
-
-
-def accept_all2():
-    '''() -> NoneType
-    Skeleton function
-    '''
-    GIT.initGit2()
-    unpack_changes()
-    i = 0
-    # while i < len(CHANGES):
-    while i < 25:
-        accept(i, 2)
-        i += 1
-    GIT.finalizeGit2()
+    if (strategy == 1):
+        while i < len(CHANGES):
+            accept(i)
+            i += 1
+    else:
+        while i < 25:
+            accept(i, 2)
+            i += 1
+        GIT.finalizeGit2()                
 
 
 def deny_number(n):
@@ -210,7 +206,6 @@ def postpone_all():
         i += 1
     print("Done.")
     
-
 
 def unpack_changes():
     # TODO : check that the last time of the update is not "Never"
@@ -430,22 +425,21 @@ def main():
             return 1
         elif (all_flag):
             show_all()
+        elif show_range_flag:
+            try:
+                print(show_range_parameter)
+                startend = show_range_parameter.split("-")
+                start = int(startend[0]) - 1
+                end = int(startend[1]) - 1
+                show_range(start, end)
+            except:
+                print("Invalid Range")
         else:
-            if show_range_flag:
-                try:
-                    print(show_range_parameter)
-                    startend = show_range_parameter.split("-")
-                    start = int(startend[0]) - 1
-                    end = int(startend[1]) - 1
-                    show_range(start, end)
-                except:
-                    print("Invalid Range")
-            else:
-                try:
-                    show_parameter = int(show_parameter)
-                    show_number(show_parameter)
-                except ValueError:
-                    print("Invalid Parameter to shownumber.")
+            try:
+                show_parameter = int(show_parameter)
+                show_number(show_parameter)
+            except ValueError:
+                print("Invalid Parameter to shownumber.")
 
     # update
     if (update_flag):
@@ -457,7 +451,7 @@ def main():
 
     # accept all
     if (accept_all_flag):
-        accept_all()
+        accept_all(1)
         print("Accepted all.")
 
     # accept
@@ -466,7 +460,7 @@ def main():
 
     # accept all
     if (accept_all2_flag):
-        accept_all2()
+        accept_all(2)
         print("Accepted all2")
 
     # deny
