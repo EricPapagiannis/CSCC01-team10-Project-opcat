@@ -1,3 +1,5 @@
+import sys
+sys.path.append('../')
 from data_parsing.Planet import Planet
 from data_parsing.Star import Star
 
@@ -7,6 +9,10 @@ eu = {"name":"name","mass": "mass", "radius":"radius", "period":"orbital_period"
     "lastupdate":"updated", "nameStar":"star_name"}
 nasa = {"name":"pl_hostname", "radius":"pl_radj", "eccentricity":"pl_orbeccen", "period":"pl_orbper",
     "lastupdate":"rowupdate", "discoverymethod":"pl_discmethod", "mass":"pl_bmassj","nameStar":"pl_hostname"}
+
+eustar = {'rightascension':'ra', 'declination':'dec', 'distance':'star_distance', 'name':'star_name', 'mass':'star_mass', 'radius':'star_radius', 'magV':'mag_v', 'magB':'', 'magI':'mag_i', 'magJ':'mag_j', 'magH':'mag_h', 'magK':'mag_k', 'temperature':'star_teff', 'metallicity':'star_metallicity', 'spectraltype':'star_sp_type'}
+nasastar = {'rightascension':'ra_str', 'declination':'dec_str', 'distance':'st_dist', 'name':'pl_hostname', 'mass':'st_mass', 'radius':'st_rad', 'magV':'st_optmag', 'magB':'', 'magJ':'', 'magH':'', 'magK':'', 'temperature':'st_teff', 'metallicity':'', 'spectraltype':''}
+
 
 # discovery method correction to xml
 discoveryCorrection = {"Radial Velocity": "RV", "Primary Transit": "transit", "Imaging":"imaging",
@@ -135,38 +141,65 @@ def buildDictStar(planets, source):
     return stars
 
 def buildDictStarExistingField(filename, source):
-    ''' (str, str) -> Dict of stars
-    Builds dict of star with name of star as key for all fields that are parsable
+    '''(str, str)-> dict of stars
+    Returns a dict of stars of planets built from the specific file
     '''
+    stars = dict()
     if(source == "eu"):
         wanted = eu.keys()
     else:
         wanted = nasa.keys()
-    return buildDictStar(buildListPlanets(filename, wanted, source), source)
 
-def buildListStar(filename, wanted, source):
-    ''' (str, list str, str) -> list star
-    Builds list of stars for the desired fields
-    '''
-    planets = buildListPlanets(filename, wanted, source)
-    return buildDictStar(planets, source).values()
+    file = open(filename, 'r')
+    heads = file.readline().split(',')
+    # removing new lines
+    if(heads[-1][-1] == '\n'):
+        heads[-1] = heads[-1][:-1]
+    line = file.readline()
+    while(line == '\n'):
+        line = file.readline()
 
-def buildListStarExistingField(filename, source):
-    ''' (str, str) -> list star
-    Builds a list of stars for all fields that are parsable
+    while(line):
+        line = line.split(',')
+        planet = buildPlanet(line, heads, wanted, source)
+        star = buildStar(line, heads, source)
+        stars[star.name] = star
+        star.planetObjects += [planet]
+        line = '\n'
+        while(line == '\n'):
+            line = file.readline()
+    return stars
+
+def buildStar(line, heads, source):
+    '''(str, list of str, str) -> star
+    Returns a star object from parsing the line
     '''
-    if(source == "eu"):
-        return  buildListStar(filename, eu, source)
-    else: #source == "nasa"
-        return buildListStar(filename, nasa, source)
+    _data_field = dict()
+    if(source == 'eu'):
+        _actual = eustar
+    else:
+        _actual = nasastar
+    for i in _actual:
+        try:
+            _data_field[i] = heads.index(_actual[i])
+        except ValueError:
+            pass
+    _name = line[_data_field['name']]
+
+    star = Star(_name)
+    for i in _data_field:
+        try:
+            star.addVal(i, _fixVal(i, line[_data_field[i]], source))
+        except keyError:
+            planet.addVal(i, '')
+    return star
 
 def buildListStarAllField(filename, source):
     ''' (str, str) -> list star
     Idk why this is here since it has the exact same functionality as buildListStarExistingField
     but... it's here so yeah.
     '''
-    planets = buildListPlanetsAllField(filename, source)
-    return buildDictStar(planets, source).values()
+    return list(buildDictStarExistingField(filename, source).value())
 
 class UnitConverter:
     ''' A class for converting units in NASA and EU to OEC's units
