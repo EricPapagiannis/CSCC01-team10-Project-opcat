@@ -1,0 +1,2 @@
+name,mass,radius,orbital_period,semi_major_axis,eccentricity,detection_type,discovered,updated,star_name
+mars,10,3.14,0.7,0.5,1,Radial Velocity,2001,2004-05-16,sun

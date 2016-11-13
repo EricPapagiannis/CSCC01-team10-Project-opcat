@@ -81,7 +81,10 @@ def buildDictionaryPlanets(filename, wanted, source):
     ''' (str, list str, str) -> dict of Planets
     Builds a dictionary of planets where name of planet is key to planets
     '''
-    file = open(filename, "r")
+    try:
+        file = open(filename, "r")
+    except FileNotFoundError:
+        file = open("../storage/" + filename, "r")
     heads = file.readline().split(',')
     # remove the stupid new line
     if(heads[-1][-1] == '\n'):
@@ -150,8 +153,10 @@ def buildDictStarExistingField(filename, source):
         wanted = eu.keys()
     else:
         wanted = nasa.keys()
-
-    file = open(filename, 'r')
+    try:
+        file = open(filename, "r")
+    except FileNotFoundError:
+        file = open("../storage/" + filename, "r")
     heads = file.readline().split(',')
     # removing new lines
     if(heads[-1][-1] == '\n'):
