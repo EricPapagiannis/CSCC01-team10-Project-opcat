@@ -116,7 +116,7 @@ class Comparator():
                         float(left_data[key]), float(right_data[key]))
                     # otherwise just normal compare
                 except ValueError:
-                    if (left_data[key] != right_data[key]):
+                    if (left_data[key].lower() != right_data[key].lower()):
                         result_dict[key] = (left_data[key], right_data[key])
         return result_dict
 
