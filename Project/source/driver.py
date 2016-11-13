@@ -300,14 +300,14 @@ def main():
     shortOPT = "huacel"
     # log opts are phrases, add onto longOPT to include
     longOPT = ["help", "update", "showall", "acceptall", "acceptall2",
-               "denyall", "status"]
+               "denyall", "status", "postponeall"]
 
     # flags that do expect a parameter (--output file.txt for example)
     # similar to shortOPT
     shortARG = "opsntdr"
     # similar to longOTP
     longARG = ["output", "planet", "shownumber", "accept", "accept2", "deny",
-               "showrange"]
+               "showrange", "postpone"]
 
     # arg, opt pre-processor, do not edit
     short = ':'.join([shortARG[i:i + 1] for i in range(0, len(shortARG), 1)]) \
@@ -338,6 +338,9 @@ def main():
     deny_flag = None
     deny_all_flag = None
     deny_marker = None
+    postpone_flag = None
+    postpone_marker = None
+    postponeall_flag = None
 
     for o, a in opts:
 
@@ -408,6 +411,15 @@ def main():
             show_range_flag = True
             show_range_parameter = a
 
+        # postpone
+        elif o in ("--" + longARG[7]):
+            postpone_flag = True
+            postpone_marker = int(a)    
+
+        # postponeall
+        elif o in ("--" + longOPT[7]):
+            postponeall_flag = True
+
         else:
             usage()
             assert False, "unhandled option"
@@ -464,7 +476,14 @@ def main():
     # deny all
     if (deny_all_flag):
         deny_all()
+        
+    # postpone
+    if (postpone_flag):
+        postpone_number(postpone_marker)
 
+    # postponeall
+    if (postponeall_flag):
+        postpone_all()
 
 if __name__ == "__main__":
     main()
