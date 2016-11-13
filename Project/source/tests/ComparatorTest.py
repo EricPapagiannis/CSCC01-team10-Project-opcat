@@ -12,8 +12,8 @@ from data_parsing.Star import *
 from data_parsing.System import *
 import unittest
 
-class TestComparator(unittest.TestCase):
 
+class TestComparator(unittest.TestCase):
     def setUp(self):
         self.planet1 = Planet("planet1")
         self.planet1.addVal("mass", 10)
@@ -34,29 +34,39 @@ class TestComparator(unittest.TestCase):
         self.EStar2 = Star("empty2")
 
     def testCreateComparatorWithNonPlanetaryObjects(self):
-        try:        
+        try:
             rip = Comparator("egg", 1, "eu")
         except ObjectTypeMismatchException:
             self.assertTrue(True)
 
     def testCreateComparatorWithDifferentPlanetaryObjects(self):
-        try:        
+        try:
             rip = Comparator(self.planet1, self.Star1, "eu")
         except ObjectTypeMismatchException:
             self.assertTrue(True)
-        
+
     def testSQLjoin(self):
         comparator = Comparator(self.planet2, self.planet1, "eu")
         result = comparator.sqlJoin(True)
-        self.assertEqual(result["data"], ["mass", "temperature"])
-        self.assertEqual(result["left"], [12, 145])
-        self.assertEqual(result["right"], [10, "N/A"])
-        
+        a = result["data"]
+        b = ["mass", "temperature"]
+        self.assertTrue(
+            len(a) == len(b) and all(a.count(i) == b.count(i) for i in a))
+        c = result["left"]
+        d = [12, 145]
+        self.assertTrue(
+            len(c) == len(d) and all(c.count(i) == d.count(i) for i in c))
+        e = result["right"]
+        f = [10, "N/A"]
+        self.assertTrue(
+            len(e) == len(f) and all(e.count(i) == f.count(i) for i in e))
+
+
     def testInnerJoinDiffFieldMatch(self):
         comparator = Comparator(self.Star1, self.Star2, "eu")
         inner = comparator.innerJoinDiff()
         self.assertEqual(inner, {'mass': (100, 112)})
-        
+
     def testInnerJoinDiffFieldDiff(self):
         comparator = Comparator(self.planet1, self.planet3, "eu")
         inner = comparator.innerJoinDiff()
@@ -68,7 +78,7 @@ class TestComparator(unittest.TestCase):
             comparator.starCompare()
         except ObjectTypeIncompatibleException:
             self.assertTrue(True)
-    
+
     def testStarCompareEmptyStarsStarC(self):
         comparator = Comparator(self.EStar1, self.EStar2, "eu")
         result = comparator.starCompare()
@@ -111,19 +121,19 @@ class TestComparator(unittest.TestCase):
 
     def testStarCWithDifferentNumberFields(self):
         self.Star2.addVal("temperature", 144)
-    
+
     def testStarCompareStarWithOneFieldStarN(self):
         comparator = Comparator(self.Star1, self.Star2, "eu")
         result = comparator.starCompare()
         starN = result["starN"]
-        answer = {"data":["mass"], "left":[100.0], "right":[112.0]}
+        answer = {"data": ["mass"], "left": [100.0], "right": [112.0]}
         self.assertEqual(starN, answer)
 
     def testStarCompareStarWithOneFieldStarN(self):
         comparator = Comparator(self.Star1, self.Star2, "eu")
         result = comparator.starCompare()
         planetN = result["planetN"]
-        answer = {"left":[], "right":[self.planet4]}
+        answer = {"left": [], "right": [self.planet4]}
         self.assertEqual(planetN, answer)
 
     def testStarCompareStarWithOneFieldPlanetDN(self):
@@ -144,16 +154,17 @@ class TestComparator(unittest.TestCase):
         comparator = Comparator(self.Star1, self.Star2, "eu")
         result = comparator.starCompare()
         planetA = result["planetA"]
-        answer = {"planet1":self.planet1, "planet3":self.planet3}
+        answer = {"planet1": self.planet1, "planet3": self.planet3}
         self.assertEqual(planetA, answer)
 
     def testproposedChangeStarCompare(self):
         comparator = Comparator(self.Star1, self.Star2, "eu")
-        result = comparator.proposedChangeStarCompare();
-        answer = [self.planet1, self.planet3]
-        self.assertEqual(len(result), len(answer))
-        for i in range(0, len(result)-1):
-            self.assertEqual(result[i].get_object_name(), answer[i].name)
-        
+        result = comparator.proposedChangeStarCompare()
+        resultNames = [result[0].get_object_name(), result[1].get_object_name()]
+        answer = [self.planet1.name, self.planet3.name]
+        self.assertTrue(
+            len(resultNames) == len(answer) and all(
+                resultNames.count(i) == answer.count(i) for i in resultNames))
+
 if __name__ == "__main__":
     unittest.main(exit=False)
