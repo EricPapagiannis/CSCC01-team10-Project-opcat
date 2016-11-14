@@ -236,7 +236,7 @@ class UnitConverter:
             minute = (hour - float(hours))*60
             minutes = int(minute)
             second = (minute - float(minutes))*60
-            re = str(hours) + ' ' + str(minutes) + ' ' + str(second)
+            re = ('%.5f' % hours) + ' ' + ('%.5f' % minutes) + ' ' + ('%.5f' % second)
             return re
 
         def convertNASARA(data):
@@ -260,7 +260,7 @@ class UnitConverter:
             minute = (hour - float(hours))*60
             minutes = int(minute)
             second = (minute - float(minutes))*60
-            re = str(hours) + ' ' + str(minutes) + ' ' + str(second)
+            re = ('%.5f' % hours) + ' ' + ('%.5f' % minutes) + ' ' + ('%.5f' % second)
             return re
 
         # dict of functions for ea source's proper conversion
