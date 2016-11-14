@@ -152,11 +152,8 @@ def accept(n, strategy):
 
 def accept_all(strategy):
     '''() -> NoneType
-<<<<<<< HEAD
     Function for accepting all changes/additions
     strategy argument accepts "1" or "2"
-=======
-    Skeleton function
     '''
     GIT.initGit()
     unpack_changes()
@@ -164,28 +161,6 @@ def accept_all(strategy):
     while i < len(CHANGES):
         accept(i, 1)
         i += 1
-
-
-def accept_all2():
-    '''() -> NoneType
-    Skeleton function
->>>>>>> refs/remotes/origin/master
-    '''
-    if (strategy == 1):
-        GIT.initGit()
-    else:
-        GIT.initGit2()
-    unpack_changes()
-    i = 0
-    if (strategy == 1):
-        while i < len(CHANGES):
-            accept(i)
-            i += 1
-    else:
-        while i < 25:
-            accept(i, 2)
-            i += 1
-        GIT.finalizeGit2()                
 
 
 def deny_number(n):
