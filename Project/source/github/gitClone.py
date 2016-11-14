@@ -9,10 +9,10 @@ direc = "github/open_exoplanet_catalogue"
 
 
 def initGit():
+    ''' () -> None
+    Does any initialization to use github with strategy 1
     '''
-
-    '''
-    # change to actual later
+    # change to actual repository later
     link = 'https://github.com/EricPapagiannis/open_exoplanet_catalogue.git'
     call(["git", "--bare", "clone", link], cwd="github")
     link = link.split('/')[-1][0:-4]
@@ -22,9 +22,10 @@ def initGit():
     call(["git", "push", "--set-upstream", "origin", "master"], cwd=direc)
     return link
 
-def initGit2():
-    '''
 
+def initGit2():
+    ''' () -> None
+    Does any initialization to use github with strategy 1
     '''
     # change to actual later
     link = 'https://github.com/EricPapagiannis/open_exoplanet_catalogue.git'
@@ -38,20 +39,31 @@ def initGit2():
     call(["git", "push", "upstream", "OPCAT"], cwd=direc)
     return link
 
+
 def finalizeGit2():
+    """ () -> None
+    Does any final commands to use github with strategy 2
+    """
     call(["git", "push", "upstream", "OPCAT"], cwd=direc)
 
     # pull-request
     call(["hub", "pull-request", "-f", "-h", "OPCAT", "-m",
           "Compiled modifications"], cwd=direc)
 
+
 def saveDirName(direc):
+    """ (str) -> None
+    Save the directory name for the repo
+    """
     file = open('dirname', 'w')
     file.write(direc)
     file.close()
 
 
 def getDirName():
+    """ () -> None
+        Get the directory name for the repo
+    """
     try:
         file = open('dirname', 'r')
         return file.read()
@@ -60,6 +72,9 @@ def getDirName():
 
 
 def UpdateRepo():
+    """ () -> None
+    Update the the local github repo to latest
+    """
     # check for local github repo
     direc = getDirName()
     if (direc == None):
@@ -76,15 +91,24 @@ def UpdateRepo():
     # call(["git", "push"], cwd=direc)
 
 
-# later just take proposedChange, and get sysname from that using another method
 def modifyXML(proposedChange, n, mode=False):
+    """ (ProposedChange, int, bool) -> None
+    Given a proposed change, and the a number n referring to what proposed
+    change it is, apply the github pull request strategy depending on mode.
+    mode = False represents strategy 1: 1 branch per modification and 1 pull
+        request per branch
+    mode = True represents strategy 2: 1 branch witl all modifications, and 1
+        pull request
+    """
+    # case if proposed change is modification
     if isinstance(proposedChange, PC.Modification):
         branch = "opcat" + str(n)
         path = "github/open_exoplanet_catalogue/systems/" + \
                proposedChange.getSystemName() + ".xml"
         oec = ET.parse(path)
-
+        # apply strategy 2
         if mode:
+            # if the proposed change is a star, modify the star fields
             if proposedChange.getOECType() == "Star":
                 # modify
                 modifyStar(oec, proposedChange)
@@ -94,7 +118,7 @@ def modifyXML(proposedChange, n, mode=False):
                 commitMessage = str(proposedChange)
                 call(["git", "commit", "-m", commitMessage], cwd=direc)
 
-
+            # if the proposed change is a planet, modify the planet fields
             elif proposedChange.getOECType() == "Planet":
                 # modify
                 modifyPlanet(oec, proposedChange)
@@ -103,7 +127,9 @@ def modifyXML(proposedChange, n, mode=False):
                 call(["git", "add", path2], cwd=direc)
                 commitMessage = str(proposedChange)
                 call(["git", "commit", "-m", commitMessage], cwd=direc)
+        # apply strategy 1
         else:
+            # if the proposed change is a star, modify the star fields
             if proposedChange.getOECType() == "Star":
                 call(["git", "checkout", "-b", branch], cwd=direc)
                 call(["git", "push", "upstream", branch], cwd=direc)
@@ -120,7 +146,7 @@ def modifyXML(proposedChange, n, mode=False):
                 call(["hub", "pull-request", "-f", "-h", branch, "-m",
                       commitMessage], cwd=direc)
 
-
+            # if the proposed change is a planet, modify the planet fields
             elif proposedChange.getOECType() == "Planet":
                 call(["git", "checkout", "-b", branch], cwd=direc)
                 call(["git", "push", "upstream", branch], cwd=direc)
@@ -138,6 +164,11 @@ def modifyXML(proposedChange, n, mode=False):
 
 
 def modifyStar(oec, proposedChange):
+    """ (ElementTree, ProposedChange) -> None
+    Given the XML for the related proposed, and a ProposedChange for a star,
+    apply the modifications of the proposed change into the XML
+    """
+    specificStarXML = None
     path = "github/open_exoplanet_catalogue/systems/" + \
            proposedChange.getSystemName() + ".xml"
     # find the star we want
@@ -153,6 +184,11 @@ def modifyStar(oec, proposedChange):
 
 
 def modifyPlanet(oec, proposedChange):
+    """ (ElementTree, ProposedChange) -> None
+    Given the XML for the related proposed, and a ProposedChange for a star,
+    apply the modifications of the proposed change into the XML
+    """
+    specificPlanetXML = None
     path = "github/open_exoplanet_catalogue/systems/" + \
            proposedChange.getSystemName() + ".xml"
     # find the planet we want

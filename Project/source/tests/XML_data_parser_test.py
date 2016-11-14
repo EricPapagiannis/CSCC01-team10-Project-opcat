@@ -26,7 +26,8 @@ class TestbuildSystemFromXML(unittest.TestCase):
                           "incorrect name")
         self.assertEquals(self.planets[0].data["period"], "326.03",
                           "incorrect period")
-        self.assertEquals(self.planets[0].data["mass"], "19.4", "incorrect mass")
+        self.assertEquals(self.planets[0].data["mass"], "19.4",
+                          "incorrect mass")
 
     def test_star_fields(self):
         self.assertEquals(self.stars[0].name, "11 Com",
@@ -55,6 +56,27 @@ class TestbuildSystemFromXML(unittest.TestCase):
     def test_number_of_systems(self):
         self.assertEquals(len(self.systems), 2500,
                           "incorrect number of systems")
+
+    def test_alternate_names(self):
+        planet = self.planets[0]
+        self.assertEquals(planet.starObject,
+                          planet.starObjectNamesToStar["11 Comae Berenices"])
+        self.assertEquals(planet.starObject,
+                          planet.starObjectNamesToStar["HD 107383"])
+        self.assertEquals(planet.starObject,
+                          planet.starObjectNamesToStar["HIP 60202"])
+        self.assertEquals(planet.starObject,
+                          planet.starObjectNamesToStar["TYC 1445-2560-1"])
+        self.assertEquals(planet.starObject,
+                          planet.starObjectNamesToStar["SAO 100053"])
+        self.assertEquals(planet.starObject,
+                          planet.starObjectNamesToStar["HR 4697"])
+        self.assertEquals(planet.starObject,
+                          planet.starObjectNamesToStar["BD+18 2592"])
+        self.assertEquals(planet.starObject,
+                          planet.starObjectNamesToStar[
+                              "2MASS J12204305+1747341"])
+
 
 if __name__ == "__main__":
     unittest.main(exit=False)
