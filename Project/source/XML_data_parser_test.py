@@ -26,8 +26,7 @@ class TestbuildSystemFromXML(unittest.TestCase):
                           "incorrect name")
         self.assertEquals(self.planets[0].data["period"], "326.03",
                           "incorrect period")
-        self.assertEquals(self.planets[0].data["mass"], "19.4",
-                          "incorrect mass")
+        self.assertEquals(self.planets[0].data["mass"], "19.4", "incorrect mass")
 
     def test_star_fields(self):
         self.assertEquals(self.stars[0].name, "11 Com",
@@ -56,27 +55,24 @@ class TestbuildSystemFromXML(unittest.TestCase):
     def test_number_of_systems(self):
         self.assertEquals(len(self.systems), 2500,
                           "incorrect number of systems")
-
-    def test_alternate_names(self):
-        planet = self.planets[0]
-        self.assertEquals(planet.starObject,
-                          planet.starObjectNamesToStar["11 Comae Berenices"])
-        self.assertEquals(planet.starObject,
-                          planet.starObjectNamesToStar["HD 107383"])
-        self.assertEquals(planet.starObject,
-                          planet.starObjectNamesToStar["HIP 60202"])
-        self.assertEquals(planet.starObject,
-                          planet.starObjectNamesToStar["TYC 1445-2560-1"])
-        self.assertEquals(planet.starObject,
-                          planet.starObjectNamesToStar["SAO 100053"])
-        self.assertEquals(planet.starObject,
-                          planet.starObjectNamesToStar["HR 4697"])
-        self.assertEquals(planet.starObject,
-                          planet.starObjectNamesToStar["BD+18 2592"])
-        self.assertEquals(planet.starObject,
-                          planet.starObjectNamesToStar[
-                              "2MASS J12204305+1747341"])
-
+    def test_alternate_names_point_right_allSystemsDict(self):
+        for sys in self.allSystemsDict:
+            system = self.allSystemsDict[sys]
+            for sysName in system.otherNamesSystem:
+                self.assertEqual(self.allSystemsDict[sysName].name, 
+                                 system.name)
+    def test_alternate_names_point_right_allStarsDict(self):
+        for sta in self.allStarsDict:
+            star = self.allStarsDict[sta]
+            for starName in star.otherNamesStar:
+                self.assertEqual(self.allStarsDict[starName].name,
+                                 star.name)
+    def test_alternate_names_point_right_allPlanetsDict(self):
+        for pla in self.allPlanetsDict:
+            planet = self.allPlanetsDict[pla]
+            for plaName in planet.otherNamesPlanet:
+                self.assertEqual(self.allPlanetsDict[plaName].name,
+                                 planet.name)
 
 if __name__ == "__main__":
     unittest.main(exit=False)

@@ -1,3 +1,4 @@
+
 from data_parsing.Planet import *
 from data_parsing.Star import *
 from data_parsing.System import *
@@ -5,6 +6,7 @@ from data_comparison.proposed_change import *
 
 
 class Comparator():
+
     def __init__(self, obj1, obj2, origin):
         '''(PlanetaryObject, PlanetaryObject, str) -> NoneTye
         sets up the comparator with two objects of PlanetaryObject
@@ -34,6 +36,7 @@ class Comparator():
         SQL join logic will determine what is included
         '''
 
+        # config of whether to run left join or right join
         if (left_join):
             left_data = self.obj1.getData()
             right_data = self.obj2.getData()
@@ -42,21 +45,56 @@ class Comparator():
             right_data = self.obj1.getData()
 
         missing_keys = []
+        # entries are linked using indices
         result_dict = {'data': [], 'left': [], 'right': []}
 
+        # set up the list of data fields
         for key in left_data:
             if not (key in right_data):
+                # fields not appearing in either data set
                 missing_keys.append(key)
-            result_dict['data'].append(key)
+            if key == "":
+                left_data[key] = "N/A"
+                result_dict['data'].append("N/A")
+            else:
+                result_dict['data'].append(key)
 
+        # generate entries of left and right based on sql join logic
         for key in result_dict['data']:
-            result_dict['left'].append(left_data[key])
-            if key in missing_keys:
+            if left_data[key] == "":
+                # left missing
+                left_data[key] = "N/A"
+                result_dict['left'].append("N/A")
+            else:
+                # exists in left
+                result_dict['left'].append(left_data[key])
+            if key in missing_keys or key == "":
+                # right missing
                 result_dict['right'].append("N/A")
             else:
+                # exists in right
                 result_dict['right'].append(right_data[key])
 
         return result_dict
+
+
+    def sqlJoinNewOnly(self, left_join):
+        '''(bool) -> Dictionary
+        Identical to method sqlJoin except excludes all rows
+        which do not have a new or missing data field
+        Returns dictionary structured in the same manner as sqlJoin
+        '''
+        raw_dict = self.sqlJoin(left_join)
+        entry_count = len(raw_dict['data'])
+
+        # remove entries not including new or missing fields
+        for i in range(0, entry_count):
+            if ((raw_dict['right'] == "N/A") or (raw_dict['left'] == "N/A")):
+                raw_dict['data'].pop(i)
+                raw_dict['left'].pop(i)
+                raw_dict['right'].pop(i)
+        return raw_dict
+
 
     def innerJoinDiff(self):
         '''() -> Dictionary
@@ -65,25 +103,30 @@ class Comparator():
         Returns a dictionary with keys corresponding to any differing field
         values. The keys map to tuples of the values of (obj1, obj2).
         '''
-
         left_data = self.obj1.getData()
         right_data = self.obj2.getData()
-
         result_dict = {}
-
         for key in left_data:
+            # this only gets data in both sets
             if key in right_data:
-                if (left_data[key] != right_data[key]):
-                    result_dict[key] = (left_data[key], right_data[key])
-
+                # try to numerical compare                    
+                try:
+                    if (float(left_data[key]) != float(right_data[key])):
+                        result_dict[key] = (
+                        float(left_data[key]), float(right_data[key]))
+                    # otherwise just normal compare
+                except ValueError:
+                    if (left_data[key].lower() != right_data[key].lower()):
+                        result_dict[key] = (left_data[key], right_data[key])
         return result_dict
+
 
     def proposedChangeStarCompare(self):
         '''() -> list
         Similar to starCompare but returns a list of Addition
         and Modification Objects
         '''
-
+        # why is variable a list?
         result_dict = []
 
         main_dictionary = self.starCompare()
@@ -99,8 +142,21 @@ class Comparator():
                                  main_dictionary["planetDC"][
                                      planet][field][1])
                 )
-
+        '''
+        for star in main_dictionary["starC"]:
+            for field in main_dictionary["starC"][star]:
+                result_dict.append(
+                    Modification(self.origin,
+                                 self.obj2, field,
+                                 main_dictionary["starC"][star][field][0],
+                                 main_dictionary["starC"][star][field][1])
+                )
+        '''
+        for planet in main_dictionary["planetA"]:
+            result_dict.append(Addition(self.origin, main_dictionary["planetA"][
+                planet]))
         i = 0
+
         '''
         for data in main_dictionary["starN"]["right"]:
             if (data == "N/A"):
@@ -111,6 +167,7 @@ class Comparator():
                 main_dictionary["starN"]["right"][i]))
         '''
         return result_dict
+
 
     def starCompare(self):
         '''() -> Dictionary
@@ -126,12 +183,12 @@ class Comparator():
             generated by innerJoinDiff()
           starN: dict of NEW star data
             keys: star fields
-            generated by sqlJoin(True)
+            generated by sqlJoinNewOnly(True)
           planetN: dict of NEW planets
             keys: left, right
           planetDN: dict of NEW planet data
             keys: planet names
-            generated by sqlJoin(True)
+            generated by sqlJoinNewOnly(True)
           planetDC: dict of mismatched/CHANGED planet data
             keys: planet names
             generated by innerJoinDiff()
@@ -154,6 +211,7 @@ class Comparator():
             newPlanets = {}
             newPlanets["left"] = list(set(self.obj1.planetObjects) -
                                       set(self.obj2.planetObjects))
+
             newPlanets["right"] = list(set(self.obj2.planetObjects) -
                                        set(self.obj1.planetObjects))
 
@@ -162,18 +220,8 @@ class Comparator():
             planetsDataChange = {}
 
             # examine all planets attached to system
-            '''
-            print("+++++++++++++++++++++++++++++")
-            print(self.obj1.planetObjects)
-            print(self.obj1.planetObjects[0])
-            print(self.obj1.nameToPlanet)
+            planetsAddition = {}
 
-            print(self.obj2.planetObjects)
-            print(self.obj2.planetObjects[0])
-            print(self.obj2.nameToPlanet)
-
-            print("+++++++++++++++++++++++++++++")
-            '''
             for planet in self.obj1.planetObjects:
                 # if (planet in self.obj2.planetObjects):
                 if (planet.name in self.obj2.nameToPlanet):
@@ -187,6 +235,8 @@ class Comparator():
                     # get dictionary of changed planet data for that planet
                     planetsDataChange[planet.name] = \
                         planetCompare.innerJoinDiff()
+                else:
+                    planetsAddition[planet.name] = planet
 
             # generates output
             output_dict = {}
@@ -195,6 +245,7 @@ class Comparator():
             output_dict["planetN"] = newPlanets
             output_dict["planetDN"] = newPlanetsData
             output_dict["planetDC"] = planetsDataChange
+            output_dict["planetA"] = planetsAddition
 
             return output_dict
 
@@ -211,17 +262,17 @@ if __name__ == "__main__":
     import data_parsing.XML_data_parser as XML
     import data_parsing.CSV_data_parser as CSV
 
-    EXO_planets = CSV.buildListPlanets("../exoplanetEU_csv",
-                                       ["mass", "radius", "period",
-                                        "semimajoraxis"], "eu")
+    nasa_planets = CSV.buildListPlanets("../storage/nasa_csv",
+                                        ["mass", "radius", "period",
+                                         "semimajoraxis", "temperature"],
+                                        "nasa")
     a = XML.buildSystemFromXML()
-    planets = a[5]
-    for planet in EXO_planets:
+    planets = a[4]
+    for planet in nasa_planets:
         if planet.name == "11 Com b":
+            print(planet)
             b = planet
-    b.data["mass"] = 20
-    print(b)
-    p = planets["11 Com b"]
+    p = planets["11 Com"]
     print(p)
     c = Comparator(b, p, "eu")
     d = c.sqlJoin(True)
@@ -230,20 +281,14 @@ if __name__ == "__main__":
     print(e)
 
     stars = a[4]
-    xml = stars["11 Com"]
+    xml = stars["KOI-2222"]
     print(xml)
-    bob = CSV.buildDictStarExistingField("../exoplanetEU_csv", "eu")
-    ayy = bob["11 Com"]
+    bob = CSV.buildDictStarExistingField("../storage/exoplanetEU_csv", "eu")
+    ayy = bob["KOI-0001"]
     ayy.planetObjects[0].data["mass"] = 21
     z = Comparator(ayy, xml, "eu")
     f = z.starCompare()
     print("STAR COMPARE----------------------------------------")
-
-    print(f)
-    """
-    print(f["planetN"]["left"][0])
-    print(f["planetN"]["right"][0])
-    """
 
     print(ayy.planetObjects[0])
     print(xml.planetObjects[0])
@@ -251,4 +296,3 @@ if __name__ == "__main__":
     print(qq)
     for proposed_change in qq:
         print(proposed_change)
-        # print(qq[0])

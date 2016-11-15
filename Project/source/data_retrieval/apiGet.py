@@ -1,6 +1,5 @@
 import requests
 
-
 class apiGet():
     def __init__(self, baseURL, saveTo):
         self.baseURL = baseURL
