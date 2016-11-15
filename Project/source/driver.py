@@ -165,7 +165,7 @@ def accept_all(strategy):
     unpack_changes()
     i = 0
     while i < len(CHANGES):
-        accept(i, 1)
+        accept(i, strategy)
         i += 1
 
 
