@@ -162,7 +162,6 @@ def accept_all(strategy):
     Function for accepting all changes/additions
     strategy argument accepts "1" or "2"
     '''
-    GIT.initGit()
     unpack_changes()
     i = 0
     while i < len(CHANGES):
@@ -455,19 +454,23 @@ def main():
 
     # accept
     if (accept_flag):
+        GIT.initGit()
         accept(accept_marker, 1)
 
     # accept all
     if (accept_all_flag):
+        GIT.initGit()
         accept_all(1)
         print("Accepted all.")
 
     # accept
     if (accept2_flag):
+        GIT.initGit()
         accept(accept2_marker, 2)
 
     # accept all
     if (accept_all2_flag):
+        GIT.initGit()
         accept_all(2)
         print("Accepted all2")
 
