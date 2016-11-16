@@ -113,54 +113,37 @@ def modifyXML(proposedChange, n, mode=False):
                 # modify
                 modifyStar(oec, proposedChange)
                 # commit
-                path2 = "systems/" + proposedChange.getSystemName() + ".xml"
-                call(["git", "add", path2], cwd=direc)
-                commitMessage = str(proposedChange)
-                call(["git", "commit", "-m", commitMessage], cwd=direc)
-
             # if the proposed change is a planet, modify the planet fields
             elif proposedChange.getOECType() == "Planet":
                 # modify
                 modifyPlanet(oec, proposedChange)
                 # commit
-                path2 = "systems/" + proposedChange.getSystemName() + ".xml"
-                call(["git", "add", path2], cwd=direc)
-                commitMessage = str(proposedChange)
-                call(["git", "commit", "-m", commitMessage], cwd=direc)
+            path2 = "systems/" + proposedChange.getSystemName() + ".xml"
+            call(["git", "add", path2], cwd=direc)
+            commitMessage = str(proposedChange)
+            call(["git", "commit", "-m", commitMessage], cwd=direc)
         # apply strategy 1
         else:
             # if the proposed change is a star, modify the star fields
+            call(["git", "checkout", "-b", branch], cwd=direc)
+            call(["git", "push", "upstream", branch], cwd=direc)
+            # modify
             if proposedChange.getOECType() == "Star":
-                call(["git", "checkout", "-b", branch], cwd=direc)
-                call(["git", "push", "upstream", branch], cwd=direc)
-                # modify
                 modifyStar(oec, proposedChange)
                 # commit
-                path2 = "systems/" + proposedChange.getSystemName() + ".xml"
-                call(["git", "add", path2], cwd=direc)
-                commitMessage = str(proposedChange)
-                call(["git", "commit", "-m", commitMessage], cwd=direc)
-                call(["git", "push", "upstream", branch], cwd=direc)
-
-                # pull-request
-                call(["hub", "pull-request", "-f", "-h", branch, "-m",
-                      commitMessage], cwd=direc)
-
             # if the proposed change is a planet, modify the planet fields
             elif proposedChange.getOECType() == "Planet":
-                call(["git", "checkout", "-b", branch], cwd=direc)
-                call(["git", "push", "upstream", branch], cwd=direc)
                 # modify
                 modifyPlanet(oec, proposedChange)
-                # commit
-                path2 = "systems/" + proposedChange.getSystemName() + ".xml"
-                call(["git", "add", path2], cwd=direc)
-                commitMessage = str(proposedChange)
-                call(["git", "commit", "-m", commitMessage], cwd=direc)
-                call(["git", "push", "upstream", branch], cwd=direc)
-                # pull-request
-                call(["hub", "pull-request", "-f", "-h", branch, "-m",
-                      commitMessage], cwd=direc)
+            # commit
+            path2 = "systems/" + proposedChange.getSystemName() + ".xml"
+            call(["git", "add", path2], cwd=direc)
+            commitMessage = str(proposedChange)
+            call(["git", "commit", "-m", commitMessage], cwd=direc)
+            call(["git", "push", "upstream", branch], cwd=direc)
+            # pull-request
+            call(["hub", "pull-request", "-f", "-h", branch, "-m",
+                  commitMessage], cwd=direc)
 
 
 def modifyStar(oec, proposedChange):
