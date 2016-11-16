@@ -162,7 +162,7 @@ def buildSystemFromXML(path="../storage/OEC_XML.gz"):
                 # build the planet data dictionary mapping the tag name to the
                 # tag value in the system
                 for child in planetXML:
-                    if (child.tag.lower() != "name"):
+                    if (child.tag.lower() != "name") and (child.tag.lower() != "lastupdate"):
                         planet.addVal(child.tag, child.text)
 
                 # add the star name that the planet is in

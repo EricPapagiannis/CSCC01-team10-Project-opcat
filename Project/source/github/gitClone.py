@@ -2,6 +2,7 @@ from subprocess import call
 import xml.etree.ElementTree as ET
 import data_comparison.proposed_change as PC
 import os
+import datetime
 
 # 'static' vars
 files = []
@@ -113,60 +114,43 @@ def modifyXML(proposedChange, n, mode=False):
                 # modify
                 modifyStar(oec, proposedChange)
                 # commit
-                path2 = "systems/" + proposedChange.getSystemName() + ".xml"
-                call(["git", "add", path2], cwd=direc)
-                commitMessage = str(proposedChange)
-                call(["git", "commit", "-m", commitMessage], cwd=direc)
-
             # if the proposed change is a planet, modify the planet fields
             elif proposedChange.getOECType() == "Planet":
                 # modify
                 modifyPlanet(oec, proposedChange)
                 # commit
-                path2 = "systems/" + proposedChange.getSystemName() + ".xml"
-                call(["git", "add", path2], cwd=direc)
-                commitMessage = str(proposedChange)
-                call(["git", "commit", "-m", commitMessage], cwd=direc)
+            path2 = "systems/" + proposedChange.getSystemName() + ".xml"
+            call(["git", "add", path2], cwd=direc)
+            commitMessage = str(proposedChange)
+            call(["git", "commit", "-m", commitMessage], cwd=direc)
         # apply strategy 1
         else:
             # if the proposed change is a star, modify the star fields
+            call(["git", "checkout", "-b", branch], cwd=direc)
+            call(["git", "push", "upstream", branch], cwd=direc)
+            # modify
             if proposedChange.getOECType() == "Star":
-                call(["git", "checkout", "-b", branch], cwd=direc)
-                call(["git", "push", "upstream", branch], cwd=direc)
-                # modify
                 modifyStar(oec, proposedChange)
                 # commit
-                path2 = "systems/" + proposedChange.getSystemName() + ".xml"
-                call(["git", "add", path2], cwd=direc)
-                commitMessage = str(proposedChange)
-                call(["git", "commit", "-m", commitMessage], cwd=direc)
-                call(["git", "push", "upstream", branch], cwd=direc)
-
-                # pull-request
-                call(["hub", "pull-request", "-f", "-h", branch, "-m",
-                      commitMessage], cwd=direc)
-
             # if the proposed change is a planet, modify the planet fields
             elif proposedChange.getOECType() == "Planet":
-                call(["git", "checkout", "-b", branch], cwd=direc)
-                call(["git", "push", "upstream", branch], cwd=direc)
                 # modify
                 modifyPlanet(oec, proposedChange)
-                # commit
-                path2 = "systems/" + proposedChange.getSystemName() + ".xml"
-                call(["git", "add", path2], cwd=direc)
-                commitMessage = str(proposedChange)
-                call(["git", "commit", "-m", commitMessage], cwd=direc)
-                call(["git", "push", "upstream", branch], cwd=direc)
-                # pull-request
-                call(["hub", "pull-request", "-f", "-h", branch, "-m",
-                      commitMessage], cwd=direc)
+            # commit
+            path2 = "systems/" + proposedChange.getSystemName() + ".xml"
+            call(["git", "add", path2], cwd=direc)
+            commitMessage = str(proposedChange)
+            call(["git", "commit", "-m", commitMessage], cwd=direc)
+            call(["git", "push", "upstream", branch], cwd=direc)
+            # pull-request
+            call(["hub", "pull-request", "-f", "-h", branch, "-m",
+                  commitMessage], cwd=direc)
 
 
 def modifyStar(oec, proposedChange):
     """ (ElementTree, ProposedChange) -> None
-    Given the XML for the related proposed, and a ProposedChange for a star,
-    apply the modifications of the proposed change into the XML
+    Given the XML for the related proposed change, and a ProposedChange for a
+    star, apply the modifications of the proposed change into the XML
     """
     specificStarXML = None
     path = "github/open_exoplanet_catalogue/systems/" + \
@@ -180,6 +164,20 @@ def modifyStar(oec, proposedChange):
     # now modify our data field we want
     child = specificStarXML.find(".//" + str(proposedChange.field_modified))
     child.text = str(proposedChange.value_in_origin_catalogue)
+    oec.write(path)
+    modifyDateToCurrent(oec, proposedChange)
+
+
+def modifyDateToCurrent(oec, proposedChange):
+    """(ElementTree) -> None
+    Given the XML for the related proposed change, modify the date to be the
+    current date
+    """
+    path = "github/open_exoplanet_catalogue/systems/" + \
+           proposedChange.getSystemName() + ".xml"
+    child = oec.find(".//lastupdate")
+    child.text = datetime.datetime.strftime(datetime.datetime.now(),
+                                           '%d/%m/%Y')
     oec.write(path)
 
 
@@ -201,6 +199,8 @@ def modifyPlanet(oec, proposedChange):
     child = specificPlanetXML.find(".//" + str(proposedChange.field_modified))
     child.text = str(proposedChange.value_in_origin_catalogue)
     oec.write(path)
+    modifyDateToCurrent(oec, proposedChange)
+
 
 # def getSystemName(proposedChange):
 # def commitAndPull():
