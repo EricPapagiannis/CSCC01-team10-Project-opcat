@@ -169,6 +169,10 @@ def accept_all(strategy):
     # for demo change back after!!!!!!!!
     while i < 25:
     #while i < len(CHANGES):
+        if strategy == 1:
+            GIT.initGit()
+        elif strategy == 2:
+            GIT.initGit2()
         accept(i, strategy)
         i += 1
 

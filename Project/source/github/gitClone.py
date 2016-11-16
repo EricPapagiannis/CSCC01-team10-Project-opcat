@@ -2,6 +2,7 @@ from subprocess import call
 import xml.etree.ElementTree as ET
 import data_comparison.proposed_change as PC
 import os
+import datetime
 
 # 'static' vars
 files = []
@@ -148,8 +149,8 @@ def modifyXML(proposedChange, n, mode=False):
 
 def modifyStar(oec, proposedChange):
     """ (ElementTree, ProposedChange) -> None
-    Given the XML for the related proposed, and a ProposedChange for a star,
-    apply the modifications of the proposed change into the XML
+    Given the XML for the related proposed change, and a ProposedChange for a
+    star, apply the modifications of the proposed change into the XML
     """
     specificStarXML = None
     path = "github/open_exoplanet_catalogue/systems/" + \
@@ -163,6 +164,20 @@ def modifyStar(oec, proposedChange):
     # now modify our data field we want
     child = specificStarXML.find(".//" + str(proposedChange.field_modified))
     child.text = str(proposedChange.value_in_origin_catalogue)
+    oec.write(path)
+    modifyDateToCurrent(oec, proposedChange)
+
+
+def modifyDateToCurrent(oec, proposedChange):
+    """(ElementTree) -> None
+    Given the XML for the related proposed change, modify the date to be the
+    current date
+    """
+    path = "github/open_exoplanet_catalogue/systems/" + \
+           proposedChange.getSystemName() + ".xml"
+    child = oec.find(".//lastupdate")
+    child.text = datetime.datetime.strftime(datetime.datetime.now(),
+                                           '%d/%m/%Y')
     oec.write(path)
 
 
@@ -184,6 +199,8 @@ def modifyPlanet(oec, proposedChange):
     child = specificPlanetXML.find(".//" + str(proposedChange.field_modified))
     child.text = str(proposedChange.value_in_origin_catalogue)
     oec.write(path)
+    modifyDateToCurrent(oec, proposedChange)
+
 
 # def getSystemName(proposedChange):
 # def commitAndPull():
