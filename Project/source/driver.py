@@ -154,8 +154,6 @@ def accept(n, strategy):
             GIT.modifyXML(CHANGES[n], n, mode=True)
     else:
         print("Out of range.")
-    if strategy == 2:
-        GIT.finalizeGit2()
     print("\nAccepted: \n" + str(n))
 
 
@@ -169,10 +167,6 @@ def accept_all(strategy):
     # for demo change back after!!!!!!!!
     while i < 25:
     #while i < len(CHANGES):
-        if strategy == 1:
-            GIT.initGit()
-        elif strategy == 2:
-            GIT.initGit2()
         accept(i, strategy)
         i += 1
 
@@ -473,13 +467,15 @@ def main():
 
     # accept
     if (accept2_flag):
-        GIT.initGit()
+        GIT.initGit2()
         accept(accept2_marker, 2)
+        GIT.finalizeGit2()
 
     # accept all
     if (accept_all2_flag):
-        GIT.initGit()
+        GIT.initGit2()
         accept_all(2)
+        GIT.finalizeGit2()
         print("Accepted all2")
 
     # deny
