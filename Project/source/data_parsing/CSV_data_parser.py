@@ -23,13 +23,14 @@ euerror = {"perioderrorplus": "orbital_period_error_max",
 nasaerror = {"perioderrorplus": "pl_orbpererr1",
              "perioderrorminus": "pl_orbpererr2"}
 
-eustar = {"name": "name",'rightascension': 'ra', 'declination': 'dec',
+eustar = {"name": "name", 'rightascension': 'ra', 'declination': 'dec',
           'distance': 'star_distance', 'name': 'star_name', 'mass': 'star_mass',
           'radius': 'star_radius', 'magV': 'mag_v', 'magB': '', 'magI': 'mag_i',
           'magJ': 'mag_j', 'magH': 'mag_h', 'magK': 'mag_k',
           'temperature': 'star_teff', 'metallicity': 'star_metallicity',
           'spectraltype': 'star_sp_type'}
-nasastar = {"name": "pl_hostname",'rightascension': 'ra_str', 'declination': 'dec_str',
+nasastar = {"name": "pl_hostname", 'rightascension': 'ra_str',
+            'declination': 'dec_str',
             'distance': 'st_dist', 'name': 'pl_hostname', 'mass': 'st_mass',
             'radius': 'st_rad', 'magV': 'st_optmag', 'magB': '', 'magJ': '',
             'magH': '', 'magK': '', 'temperature': 'st_teff', 'metallicity': '',
@@ -93,7 +94,10 @@ def buildPlanet(line, heads, wanted, source, errors=None):
         except KeyError:
             planet.addVal(i, "")
     for i in _error_field:
-        planet.errors[i] = line[_error_field[i]]
+        val = line[_error_field[i]]
+        if val.startswith("-"):
+            val = val[1:]
+        planet.errors[i] = val
     return planet
 
 
@@ -256,7 +260,10 @@ def buildStar(line, heads, source, errors=None):
         except KeyError:
             star.addVal(i, '')
     for i in _error_field:
-        star.errors[i] = line[_error_field[i]]
+        val = line[_error_field[i]]
+        if val.startswith("-"):
+            val = val[1:]
+        star.errors[i] = val
     return star
 
 
