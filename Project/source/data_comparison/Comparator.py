@@ -136,7 +136,7 @@ class Comparator():
             for field in main_dictionary["planetDC"][planet]:
                 result_dict.append(
                     Modification(self.origin,
-                                 self.obj2.nameToPlanet[planet], self.obj1.nameToPlanet[planet],field,
+                                 self.obj2.nameToPlanet[planet], self.obj1.planetObjects[0],field,
                                  main_dictionary["planetDC"][
                                      planet][field][0],
                                  main_dictionary["planetDC"][
