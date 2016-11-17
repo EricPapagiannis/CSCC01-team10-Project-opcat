@@ -15,3 +15,4 @@ class Planet(PlanetaryObject):
         # object that the planet is in
         self.starObjectNamesToStar = dict()
         self.otherNamesPlanet = []
+        self.errors = dict()

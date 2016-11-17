@@ -18,13 +18,18 @@ nasa = {"name": "pl_hostname", "radius": "pl_radj",
         "nameStar": "pl_hostname",
         'semimajoraxis': 'pl_orbsmax', 'inclination': 'pl_orbincl'}
 
-eustar = {'rightascension': 'ra', 'declination': 'dec',
+euerror = {"perioderrorplus": "orbital_period_error_max",
+           "perioderrorminus": "orbital_period_error_min"}
+nasaerror = {"perioderrorplus": "pl_orbpererr1",
+             "perioderrorminus": "pl_orbpererr2"}
+
+eustar = {"name": "name",'rightascension': 'ra', 'declination': 'dec',
           'distance': 'star_distance', 'name': 'star_name', 'mass': 'star_mass',
           'radius': 'star_radius', 'magV': 'mag_v', 'magB': '', 'magI': 'mag_i',
           'magJ': 'mag_j', 'magH': 'mag_h', 'magK': 'mag_k',
           'temperature': 'star_teff', 'metallicity': 'star_metallicity',
           'spectraltype': 'star_sp_type'}
-nasastar = {'rightascension': 'ra_str', 'declination': 'dec_str',
+nasastar = {"name": "pl_hostname",'rightascension': 'ra_str', 'declination': 'dec_str',
             'distance': 'st_dist', 'name': 'pl_hostname', 'mass': 'st_mass',
             'radius': 'st_rad', 'magV': 'st_optmag', 'magB': '', 'magJ': '',
             'magH': '', 'magK': '', 'temperature': 'st_teff', 'metallicity': '',
@@ -41,19 +46,21 @@ discoveryCorrection = {"Radial Velocity": "RV", "Primary Transit": "transit",
 correction = {"discoverymethod": discoveryCorrection}
 
 
-def buildPlanet(line, heads, wanted, source):
+def buildPlanet(line, heads, wanted, source, errors=None):
     ''' (list str, list str, list str, str) -> Planet
     Takes in the line read as a list, the titles of the file, the wanted field and parses the wanted field
     from the read line into a planet.
     '''
     _name_index = 0
     _data_field = dict()
-
+    _error_field = dict()
     # putting correct source dict
     if (source == "eu"):
         _actual = eu
+        _actualerror = euerror
     else:
         _actual = nasa
+        _actualerror = nasaerror
     # get the field index in head
     for i in wanted:
         try:
@@ -64,6 +71,14 @@ def buildPlanet(line, heads, wanted, source):
         except ValueError:  # not parsing fields we can't find
             pass
 
+    for i in errors:
+        try:
+            temp = _actualerror[i]
+            tempval = heads.index(temp)
+            # the dict saves the indii
+            _error_field[i] = tempval
+        except ValueError:  # not parsing fields we can't find
+            pass
     # name of planet is always first field
     _name = line[_name_index]
     # nasa is weird, it's first 2 field
@@ -77,6 +92,8 @@ def buildPlanet(line, heads, wanted, source):
         # if the field DNE then we add empty to it
         except KeyError:
             planet.addVal(i, "")
+    for i in _error_field:
+        planet.errors[i] = line[_error_field[i]]
     return planet
 
 
@@ -175,8 +192,10 @@ def buildDictStarExistingField(filename, source):
     stars = dict()
     if (source == "eu"):
         wanted = eu.keys()
+        errors = euerror.keys()
     else:
         wanted = nasa.keys()
+        errors = nasaerror.keys()
     try:
         file = open(filename, "r")
     except FileNotFoundError:
@@ -191,8 +210,8 @@ def buildDictStarExistingField(filename, source):
 
     while (line):
         line = next(reader(line.splitlines()))
-        planet = buildPlanet(line, heads, wanted, source)
-        star = buildStar(line, heads, source)
+        planet = buildPlanet(line, heads, wanted, source, errors)
+        star = buildStar(line, heads, source, errors)
         stars[star.name] = star
         star.planetObjects += [planet]
         line = '\n'
@@ -201,19 +220,32 @@ def buildDictStarExistingField(filename, source):
     return stars
 
 
-def buildStar(line, heads, source):
+def buildStar(line, heads, source, errors=None):
     '''(str, list of str, str) -> star
     Returns a star object from parsing the line
     '''
     _data_field = dict()
-    if (source == 'eu'):
+    _error_field = dict()
+    # putting correct source dict
+    if (source == "eu"):
         _actual = eustar
+        _actualerror = euerror
     else:
         _actual = nasastar
+        _actualerror = nasaerror
     for i in _actual:
         try:
             _data_field[i] = heads.index(_actual[i])
         except ValueError:
+            pass
+
+    for i in errors:
+        try:
+            temp = _actualerror[i]
+            tempval = heads.index(temp)
+            # the dict saves the indii
+            _error_field[i] = tempval
+        except ValueError:  # not parsing fields we can't find
             pass
     _name = line[_data_field['name']]
 
@@ -222,7 +254,9 @@ def buildStar(line, heads, source):
         try:
             star.addVal(i, _fixVal(i, line[_data_field[i]], source))
         except KeyError:
-            planet.addVal(i, '')
+            star.addVal(i, '')
+    for i in _error_field:
+        star.errors[i] = line[_error_field[i]]
     return star
 
 

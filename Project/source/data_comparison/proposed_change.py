@@ -80,19 +80,19 @@ class Modification(ProposedChange):
         OEC_lower = 'N/A'
         origin_upper = 'N/A'
         origin_lower = 'N/A'
-        for field in self.OEC_object.data:
+        for field in self.OEC_object.errors:
             if self.field_modified in field and self.field_modified != field:
                 if field[len(self.field_modified):] in upperAttribs:
-                    OEC_upper = self.OEC_object.data[field]
+                    OEC_upper = self.OEC_object.errors[field]
                 if field[len(self.field_modified):] in lowerAttribs:
-                    OEC_lower = self.OEC_object.data[field]
+                    OEC_lower = self.OEC_object.errors[field]
 
-        for field in self.origin_object.data:
+        for field in self.origin_object.errors:
             if self.field_modified in field and self.field_modified != field:
                 if field[len(self.field_modified):] in upperAttribs:
-                    origin_upper = self.origin_object.data[field]
+                    origin_upper = self.origin_object.errors[field]
                 if field[len(self.field_modified):] in lowerAttribs:
-                    origin_lower = self.origin_object.data[field]
+                    origin_lower = self.origin_object.errors[field]
         return (OEC_upper, OEC_lower, origin_upper, origin_lower)
 
 
