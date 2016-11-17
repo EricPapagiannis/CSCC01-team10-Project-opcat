@@ -60,13 +60,49 @@ class Modification(ProposedChange):
     value_in_origin_catalogue / value_in_OEC - may or may not be of type str
     '''
 
-    def __init__(self, origin, OEC_object,
+    def __init__(self, origin, OEC_object, origin_object,
                  field_modified, value_in_origin_catalogue, value_in_OEC):
         self.OEC_object = OEC_object
+        self.origin_object = origin_object
         self.field_modified = field_modified
         self.value_in_origin_catalogue = value_in_origin_catalogue
         self.value_in_OEC = value_in_OEC
         ProposedChange.__init__(self, origin)
+
+    def getUpperLowerAttribs(self):
+        """() -> (str, str, str,  str)
+        Return the upper and lower limit attributes of the numeric field
+        Returned as (OEC_upper, OEC_lower, origin_upper, origin_lower)
+        """
+        upperAttribs = ["errorplus", "upperlimit"]
+        lowerAttribs = ["errorminus", "lowerlimit"]
+        OEC_upper = ''
+        OEC_lower = ''
+        origin_upper = ''
+        origin_lower = ''
+        for field in self.OEC_object.data:
+            if self.field_modified in field and self.field_modified != field:
+                if field[len(self.field_modified):] in upperAttribs:
+                    OEC_upper = self.OEC_object.data[field]
+                else:
+                    OEC_upper = "N/A"
+                if field[len(self.field_modified):] in lowerAttribs:
+                    OEC_lower = self.OEC_object.data[field]
+                else:
+                    OEC_lower = "N/A"
+
+        for field in self.origin_object.data:
+            if self.field_modified in field and self.field_modified != field:
+                if field[len(self.field_modified):] in upperAttribs:
+                    OEC_upper = self.origin_object.data[field]
+                else:
+                    origin_upper = "N/A"
+                if field[len(self.field_modified):] in lowerAttribs:
+                    OEC_lower = self.origin_object.data[field]
+                else:
+                    origin_lower = "N/A"
+        return (OEC_upper, OEC_lower, origin_upper, origin_lower)
+
 
     def __str__(self):
         s = "Proposed modification:\n\n"

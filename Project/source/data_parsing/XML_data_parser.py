@@ -170,7 +170,7 @@ def buildSystemFromXML(path="../storage/OEC_XML.gz"):
                 # tag value in the system
                 for child in planetXML:
                     if (child.tag.lower() != "name") and (
-                        child.tag.lower() != "lastupdate"):
+                                child.tag.lower() != "lastupdate"):
                         planet.addVal(child.tag, child.text)
                         for attribute in child.attrib:
                             # later when converting back to change xml use the
