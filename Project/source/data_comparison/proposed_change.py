@@ -60,15 +60,48 @@ class Modification(ProposedChange):
     value_in_origin_catalogue / value_in_OEC - may or may not be of type str
     '''
 
-    def __init__(self, origin, OEC_object,
+    def __init__(self, origin, OEC_object, origin_object,
                  field_modified, value_in_origin_catalogue, value_in_OEC):
         self.OEC_object = OEC_object
+        self.origin_object = origin_object
         self.field_modified = field_modified
         self.value_in_origin_catalogue = value_in_origin_catalogue
         self.value_in_OEC = value_in_OEC
         ProposedChange.__init__(self, origin)
 
+    def getUpperLowerAttribs(self):
+        """() -> (str, str, str,  str)
+        Return the upper and lower limit attributes of the numeric field
+        Returned as (OEC_upper, OEC_lower, origin_upper, origin_lower)
+        """
+        upperAttribs = ["errorplus", "upperlimit"]
+        lowerAttribs = ["errorminus", "lowerlimit"]
+        OEC_upper = 'N/A'
+        OEC_lower = 'N/A'
+        origin_upper = 'N/A'
+        origin_lower = 'N/A'
+        for field in self.OEC_object.data:
+            if self.field_modified in field and self.field_modified != field:
+                if field[len(self.field_modified):] in upperAttribs:
+                    OEC_upper = self.OEC_object.data[field]
+                if field[len(self.field_modified):] in lowerAttribs:
+                    OEC_lower = self.OEC_object.data[field]
+
+        for field in self.origin_object.data:
+            if self.field_modified in field and self.field_modified != field:
+                if field[len(self.field_modified):] in upperAttribs:
+                    origin_upper = self.origin_object.data[field]
+                if field[len(self.field_modified):] in lowerAttribs:
+                    origin_lower = self.origin_object.data[field]
+        return (OEC_upper, OEC_lower, origin_upper, origin_lower)
+
+
     def __str__(self):
+        limits = self.getUpperLowerAttribs()
+        OEC_upper = limits[0]
+        OEC_lower = limits[1]
+        origin_upper = limits[2]
+        origin_lower = limits[3]
         s = "Proposed modification:\n\n"
         s += "Name of object modified: "
         s += self.OEC_object.name
@@ -94,6 +127,18 @@ class Modification(ProposedChange):
         s += "\n"
         s += "Value according to Open Exoplanet Catalogue: "
         s += str(self.value_in_OEC)
+        s += "\n"
+        s += "OEC Upper Limit: "
+        s +=  str(OEC_upper)
+        s += "\n"
+        s += "OEC Lower Limit: "
+        s +=  str(OEC_lower)
+        s += "\n"
+        s += "Origin Upper Limit: "
+        s +=  str(origin_upper)
+        s += "\n"
+        s += "Origin Lower Limit: "
+        s +=  str(origin_lower)
         s += "\n"
         return s
 
