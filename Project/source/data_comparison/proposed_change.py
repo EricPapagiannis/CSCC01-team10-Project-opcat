@@ -108,9 +108,21 @@ class Modification(ProposedChange):
                 if field[len(self.field_modified):] in lowerAttribs:
                     lowerAttribName = field[len(self.field_modified):]
                     origin_lower = self.origin_object.errors[field]
+        if OEC_upper == "":
+            OEC_upper = "N/A"
+        if OEC_lower == "":
+            OEC_lower = "N/A"
+        if origin_upper == "":
+            origin_upper = "N/A"
+        if origin_lower == "":
+            origin_lower = "N/A"
+        if upperAttribName == "":
+            upperAttribName = "N/A"
+        if lowerAttribName == "":
+            lowerAttribName = "N/A"
         return (
-        OEC_upper, OEC_lower, origin_upper, origin_lower, upperAttribName,
-        lowerAttribName)
+            OEC_upper, OEC_lower, origin_upper, origin_lower, upperAttribName,
+            lowerAttribName)
 
     def __str__(self):
         s = "Proposed modification:\n\n"
