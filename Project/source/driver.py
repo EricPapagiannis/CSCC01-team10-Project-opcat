@@ -11,10 +11,9 @@ import github.gitClone as GIT
 import storage_manager.storage_manager as STORAGE
 import datetime
 
-
 # usage string
 usage_str = "usage: driver [--help] [--update] [--output string] [--planet " \
-    + "string] [--showall | --shownumber int]\n"
+            + "string] [--showall | --shownumber int]\n"
 
 # link to NASA catalogue
 NASA_link = "http://exoplanetarchive.ipac.caltech.edu/cgi-bin/nsted\
@@ -33,6 +32,7 @@ XML_path = "storage/OEC_XML.gz"
 # list of all proposed changes (accumulated on update())
 CHANGES = []
 
+
 def status():
     '''() -> NoneType
     Prints the current status of the updates, including the following
@@ -47,7 +47,7 @@ def status():
     else:
         print("\nLast Update: " + str(last_update))
         print("Number of proposed changes stored : " + str(num_changes) + "\n")
-        
+
 
 def usage():
     '''() -> NoneType
@@ -92,15 +92,22 @@ def show_all():
     print("End.\n")
 
 
-
 def show_range(start, end):
     '''() -> NoneType
     Skeleton function
     '''
     unpack_changes()
     # sort the list of proposed changes
+    if isinstance(start, str) and start.lower() == "s":
+        start = 1
+    elif isinstance(start, str) and start.lower() == "e":
+        start = len(CHANGES)
+    if isinstance(end, str) and end.lower() == "e":
+        end = len(CHANGES)
+    elif isinstance(end, str) and end.lower() == "s":
+        end = 1
     bothInts = isinstance(start, int) and isinstance(end, int)
-    validRange = 0 <= start <= len(CHANGES) and end >= 0 and end <= len(CHANGES)
+    validRange = 1 <= start <= len(CHANGES) and 1 <=  end <= len(CHANGES)
     if (bothInts and validRange):
         if start <= end:
             i = start
@@ -109,8 +116,8 @@ def show_range(start, end):
                 i += 1
         else:  # start > end
             # reverse range
-            i = end
-            while i >= start:
+            i = start
+            while i >= end:
                 show_number(i)
                 i -= 1
     else:
@@ -125,7 +132,7 @@ def show_number(n):
         unpack_changes()
     if n <= len(CHANGES) and n > 0:
         print("\nShowing number : " + str(n) + "\n")
-        print(CHANGES[n-1])
+        print(CHANGES[n - 1])
         print()
     else:
         print("Out of range.")
@@ -169,11 +176,11 @@ def deny_number(n):
 
 
 def deny_all():
-    unpack_changes()    
+    unpack_changes()
     i = 1
     while i <= len(CHANGES):
         deny_number(i)
-        i += 1    
+        i += 1
     print("Done.")
 
 
@@ -182,8 +189,8 @@ def postpone_number(n):
     if len(CHANGES) == 0:
         unpack_changes()
     length = len(CHANGES)
-    if n > 0 and n <= length :
-        CHANGES.pop(n-1)
+    if n > 0 and n <= length:
+        CHANGES.pop(n - 1)
         STORAGE.write_changes_to_memory(CHANGES)
     else:
         print("Out of range.")
@@ -196,7 +203,7 @@ def postpone_all():
         postpone_number(i)
         i += 1
     print("Done.")
-    
+
 
 def unpack_changes():
     # TODO : check that the last time of the update is not "Never"
@@ -400,9 +407,9 @@ def main():
         # postpone
         elif o in ("--" + longARG[7]):
             postpone_flag = True
-            postpone_marker = int(a)    
+            postpone_marker = int(a)
 
-        # postponeall
+            # postponeall
         elif o in ("--" + longOPT[7]):
             postponeall_flag = True
 
@@ -418,13 +425,23 @@ def main():
             show_all()
         elif show_range_flag:
             try:
-                print(show_range_parameter)
                 startend = show_range_parameter.split("-")
-                start = int(startend[0]) - 1
-                end = int(startend[1]) - 1
+                if startend[0].lower() == "s":
+                    start = "s"
+                elif startend[0].lower() == "e":
+                    start = "e"
+                else:
+                    start = int(startend[0])
+                if startend[1].lower() == "e":
+                    end = "e"
+                elif startend[1].lower() == "s":
+                    end = "s"
+                else:
+                    end = int(startend[1])
                 show_range(start, end)
+
             except:
-                print("Invalid Range")
+                print("Invalid Range.")
         else:
             try:
                 show_parameter = int(show_parameter)
@@ -461,7 +478,7 @@ def main():
     # deny all
     if (deny_all_flag):
         deny_all()
-        
+
     # postpone
     if (postpone_flag):
         postpone_number(postpone_marker)
@@ -469,6 +486,7 @@ def main():
     # postponeall
     if (postponeall_flag):
         postpone_all()
+
 
 if __name__ == "__main__":
     main()
