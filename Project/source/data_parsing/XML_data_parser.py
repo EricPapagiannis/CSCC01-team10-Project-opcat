@@ -170,11 +170,10 @@ def buildSystemFromXML(path="../storage/OEC_XML.gz"):
                                 child.tag.lower() != "lastupdate"):
                         planet.addVal(child.tag, child.text)
                         for attribute in child.attrib:
-                            # later when converting back to change xml use the
-                            # child.tag length to slice off the appendded child
-                            # tag to get the original field name back
-                            planet.errors[child.tag + attribute] = child.attrib[
-                                attribute]
+                            if "error" in attribute or "limit" in attribute:
+                                planet.errors[child.tag + attribute] = \
+                                    child.attrib[
+                                        attribute]
 
                 # add the star name that the planet is in
                 planet.nameStar = star.name

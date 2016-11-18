@@ -198,10 +198,18 @@ def modifyPlanet(oec, proposedChange):
     # now modify our data field we want
     child = specificPlanetXML.find(".//" + str(proposedChange.field_modified))
     child.text = str(proposedChange.value_in_origin_catalogue)
-    if proposedChange.origin_upper != "N/A" and proposedChange.upper_attrib_name != "N\A":
-        child.attrib[proposedChange.upper_attrib_name] = proposedChange.origin_upper
-    if proposedChange.origin_lower != "N/A" and proposedChange.lower_attrib_name != "N\A":
-        child.attrib[proposedChange.lower_attrib_name] = proposedChange.origin_lower
+    if proposedChange.origin_upper != "N/A" and proposedChange.upper_attrib_name != "N/A":
+        if proposedChange.OEC_upper != "N/A" and float(proposedChange.OEC_upper) != float(proposedChange.origin_upper):
+            child.attrib[
+                proposedChange.upper_attrib_name] = proposedChange.origin_upper
+        elif proposedChange.OEC_upper == "N/A":
+            child.attrib[proposedChange.upper_attrib_name] = proposedChange.origin_upper
+    if proposedChange.origin_lower != "N/A" and proposedChange.lower_attrib_name != "N/A":
+        if proposedChange.OEC_lower != "N/A" and float(proposedChange.OEC_loewr) != float(proposedChange.origin_lower):
+            child.attrib[
+                proposedChange.lower_attrib_name] = proposedChange.origin_lower
+        elif proposedChange.OEC_lower == "N/A":
+            child.attrib[proposedChange.upper_lower_name] = proposedChange.origin_lower
     oec.write(path)
     modifyDateToCurrent(oec, proposedChange)
 
