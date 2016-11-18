@@ -19,9 +19,34 @@ nasa = {"name": "pl_hostname", "radius": "pl_radj",
         'semimajoraxis': 'pl_orbsmax', 'inclination': 'pl_orbincl'}
 
 euerror = {"perioderrorplus": "orbital_period_error_max",
-           "perioderrorminus": "orbital_period_error_min"}
+           "perioderrorminus": "orbital_period_error_min",
+           "radiuserrorplus": "radius_error_max",
+           "radiuserrorminus": "radius_error_min",
+           "eccentricityupperlimit": "eccentricity_error_max",
+           "eccentricitylowerlimit": "eccentricity_error_min",
+           "masserrorplus": "mass_error_max",
+           "masserrorminus": "mass_error_min",
+           "semimajoraxiserrorplus": "semi_major_axis_error_max",
+           "semimajoraxiserrorminus": "semi_major_axis_error_min",
+           "inclinationerrorplus": "inclination_error_max",
+           "inclinationerrorminus": "inclination_error_min",
+           "transittimeerrorplus": "tzero_vr_error_max",
+           "transittimeerrorminus": "tzero_vr_error_max",
+           "impactparametererrorplus": "impact_parameter_error_max",
+           "impactparametererrorminus": "impact_parameter_error_min"}
+
 nasaerror = {"perioderrorplus": "pl_orbpererr1",
-             "perioderrorminus": "pl_orbpererr2"}
+             "perioderrorminus": "pl_orbpererr2",
+             "radiuserrorplus": "pl_radjerr1",
+             "radiuserrorminus": "pl_radjerr2",
+             "eccentricityupperlimit": "pl_orbeccenerr1",
+             "eccentricitylowerlimit": "pl_orbeccenerr2",
+             "masserrorplus": "pl_bmassjerr1",
+             "masserrorminus": "pl_bmassjerr2",
+             "semimajoraxiserrorplus": "pl_orbsmaxerr1",
+             "semimajoraxiserrorminus": "pl_orbsmaxerr2",
+             "inclinationerrorplus": "pl_orbinclerr1",
+             "inclinationerrorminus": "pl_orbinclerr2"}
 
 eustar = {"name": "name", 'rightascension': 'ra', 'declination': 'dec',
           'distance': 'star_distance', 'name': 'star_name', 'mass': 'star_mass',

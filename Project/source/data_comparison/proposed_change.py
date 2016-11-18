@@ -67,12 +67,21 @@ class Modification(ProposedChange):
         self.field_modified = field_modified
         self.value_in_origin_catalogue = value_in_origin_catalogue
         self.value_in_OEC = value_in_OEC
+
+        limits = self.getUpperLowerAttribs()
+        self.OEC_upper = limits[0]
+        self.OEC_lower = limits[1]
+        self.origin_upper = limits[2]
+        self.origin_lower = limits[3]
+        self.upper_attrib_name = limits[4]
+        self.lower_attrib_name = limits[5]
+
         ProposedChange.__init__(self, origin)
 
     def getUpperLowerAttribs(self):
-        """() -> (str, str, str,  str)
+        """() -> (str, str, str,  str, str)
         Return the upper and lower limit attributes of the numeric field
-        Returned as (OEC_upper, OEC_lower, origin_upper, origin_lower)
+        Returned as (OEC_upper, OEC_lower, origin_upper, origin_lower, fieldName)
         """
         upperAttribs = ["errorplus", "upperlimit"]
         lowerAttribs = ["errorminus", "lowerlimit"]
@@ -80,28 +89,42 @@ class Modification(ProposedChange):
         OEC_lower = 'N/A'
         origin_upper = 'N/A'
         origin_lower = 'N/A'
+        upperAttribName = "N/A"
+        lowerAttribName = "N/A"
         for field in self.OEC_object.errors:
             if self.field_modified in field and self.field_modified != field:
                 if field[len(self.field_modified):] in upperAttribs:
+                    upperAttribName = field[len(self.field_modified):]
                     OEC_upper = self.OEC_object.errors[field]
                 if field[len(self.field_modified):] in lowerAttribs:
+                    lowerAttribName = field[len(self.field_modified):]
                     OEC_lower = self.OEC_object.errors[field]
 
         for field in self.origin_object.errors:
             if self.field_modified in field and self.field_modified != field:
                 if field[len(self.field_modified):] in upperAttribs:
+                    upperAttribName = field[len(self.field_modified):]
                     origin_upper = self.origin_object.errors[field]
                 if field[len(self.field_modified):] in lowerAttribs:
+                    lowerAttribName = field[len(self.field_modified):]
                     origin_lower = self.origin_object.errors[field]
-        return (OEC_upper, OEC_lower, origin_upper, origin_lower)
-
+        if OEC_upper == "":
+            OEC_upper = "N/A"
+        if OEC_lower == "":
+            OEC_lower = "N/A"
+        if origin_upper == "":
+            origin_upper = "N/A"
+        if origin_lower == "":
+            origin_lower = "N/A"
+        if upperAttribName == "":
+            upperAttribName = "N/A"
+        if lowerAttribName == "":
+            lowerAttribName = "N/A"
+        return (
+            OEC_upper, OEC_lower, origin_upper, origin_lower, upperAttribName,
+            lowerAttribName)
 
     def __str__(self):
-        limits = self.getUpperLowerAttribs()
-        OEC_upper = limits[0]
-        OEC_lower = limits[1]
-        origin_upper = limits[2]
-        origin_lower = limits[3]
         s = "Proposed modification:\n\n"
         s += "Name of object modified: "
         s += self.OEC_object.name
@@ -129,16 +152,16 @@ class Modification(ProposedChange):
         s += str(self.value_in_OEC)
         s += "\n"
         s += "OEC Upper Limit: "
-        s +=  str(OEC_upper)
+        s += str(self.OEC_upper)
         s += "\n"
         s += "OEC Lower Limit: "
-        s +=  str(OEC_lower)
+        s += str(self.OEC_lower)
         s += "\n"
         s += "Origin Upper Limit: "
-        s +=  str(origin_upper)
+        s += str(self.origin_upper)
         s += "\n"
         s += "Origin Lower Limit: "
-        s +=  str(origin_lower)
+        s += str(self.origin_lower)
         s += "\n"
         return s
 
@@ -167,12 +190,12 @@ class Modification(ProposedChange):
             sysName = self.OEC_object.name
         return sysName
 
-
     def getOECType(self):
         '''
         () -> str
         '''
         return self.OEC_object.__class__.__name__
+
 
 def merge_changes(first, second):
     '''

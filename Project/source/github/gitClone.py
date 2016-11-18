@@ -177,7 +177,7 @@ def modifyDateToCurrent(oec, proposedChange):
            proposedChange.getSystemName() + ".xml"
     child = oec.find(".//lastupdate")
     child.text = datetime.datetime.strftime(datetime.datetime.now(),
-                                           '%d/%m/%Y')[:-2]
+                                            '%Y/%m/%d/')[2:]
     oec.write(path)
 
 
@@ -198,9 +198,21 @@ def modifyPlanet(oec, proposedChange):
     # now modify our data field we want
     child = specificPlanetXML.find(".//" + str(proposedChange.field_modified))
     child.text = str(proposedChange.value_in_origin_catalogue)
+    if proposedChange.origin_upper != "N/A" and proposedChange.upper_attrib_name != "N/A":
+        print(proposedChange.OEC_upper, proposedChange.origin_upper)
+        if proposedChange.OEC_upper != "N/A" and float(proposedChange.OEC_upper) != float(proposedChange.origin_upper):
+            child.attrib[
+                proposedChange.upper_attrib_name] = proposedChange.origin_upper
+        elif proposedChange.OEC_upper == "N/A":
+            child.attrib[proposedChange.upper_attrib_name] = proposedChange.origin_upper
+    if proposedChange.origin_lower != "N/A" and proposedChange.lower_attrib_name != "N/A":
+        if proposedChange.OEC_lower != "N/A" and float(proposedChange.OEC_lower) != float(proposedChange.origin_lower):
+            child.attrib[
+                proposedChange.lower_attrib_name] = proposedChange.origin_lower
+        elif proposedChange.OEC_lower == "N/A":
+            child.attrib[proposedChange.lower_attrib_name] = proposedChange.origin_lower
     oec.write(path)
     modifyDateToCurrent(oec, proposedChange)
-
 
 # def getSystemName(proposedChange):
 # def commitAndPull():
