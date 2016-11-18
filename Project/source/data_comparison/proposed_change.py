@@ -73,8 +73,8 @@ class Modification(ProposedChange):
         self.OEC_lower = limits[1]
         self.origin_upper = limits[2]
         self.origin_lower = limits[3]
-        self.upper_aatrib_name = limits[4]
-        self.lower_aatrib_name = limits[5]
+        self.upper_attrib_name = limits[4]
+        self.lower_attrib_name = limits[5]
 
         ProposedChange.__init__(self, origin)
 

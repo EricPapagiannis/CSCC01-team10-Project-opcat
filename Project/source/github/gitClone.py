@@ -198,10 +198,10 @@ def modifyPlanet(oec, proposedChange):
     # now modify our data field we want
     child = specificPlanetXML.find(".//" + str(proposedChange.field_modified))
     child.text = str(proposedChange.value_in_origin_catalogue)
-    if proposedChange.origin_upper != "N/A" and proposedChange.aatrib_name != "N\A":
-        child.attrib[proposedChange.upper_aatrib_name] = proposedChange.origin_upper
-    if proposedChange.origin_lower != "N/A" and proposedChange.aatrib_name != "N\A":
-        child.attrib[proposedChange.lower_aatrib_name] = proposedChange.origin_lower
+    if proposedChange.origin_upper != "N/A" and proposedChange.upper_attrib_name != "N\A":
+        child.attrib[proposedChange.upper_attrib_name] = proposedChange.origin_upper
+    if proposedChange.origin_lower != "N/A" and proposedChange.lower_attrib_name != "N\A":
+        child.attrib[proposedChange.lower_attrib_name] = proposedChange.origin_lower
     oec.write(path)
     modifyDateToCurrent(oec, proposedChange)
 
