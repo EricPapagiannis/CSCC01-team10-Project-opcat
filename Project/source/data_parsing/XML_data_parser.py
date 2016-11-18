@@ -128,8 +128,9 @@ def buildSystemFromXML(path="../storage/OEC_XML.gz"):
                             child.tag.lower() != "name"):
                     star.addVal(child.tag, child.text)
                     for attribute in child.attrib:
-                        star.errors[child.tag + attribute] = child.attrib[
-                            attribute]
+                        if "error" in attribute or "limit" in attribute:
+                            star.errors[child.tag + attribute] = child.attrib[
+                                attribute]
 
             # build a list of planets that are in the star
             planets = []
