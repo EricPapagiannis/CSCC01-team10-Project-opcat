@@ -11,10 +11,9 @@ import github.gitClone as GIT
 import storage_manager.storage_manager as STORAGE
 import datetime
 
-
 # usage string
 usage_str = "usage: driver [--help] [--update] [--output string] [--planet " \
-    + "string] [--showall | --shownumber int]\n"
+            + "string] [--showall | --shownumber int]\n"
 
 # link to NASA catalogue
 NASA_link = "http://exoplanetarchive.ipac.caltech.edu/cgi-bin/nsted\
@@ -33,12 +32,14 @@ XML_path = "storage/OEC_XML.gz"
 # list of all proposed changes (accumulated on update())
 CHANGES = []
 
+
 def status():
     '''() -> NoneType
     Prints the current status of the updates, including the following
     relevant information: time of last update, current auto-update settings and
     the number of changes pending to be reviewed.
     '''
+
     unpack_changes()
     last_update = STORAGE.config_get("last_update")
     num_changes = len(CHANGES)
@@ -47,19 +48,22 @@ def status():
     else:
         print("\nLast Update: " + str(last_update))
         print("Number of proposed changes stored : " + str(num_changes) + "\n")
-        
+
 
 def usage():
     '''() -> NoneType
-    Example called method
+    Method for printing the usage string to the screen
     Returns NoneType
     '''
+
     print(usage_str)
 
 
 def print_help():
     '''() -> NoneType
+    Method for printing program manual to the screen
     '''
+
     print(STORAGE.manual())
 
 
@@ -68,6 +72,7 @@ def clean_files():
     Removes text files from previous update.
     Returns None
     '''
+
     for name in [nasa_file, EU_file]:
         try:
             os.remove(name)
@@ -77,8 +82,9 @@ def clean_files():
 
 def show_all():
     '''() -> NoneType
-    Skeleton function
+    Method for showing all proposed changes
     '''
+
     unpack_changes()
     # sort the list of proposed changes    
     i = 1
@@ -92,15 +98,25 @@ def show_all():
     print("End.\n")
 
 
-
 def show_range(start, end):
-    '''() -> NoneType
-    Skeleton function
+    '''(int, int) -> NoneType
+    or (str, str) -> NoneType, where str in [s,e]
+    Method for showing a range of proposed changes between start and end
+    Returns NoneType
     '''
+
     unpack_changes()
     # sort the list of proposed changes
+    if isinstance(start, str) and start.lower() == "s":
+        start = 1
+    elif isinstance(start, str) and start.lower() == "e":
+        start = len(CHANGES)
+    if isinstance(end, str) and end.lower() == "e":
+        end = len(CHANGES)
+    elif isinstance(end, str) and end.lower() == "s":
+        end = 1
     bothInts = isinstance(start, int) and isinstance(end, int)
-    validRange = 0 <= start <= len(CHANGES) and end >= 0 and end <= len(CHANGES)
+    validRange = 1 <= start <= len(CHANGES) and 1 <=  end <= len(CHANGES)
     if (bothInts and validRange):
         if start <= end:
             i = start
@@ -109,8 +125,8 @@ def show_range(start, end):
                 i += 1
         else:  # start > end
             # reverse range
-            i = end
-            while i >= start:
+            i = start
+            while i >= end:
                 show_number(i)
                 i -= 1
     else:
@@ -119,13 +135,14 @@ def show_range(start, end):
 
 def show_number(n):
     '''(int) -> NoneType
-    Skeleton function
+    Method for showing the proposed change designated by 'n'
     '''
+
     if len(CHANGES) == 0:
         unpack_changes()
     if n <= len(CHANGES) and n > 0:
         print("\nShowing number : " + str(n) + "\n")
-        print(CHANGES[n-1])
+        print(CHANGES[n - 1])
         print()
     else:
         print("Out of range.")
@@ -138,6 +155,7 @@ def accept(n, strategy):
     strategy argument accepts "1" or "2"
     Returns NoneType
     '''
+
     if len(CHANGES) == 0:
         unpack_changes()
     if n < len(CHANGES) and n >= 0:
@@ -150,66 +168,75 @@ def accept(n, strategy):
     print("\nAccepted: \n" + str(n))
 
 
-def accept_all():
+def accept_all(strategy):
     '''() -> NoneType
-    Skeleton function
+    Function for accepting all changes/additions
+    strategy argument accepts "1" or "2"
     '''
-    GIT.initGit()
+
     unpack_changes()
     i = 0
-    while i < len(CHANGES):
-        accept(i)
-        i += 1
-
-
-def accept_all2():
-    '''() -> NoneType
-    Skeleton function
-    '''
-    GIT.initGit2()
-    unpack_changes()
-    i = 0
-    # while i < len(CHANGES):
+    # for demo change back after!!!!!!!!
     while i < 25:
-        accept(i, 2)
+    #while i < len(CHANGES):
+        accept(i, strategy)
         i += 1
-    GIT.finalizeGit2()
 
 
 def deny_number(n):
-    # TODO
+    '''(int) -> NoneType
+    Method for declining a specific proposed changed, the one
+    designated by 'n'
+    Returns NoneType
+    '''
+
     print("denied ", n)
 
 
 def deny_all():
-    unpack_changes()    
+    '''() -> NoneType
+    Method for declining all proposed changes.
+    Returns NoneType
+    '''
+
+    unpack_changes()
     i = 1
     while i <= len(CHANGES):
         deny_number(i)
-        i += 1    
+        i += 1
     print("Done.")
 
 
 def postpone_number(n):
+    '''(int) -> NoneType
+    Method for postponing a specific proposed changed, the one
+    designated by 'n'
+    Returns NoneType
+    '''
+
     global CHANGES
     if len(CHANGES) == 0:
         unpack_changes()
     length = len(CHANGES)
-    if n > 0 and n <= length :
-        CHANGES.pop(n-1)
+    if n > 0 and n <= length:
+        CHANGES.pop(n - 1)
         STORAGE.write_changes_to_memory(CHANGES)
     else:
         print("Out of range.")
 
 
 def postpone_all():
+    '''() -> NoneType
+    Method for postponing all proposed changes.
+    Returns NoneType
+    '''
+
     unpack_changes()
     i = 1
     while i <= len(CHANGES):
         postpone_number(i)
         i += 1
     print("Done.")
-    
 
 
 def unpack_changes():
@@ -220,9 +247,11 @@ def unpack_changes():
 
 def update():
     '''() -> NoneType
-    Example called method
+    Method for updating system from remote databases and generating
+    proposed changes. Network connection required.
     Returns NoneType
     '''
+
     # open exoplanet catalogue
     global CHANGES
     CHANGES = []
@@ -289,25 +318,47 @@ def update():
     print("Update complete.\n")
 
 
+def clearblacklist():
+    '''() -> NoneType
+    Method for clearing declined blacklist of proposed changes
+    '''
+
+    # TODO
+    pass
+
+
+def showlastest(showlastest_marker):
+    '''(int) -> NoneType
+    Method for showest the lastest 'n' proposed changes
+    "showlastest_marker" is passed in as int
+    '''
+
+    print (showlastest_marker)
+    # TODO
+    pass
+
+
 def main():
     '''() -> NoneType
     Main driver method
     Accepts command line arguments
     Returns NoneType
     '''
+
     # flags which do not expect parameter (--help for example)
     # short opts are single characters, add onto shortOPT to include
     shortOPT = "huacel"
     # log opts are phrases, add onto longOPT to include
     longOPT = ["help", "update", "showall", "acceptall", "acceptall2",
-               "denyall", "status"]
+               "denyall", "status", "postponeall", "clearblacklist",
+               "stopautoupdate"]
 
     # flags that do expect a parameter (--output file.txt for example)
     # similar to shortOPT
     shortARG = "opsntdr"
     # similar to longOTP
     longARG = ["output", "planet", "shownumber", "accept", "accept2", "deny",
-               "showrange"]
+               "showrange", "postpone", "setautoupdate", "showlatest"]
 
     # arg, opt pre-processor, do not edit
     short = ':'.join([shortARG[i:i + 1] for i in range(0, len(shortARG), 1)]) \
@@ -338,6 +389,15 @@ def main():
     deny_flag = None
     deny_all_flag = None
     deny_marker = None
+    postpone_flag = None
+    postpone_marker = None
+    postponeall_flag = None
+    clearblacklist_flag = False
+    stopautoupdate_flag = False
+    setautoupdate_flag = False
+    autoupdate_interval = None
+    showlastest_flag = False
+    showlastest_marker = None
 
     for o, a in opts:
 
@@ -389,28 +449,51 @@ def main():
         elif o in ("-" + shortOPT[4], "--" + longOPT[4]):
             accept_all2_flag = True
 
-            # deny
+        # deny
         elif o in ("-" + shortARG[5], "--" + longARG[5]):
             deny_flag = True
             deny_marker = int(a)
 
-            # denyall
+        # denyall
         elif o in ("-" + shortOPT[5], "--" + longOPT[5]):
             deny_all_flag = True
-            # status
+
+        # status
         elif o in ("--" + longOPT[6]):
             status()
 
-            # showrange
+        # showrange
         elif o in ("-" + shortARG[6], "--" + longARG[6]):
             show_flag = True
             show_range_flag = True
             show_range_parameter = a
-        # showrange
-        elif o in ("-" + shortARG[5], "--" + longARG[5]):
-            show_flag = True
-            show_range_flag = True
-            show_range_parameter = a
+
+        # postpone
+        elif o in ("--" + longARG[7]):
+            postpone_flag = True
+            postpone_marker = int(a)
+
+        # postponeall
+        elif o in ("--" + longOPT[7]):
+            postponeall_flag = True
+
+        # clearblacklist
+        elif o in ("--" + longOPT[8]):
+            clearblacklist_flag = True
+
+        # stopautoupdate
+        elif o in ("--" + longOPT[9]):
+            stopautoupdate_flag = True
+
+        # setautoupdate
+        elif o in ("--" + longARG[8]):
+            setautoupdate_flag = True
+            autoupdate_interval = int(a)
+
+        # showlatest
+        elif o in ("--" + longARG[9]):
+            showlastest_flag = True
+            showlastest_marker = int(a)
 
         else:
             usage()
@@ -422,22 +505,31 @@ def main():
             return 1
         elif (all_flag):
             show_all()
+        elif show_range_flag:
+            try:
+                startend = show_range_parameter.split("-")
+                if startend[0].lower() == "s":
+                    start = "s"
+                elif startend[0].lower() == "e":
+                    start = "e"
+                else:
+                    start = int(startend[0])
+                if startend[1].lower() == "e":
+                    end = "e"
+                elif startend[1].lower() == "s":
+                    end = "s"
+                else:
+                    end = int(startend[1])
+                show_range(start, end)
+
+            except:
+                print("Invalid Range.")
         else:
-            if show_range_flag:
-                try:
-                    print(show_range_parameter)
-                    startend = show_range_parameter.split("-")
-                    start = int(startend[0]) - 1
-                    end = int(startend[1]) - 1
-                    show_range(start, end)
-                except:
-                    print("Invalid Range")
-            else:
-                try:
-                    show_parameter = int(show_parameter)
-                    show_number(show_parameter)
-                except ValueError:
-                    print("Invalid Parameter to shownumber.")
+            try:
+                show_parameter = int(show_parameter)
+                show_number(show_parameter)
+            except ValueError:
+                print("Invalid Parameter to shownumber.")
 
     # update
     if (update_flag):
@@ -445,20 +537,26 @@ def main():
 
     # accept
     if (accept_flag):
+        GIT.initGit()
         accept(accept_marker, 1)
 
     # accept all
     if (accept_all_flag):
-        accept_all()
+        GIT.initGit()
+        accept_all(1)
         print("Accepted all.")
 
     # accept
     if (accept2_flag):
+        GIT.initGit2()
         accept(accept2_marker, 2)
+        GIT.finalizeGit2()
 
     # accept all
     if (accept_all2_flag):
-        accept_all2()
+        GIT.initGit2()
+        accept_all(2)
+        GIT.finalizeGit2()
         print("Accepted all2")
 
     # deny
@@ -468,6 +566,32 @@ def main():
     # deny all
     if (deny_all_flag):
         deny_all()
+
+    # postpone
+    if (postpone_flag):
+        postpone_number(postpone_marker)
+
+    # postponeall
+    if (postponeall_flag):
+        postpone_all()
+
+    # clearblacklist
+    if (clearblacklist_flag):
+        clearblacklist()
+
+    # stopautoupdate
+    if (stopautoupdate_flag):
+        # TODO
+        pass
+
+    # setautoupdate
+    if (setautoupdate_flag):
+        print(autoupdate_interval)
+        # TODO
+
+    # showlatest
+    if (showlastest_flag):
+        showlastest(showlastest_marker)
 
 
 if __name__ == "__main__":
