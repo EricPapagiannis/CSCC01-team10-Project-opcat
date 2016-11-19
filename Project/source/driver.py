@@ -39,6 +39,7 @@ def status():
     relevant information: time of last update, current auto-update settings and
     the number of changes pending to be reviewed.
     '''
+
     unpack_changes()
     last_update = STORAGE.config_get("last_update")
     num_changes = len(CHANGES)
@@ -51,15 +52,18 @@ def status():
 
 def usage():
     '''() -> NoneType
-    Example called method
+    Method for printing the usage string to the screen
     Returns NoneType
     '''
+
     print(usage_str)
 
 
 def print_help():
     '''() -> NoneType
+    Method for printing program manual to the screen
     '''
+
     print(STORAGE.manual())
 
 
@@ -68,6 +72,7 @@ def clean_files():
     Removes text files from previous update.
     Returns None
     '''
+
     for name in [nasa_file, EU_file]:
         try:
             os.remove(name)
@@ -77,8 +82,9 @@ def clean_files():
 
 def show_all():
     '''() -> NoneType
-    Skeleton function
+    Method for showing all proposed changes
     '''
+
     unpack_changes()
     # sort the list of proposed changes    
     i = 1
@@ -93,9 +99,12 @@ def show_all():
 
 
 def show_range(start, end):
-    '''() -> NoneType
-    Skeleton function
+    '''(int, int) -> NoneType
+    or (str, str) -> NoneType, where str in [s,e]
+    Method for showing a range of proposed changes between start and end
+    Returns NoneType
     '''
+
     unpack_changes()
     # sort the list of proposed changes
     if isinstance(start, str) and start.lower() == "s":
@@ -126,8 +135,9 @@ def show_range(start, end):
 
 def show_number(n):
     '''(int) -> NoneType
-    Skeleton function
+    Method for showing the proposed change designated by 'n'
     '''
+
     if len(CHANGES) == 0:
         unpack_changes()
     if n <= len(CHANGES) and n > 0:
@@ -145,6 +155,7 @@ def accept(n, strategy):
     strategy argument accepts "1" or "2"
     Returns NoneType
     '''
+
     if len(CHANGES) == 0:
         unpack_changes()
     if n < len(CHANGES) and n >= 0:
@@ -162,6 +173,7 @@ def accept_all(strategy):
     Function for accepting all changes/additions
     strategy argument accepts "1" or "2"
     '''
+
     GIT.initGit()
     unpack_changes()
     i = 0
@@ -171,11 +183,21 @@ def accept_all(strategy):
 
 
 def deny_number(n):
-    # TODO
+    '''(int) -> NoneType
+    Method for declining a specific proposed changed, the one
+    designated by 'n'
+    Returns NoneType
+    '''
+
     print("denied ", n)
 
 
 def deny_all():
+    '''() -> NoneType
+    Method for declining all proposed changes.
+    Returns NoneType
+    '''
+
     unpack_changes()
     i = 1
     while i <= len(CHANGES):
@@ -185,6 +207,12 @@ def deny_all():
 
 
 def postpone_number(n):
+    '''(int) -> NoneType
+    Method for postponing a specific proposed changed, the one
+    designated by 'n'
+    Returns NoneType
+    '''
+
     global CHANGES
     if len(CHANGES) == 0:
         unpack_changes()
@@ -197,6 +225,11 @@ def postpone_number(n):
 
 
 def postpone_all():
+    '''() -> NoneType
+    Method for postponing all proposed changes.
+    Returns NoneType
+    '''
+
     unpack_changes()
     i = 1
     while i <= len(CHANGES):
@@ -213,9 +246,11 @@ def unpack_changes():
 
 def update():
     '''() -> NoneType
-    Example called method
+    Method for updating system from remote databases and generating
+    proposed changes. Network connection required.
     Returns NoneType
     '''
+
     # open exoplanet catalogue
     global CHANGES
     CHANGES = []
@@ -286,6 +321,7 @@ def clearblacklist():
     '''() -> NoneType
     Method for clearing declined blacklist of proposed changes
     '''
+
     # TODO
     pass
 
@@ -295,6 +331,7 @@ def showlastest(showlastest_marker):
     Method for showest the lastest 'n' proposed changes
     "showlastest_marker" is passed in as int
     '''
+
     print (showlastest_marker)
     # TODO
     pass
@@ -306,6 +343,7 @@ def main():
     Accepts command line arguments
     Returns NoneType
     '''
+
     # flags which do not expect parameter (--help for example)
     # short opts are single characters, add onto shortOPT to include
     shortOPT = "huacel"
