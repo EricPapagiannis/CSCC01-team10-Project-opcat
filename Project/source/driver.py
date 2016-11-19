@@ -293,14 +293,15 @@ def main():
     shortOPT = "huacel"
     # log opts are phrases, add onto longOPT to include
     longOPT = ["help", "update", "showall", "acceptall", "acceptall2",
-               "denyall", "status", "postponeall"]
+               "denyall", "status", "postponeall", "clearblacklist",
+               "stopautoupdate"]
 
     # flags that do expect a parameter (--output file.txt for example)
     # similar to shortOPT
     shortARG = "opsntdr"
     # similar to longOTP
     longARG = ["output", "planet", "shownumber", "accept", "accept2", "deny",
-               "showrange", "postpone"]
+               "showrange", "postpone", "setautoupdate", "showlatest"]
 
     # arg, opt pre-processor, do not edit
     short = ':'.join([shortARG[i:i + 1] for i in range(0, len(shortARG), 1)]) \
@@ -334,6 +335,12 @@ def main():
     postpone_flag = None
     postpone_marker = None
     postponeall_flag = None
+    clearblacklist_flag = False
+    stopautoupdate_flag = False
+    setautoupdate_flag = False
+    autoupdate_interval = None
+    showlastest_flag = False
+    showlastest_marker = None
 
     for o, a in opts:
 
@@ -409,9 +416,27 @@ def main():
             postpone_flag = True
             postpone_marker = int(a)
 
-            # postponeall
+        # postponeall
         elif o in ("--" + longOPT[7]):
             postponeall_flag = True
+
+        # clearblacklist
+        elif o in ("--" + longOPT[8]):
+            clearblacklist_flag = True
+
+        # stopautoupdate
+        elif o in ("--" + longOPT[9]):
+            stopautoupdate_flag = True
+
+        # setautoupdate
+        elif o in ("--" + longARG[8]):
+            setautoupdate_flag = True
+            autoupdate_interval = int(a)
+
+        # showlatest
+        elif o in ("--" + longARG[9]):
+            showlastest_flag = True
+            showlastest_marker = int(a)
 
         else:
             usage()
