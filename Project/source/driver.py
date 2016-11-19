@@ -174,11 +174,12 @@ def accept_all(strategy):
     strategy argument accepts "1" or "2"
     '''
 
-    GIT.initGit()
     unpack_changes()
     i = 0
-    while i < len(CHANGES):
-        accept(i, 1)
+    # for demo change back after!!!!!!!!
+    while i < 25:
+    #while i < len(CHANGES):
+        accept(i, strategy)
         i += 1
 
 
@@ -536,20 +537,26 @@ def main():
 
     # accept
     if (accept_flag):
+        GIT.initGit()
         accept(accept_marker, 1)
 
     # accept all
     if (accept_all_flag):
+        GIT.initGit()
         accept_all(1)
         print("Accepted all.")
 
     # accept
     if (accept2_flag):
+        GIT.initGit2()
         accept(accept2_marker, 2)
+        GIT.finalizeGit2()
 
     # accept all
     if (accept_all2_flag):
+        GIT.initGit2()
         accept_all(2)
+        GIT.finalizeGit2()
         print("Accepted all2")
 
     # deny
