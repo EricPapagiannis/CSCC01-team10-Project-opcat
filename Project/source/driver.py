@@ -282,6 +282,24 @@ def update():
     print("Update complete.\n")
 
 
+def clearblacklist():
+    '''() -> NoneType
+    Method for clearing declined blacklist of proposed changes
+    '''
+    # TODO
+    pass
+
+
+def showlastest(showlastest_marker):
+    '''(int) -> NoneType
+    Method for showest the lastest 'n' proposed changes
+    "showlastest_marker" is passed in as int
+    '''
+    print (showlastest_marker)
+    # TODO
+    pass
+
+
 def main():
     '''() -> NoneType
     Main driver method
@@ -511,6 +529,24 @@ def main():
     # postponeall
     if (postponeall_flag):
         postpone_all()
+
+    # clearblacklist
+    if (clearblacklist_flag):
+        clearblacklist()
+
+    # stopautoupdate
+    if (stopautoupdate_flag):
+        # TODO
+        pass
+
+    # setautoupdate
+    if (setautoupdate_flag):
+        print(autoupdate_interval)
+        # TODO
+
+    # showlatest
+    if (showlastest_flag):
+        showlastest(showlastest_marker)
 
 
 if __name__ == "__main__":
