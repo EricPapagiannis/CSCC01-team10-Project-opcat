@@ -39,6 +39,7 @@ def status():
     relevant information: time of last update, current auto-update settings and
     the number of changes pending to be reviewed.
     '''
+
     unpack_changes()
     last_update = STORAGE.config_get("last_update")
     num_changes = len(CHANGES)
@@ -51,15 +52,18 @@ def status():
 
 def usage():
     '''() -> NoneType
-    Example called method
+    Method for printing the usage string to the screen
     Returns NoneType
     '''
+
     print(usage_str)
 
 
 def print_help():
     '''() -> NoneType
+    Method for printing program manual to the screen
     '''
+
     print(STORAGE.manual())
 
 
@@ -68,6 +72,7 @@ def clean_files():
     Removes text files from previous update.
     Returns None
     '''
+
     for name in [nasa_file, EU_file]:
         try:
             os.remove(name)
@@ -77,8 +82,9 @@ def clean_files():
 
 def show_all():
     '''() -> NoneType
-    Skeleton function
+    Method for showing all proposed changes
     '''
+
     unpack_changes()
     # sort the list of proposed changes    
     i = 1
@@ -93,9 +99,12 @@ def show_all():
 
 
 def show_range(start, end):
-    '''() -> NoneType
-    Skeleton function
+    '''(int, int) -> NoneType
+    or (str, str) -> NoneType, where str in [s,e]
+    Method for showing a range of proposed changes between start and end
+    Returns NoneType
     '''
+
     unpack_changes()
     # sort the list of proposed changes
     if isinstance(start, str) and start.lower() == "s":
@@ -126,8 +135,9 @@ def show_range(start, end):
 
 def show_number(n):
     '''(int) -> NoneType
-    Skeleton function
+    Method for showing the proposed change designated by 'n'
     '''
+
     if len(CHANGES) == 0:
         unpack_changes()
     if n <= len(CHANGES) and n > 0:
@@ -145,6 +155,7 @@ def accept(n, strategy):
     strategy argument accepts "1" or "2"
     Returns NoneType
     '''
+
     if len(CHANGES) == 0:
         unpack_changes()
     if n < len(CHANGES) and n >= 0:
@@ -162,6 +173,7 @@ def accept_all(strategy):
     Function for accepting all changes/additions
     strategy argument accepts "1" or "2"
     '''
+
     unpack_changes()
     i = 0
     # for demo change back after!!!!!!!!
@@ -172,11 +184,21 @@ def accept_all(strategy):
 
 
 def deny_number(n):
-    # TODO
+    '''(int) -> NoneType
+    Method for declining a specific proposed changed, the one
+    designated by 'n'
+    Returns NoneType
+    '''
+
     print("denied ", n)
 
 
 def deny_all():
+    '''() -> NoneType
+    Method for declining all proposed changes.
+    Returns NoneType
+    '''
+
     unpack_changes()
     i = 1
     while i <= len(CHANGES):
@@ -186,6 +208,12 @@ def deny_all():
 
 
 def postpone_number(n):
+    '''(int) -> NoneType
+    Method for postponing a specific proposed changed, the one
+    designated by 'n'
+    Returns NoneType
+    '''
+
     global CHANGES
     if len(CHANGES) == 0:
         unpack_changes()
@@ -198,6 +226,11 @@ def postpone_number(n):
 
 
 def postpone_all():
+    '''() -> NoneType
+    Method for postponing all proposed changes.
+    Returns NoneType
+    '''
+
     unpack_changes()
     i = 1
     while i <= len(CHANGES):
@@ -214,9 +247,11 @@ def unpack_changes():
 
 def update():
     '''() -> NoneType
-    Example called method
+    Method for updating system from remote databases and generating
+    proposed changes. Network connection required.
     Returns NoneType
     '''
+
     # open exoplanet catalogue
     global CHANGES
     CHANGES = []
@@ -283,25 +318,47 @@ def update():
     print("Update complete.\n")
 
 
+def clearblacklist():
+    '''() -> NoneType
+    Method for clearing declined blacklist of proposed changes
+    '''
+
+    # TODO
+    pass
+
+
+def showlastest(showlastest_marker):
+    '''(int) -> NoneType
+    Method for showest the lastest 'n' proposed changes
+    "showlastest_marker" is passed in as int
+    '''
+
+    print (showlastest_marker)
+    # TODO
+    pass
+
+
 def main():
     '''() -> NoneType
     Main driver method
     Accepts command line arguments
     Returns NoneType
     '''
+
     # flags which do not expect parameter (--help for example)
     # short opts are single characters, add onto shortOPT to include
     shortOPT = "huacel"
     # log opts are phrases, add onto longOPT to include
     longOPT = ["help", "update", "showall", "acceptall", "acceptall2",
-               "denyall", "status", "postponeall"]
+               "denyall", "status", "postponeall", "clearblacklist",
+               "stopautoupdate"]
 
     # flags that do expect a parameter (--output file.txt for example)
     # similar to shortOPT
     shortARG = "opsntdr"
     # similar to longOTP
     longARG = ["output", "planet", "shownumber", "accept", "accept2", "deny",
-               "showrange", "postpone"]
+               "showrange", "postpone", "setautoupdate", "showlatest"]
 
     # arg, opt pre-processor, do not edit
     short = ':'.join([shortARG[i:i + 1] for i in range(0, len(shortARG), 1)]) \
@@ -335,6 +392,12 @@ def main():
     postpone_flag = None
     postpone_marker = None
     postponeall_flag = None
+    clearblacklist_flag = False
+    stopautoupdate_flag = False
+    setautoupdate_flag = False
+    autoupdate_interval = None
+    showlastest_flag = False
+    showlastest_marker = None
 
     for o, a in opts:
 
@@ -410,9 +473,27 @@ def main():
             postpone_flag = True
             postpone_marker = int(a)
 
-            # postponeall
+        # postponeall
         elif o in ("--" + longOPT[7]):
             postponeall_flag = True
+
+        # clearblacklist
+        elif o in ("--" + longOPT[8]):
+            clearblacklist_flag = True
+
+        # stopautoupdate
+        elif o in ("--" + longOPT[9]):
+            stopautoupdate_flag = True
+
+        # setautoupdate
+        elif o in ("--" + longARG[8]):
+            setautoupdate_flag = True
+            autoupdate_interval = int(a)
+
+        # showlatest
+        elif o in ("--" + longARG[9]):
+            showlastest_flag = True
+            showlastest_marker = int(a)
 
         else:
             usage()
@@ -493,6 +574,24 @@ def main():
     # postponeall
     if (postponeall_flag):
         postpone_all()
+
+    # clearblacklist
+    if (clearblacklist_flag):
+        clearblacklist()
+
+    # stopautoupdate
+    if (stopautoupdate_flag):
+        # TODO
+        pass
+
+    # setautoupdate
+    if (setautoupdate_flag):
+        print(autoupdate_interval)
+        # TODO
+
+    # showlatest
+    if (showlastest_flag):
+        showlastest(showlastest_marker)
 
 
 if __name__ == "__main__":
