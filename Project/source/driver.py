@@ -10,6 +10,7 @@ import data_comparison.proposed_change as PC
 import github.gitClone as GIT
 import storage_manager.storage_manager as STORAGE
 import datetime
+import subprocess
 
 # usage string
 usage_str = "usage: driver [--help] [--update] [--output string] [--planet " \
@@ -338,6 +339,16 @@ def showlastest(showlastest_marker):
     pass
 
 
+def setautoupdate(autoupdate_interval):
+    '''(int) -> NoneType
+    Invokes the autoupdate_daemon to run in a seperate process
+    autoupdate_daemon will continue to run after program exits
+    Returns NoneType
+    '''
+    commandstr = "python autoupdate_daemon.py -i " + str(autoupdate_interval)
+    subprocess.Popen(commandstr, shell=True)
+
+
 def main():
     '''() -> NoneType
     Main driver method
@@ -586,8 +597,7 @@ def main():
 
     # setautoupdate
     if (setautoupdate_flag):
-        print(autoupdate_interval)
-        # TODO
+        setautoupdate(autoupdate_interval)
 
     # showlatest
     if (showlastest_flag):
