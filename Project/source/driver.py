@@ -190,8 +190,19 @@ def deny_number(n):
     designated by 'n'
     Returns NoneType
     '''
-
-    print("denied ", n)
+    unpack_changes()
+    if n >= 0 and n < len(CHANGES) :
+        # if given number is within the range, add the n-th change to black 
+        # list and pop it from thelist of changes
+        black_list = STORAGE.config_get("black_list")
+        black_list.append(CHANGES.pop(n))
+        # update the blacklist
+        STORAGE.config_set("black_list", black_list)
+        # update the changes list in memory
+        STORAGE.write_changes_to_memory(CHANGES)
+        print("Done.")
+    else:
+        print("Out of range.")
 
 
 def deny_all():
@@ -199,12 +210,11 @@ def deny_all():
     Method for declining all proposed changes.
     Returns NoneType
     '''
-
     unpack_changes()
-    i = 1
-    while i <= len(CHANGES):
-        deny_number(i)
-        i += 1
+    # add all currently pending changes to the blacklist
+    STORAGE.config_set("black_list", CHANGES)
+    # clear the list of currently pending changes
+    STORAGE.write_changes_to_memory([])
     print("Done.")
 
 
@@ -231,17 +241,17 @@ def postpone_all():
     Method for postponing all proposed changes.
     Returns NoneType
     '''
-
-    unpack_changes()
-    i = 1
-    while i <= len(CHANGES):
-        postpone_number(i)
-        i += 1
+    STORAGE.write_changes_to_memory([])
     print("Done.")
 
 
 def unpack_changes():
-    # TODO : check that the last time of the update is not "Never"
+    '''
+    () -> None
+    
+    Retrieves the list of ProposedChange objects from memory into global 
+    variable "CHANGES".
+    '''
     global CHANGES
     CHANGES = STORAGE.read_changes_from_memory()
 
@@ -252,7 +262,8 @@ def update():
     proposed changes. Network connection required.
     Returns NoneType
     '''
-
+    # postpone all currently pending changes
+    STORAGE.write_changes_to_memory([])    
     # open exoplanet catalogue
     global CHANGES
     CHANGES = []
@@ -321,11 +332,10 @@ def update():
 
 def clearblacklist():
     '''() -> NoneType
+    
     Method for clearing declined blacklist of proposed changes
     '''
-
-    # TODO
-    pass
+    STORAGE.config_set("black_list", [])
 
 
 def showlastest(showlastest_marker):
