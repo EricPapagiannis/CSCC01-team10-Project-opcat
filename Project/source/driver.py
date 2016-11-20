@@ -355,7 +355,7 @@ def stopautoupdate():
     Kills the autoupdate_daemon
     '''
 
-    subprocess.call("pkill -f autoupdate_daemon.py")
+    subprocess.call("pkill -f autoupdate_daemon.py", shell=True)
 
 
 def main():
