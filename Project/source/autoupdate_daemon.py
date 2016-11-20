@@ -36,7 +36,7 @@ def main():
 
     while(1):
         # daemon continues to run until it is killed by driver
-        time.sleep(sleeptime)
+        time.sleep(sleeptime_hours)
         subprocess.Popen(commandstr, shell=True)
 
 if __name__ == "__main__":
