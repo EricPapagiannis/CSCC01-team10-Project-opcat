@@ -23,3 +23,5 @@ class Star(PlanetaryObject):
         self.otherNamesStar = []
         self.otherNamesSystem = []
         self.errors = dict()
+        self.lastupdate = ""
+
