@@ -345,7 +345,7 @@ def setautoupdate(autoupdate_interval):
     autoupdate_daemon will continue to run after program exits
     Returns NoneType
     '''
-    commandstr = "python autoupdate_daemon.py -i " + str(autoupdate_interval)
+    commandstr = "python3 autoupdate_daemon.py -i " + str(autoupdate_interval)
     subprocess.Popen(commandstr, shell=True)
 
 
