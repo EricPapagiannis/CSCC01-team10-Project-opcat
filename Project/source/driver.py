@@ -190,8 +190,19 @@ def deny_number(n):
     designated by 'n'
     Returns NoneType
     '''
-    
-    print("denied ", n)
+    unpack_changes()
+    if n >= 0 and n < len(CHANGES) :
+        # if given number is within the range, add the n-th change to black 
+        # list and pop it from thelist of changes
+        black_list = STORAGE.config_get("black_list")
+        black_list.append(CHANGES.pop(n))
+        # update the blacklist
+        STORAGE.config_set("black_list", black_list)
+        # update the changes list in memory
+        STORAGE.write_changes_to_memory(CHANGES)
+        print("Done.")
+    else:
+        print("Out of range.")
 
 
 def deny_all():
