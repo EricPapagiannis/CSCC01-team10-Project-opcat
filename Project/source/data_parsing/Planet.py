@@ -16,3 +16,4 @@ class Planet(PlanetaryObject):
         self.starObjectNamesToStar = dict()
         self.otherNamesPlanet = []
         self.errors = dict()
+        self.lastupdate = ""
