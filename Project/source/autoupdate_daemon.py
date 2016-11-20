@@ -36,8 +36,9 @@ def main():
 
     while(1):
         # daemon continues to run until it is killed by driver
-        time.sleep(sleeptime_hours)
+        print("Commencing update...")
         subprocess.Popen(commandstr, shell=True)
+        time.sleep(sleeptime_hours)
 
 if __name__ == "__main__":
     main()
