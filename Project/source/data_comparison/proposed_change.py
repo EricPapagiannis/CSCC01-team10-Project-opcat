@@ -1,3 +1,6 @@
+from datetime import datetime as dt
+
+
 class ProposedChange:
     '''
     Abstract class. Not used directly. Parent Class of Addition and 
@@ -320,6 +323,21 @@ def merge_sort_changes(CHANGES):
         return merge_changes(first, second)
     else:
         return CHANGES
+
+
+def bubble_sort_changes_by_lastupdate(CHANGES):
+    """ ([ProposedChanged]) -> ([ProposedChange], [int])
+    """
+    newChanges = CHANGES[:]
+    indeces = list(range(len(newChanges)))
+    for i in range(len(newChanges)):
+        for k in range(len(newChanges) - 1, i, -1):
+            if (dt.strptime(newChanges[k].lastupdate, "%y/%m/%d") > dt.strptime(
+                    newChanges[k - 1].lastupdate, "%y/%m/%d")):
+                (newChanges[k], newChanges[k - 1]) = (
+                newChanges[k - 1], newChanges[k])
+                (indeces[k], indeces[k - 1]) = (indeces[k - 1], indeces[k])
+    return (newChanges, indeces)
 
 
 def sort_changes(changes_list):
