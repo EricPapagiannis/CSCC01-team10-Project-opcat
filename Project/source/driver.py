@@ -190,7 +190,7 @@ def deny_number(n):
     designated by 'n'
     Returns NoneType
     '''
-    # TODO
+    
     print("denied ", n)
 
 
@@ -199,12 +199,11 @@ def deny_all():
     Method for declining all proposed changes.
     Returns NoneType
     '''
-    
     unpack_changes()
-    i = 1
-    while i <= len(CHANGES):
-        deny_number(i)
-        i += 1
+    # add all currently pending changes to the blacklist
+    STORAGE.config_set("black_list", CHANGES)
+    # clear the list of currently pending changes
+    STORAGE.write_changes_to_memory([])
     print("Done.")
 
 
@@ -322,11 +321,10 @@ def update():
 
 def clearblacklist():
     '''() -> NoneType
+    
     Method for clearing declined blacklist of proposed changes
     '''
-
-    # TODO
-    pass
+    STORAGE.config_set("black_list", [])
 
 
 def showlastest(showlastest_marker):
