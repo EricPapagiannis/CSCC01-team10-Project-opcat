@@ -190,7 +190,7 @@ def deny_number(n):
     designated by 'n'
     Returns NoneType
     '''
-
+    # TODO
     print("denied ", n)
 
 
@@ -199,7 +199,7 @@ def deny_all():
     Method for declining all proposed changes.
     Returns NoneType
     '''
-
+    
     unpack_changes()
     i = 1
     while i <= len(CHANGES):
@@ -231,17 +231,17 @@ def postpone_all():
     Method for postponing all proposed changes.
     Returns NoneType
     '''
-
-    unpack_changes()
-    i = 1
-    while i <= len(CHANGES):
-        postpone_number(i)
-        i += 1
+    STORAGE.write_changes_to_memory([])
     print("Done.")
 
 
 def unpack_changes():
-    # TODO : check that the last time of the update is not "Never"
+    '''
+    () -> None
+    
+    Retrieves the list of ProposedChange objects from memory into global 
+    variable "CHANGES".
+    '''
     global CHANGES
     CHANGES = STORAGE.read_changes_from_memory()
 
@@ -252,7 +252,8 @@ def update():
     proposed changes. Network connection required.
     Returns NoneType
     '''
-
+    # postpone all currently pending changes
+    STORAGE.write_changes_to_memory([])    
     # open exoplanet catalogue
     global CHANGES
     CHANGES = []
