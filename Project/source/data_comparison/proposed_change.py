@@ -85,6 +85,27 @@ class Modification(ProposedChange):
 
         ProposedChange.__init__(self, origin)
 
+    def __eq__(self, other):
+        return (
+            (type(other) is type(self)) and (self.origin == other.origin) and (
+                self.OEC_object.name == other.OEC_object_name) and (
+                str(self.OEC_object.__class__.__name__) == str(
+                    other.OEC_object.__class__.__name__)) and (
+                self.getSystemName() == other.getSystemName()) and (
+                self.field_modified == other.field_modified) and (
+                self.lastupdate == other.last_update) and (
+                self.value_in_OEC == other.value_in_OEC) and (
+                self.value_in_origin_catalogue == other.value_in_origin_catalogue) and (
+                self.OEC_upper == other.OEC_upper) and (
+                self.OEC_lower == other.OEC_lower) and (
+                self.origin_upper == other.origin_upper) and (
+                self.origin_lower == other.origin_lower) and (
+                self.upper_attrib_name == other.upper_attrib_name) and (
+                self.lower_attrib_name == other.lower_attrib_name))
+
+    def __ne__(self, other):
+        return not (self == other)
+
     def getUpperLowerAttribs(self):
         """() -> (str, str, str,  str, str)
         Return the upper and lower limit attributes of the numeric field
