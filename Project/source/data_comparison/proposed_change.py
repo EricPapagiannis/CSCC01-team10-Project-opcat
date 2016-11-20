@@ -40,6 +40,9 @@ class Addition(ProposedChange):
         s += "\n"
         return s
 
+    def fancyStr(self):
+        return str(self)
+
     def get_object_name(self):
         '''
         () -> str
@@ -197,6 +200,54 @@ class Modification(ProposedChange):
         s += "Origin Lower Limit: "
         s += str(self.origin_lower)
         s += "\n"
+        return s
+
+    def fancyStr(self):
+        s = "Proposed modification:\n\n"
+        s += "Name of object modified: "
+        s += self.OEC_object.name
+        s += "\nOrigin : "
+        s += str(self.origin)
+        s += "\n"
+        s += "Type of object modified: "
+        s += str(self.OEC_object.__class__.__name__)
+        s += "\n"
+        if self.OEC_object.__class__.__name__ != "System":
+            s += "Part of System: "
+            if self.OEC_object.__class__.__name__ == "Star":
+                s += self.OEC_object.nameSystem
+            elif self.OEC_object.__class__.__name__ == "Planet":
+                s += self.OEC_object.starObject.nameSystem
+            s += "\n"
+        s += "Field modified: "
+        s += str(self.field_modified)
+        s += "\n"
+        s += "Last modified by "
+        s += str(self.origin)
+        s += " on: "
+        s += self.lastupdate
+        s += "\n"
+        s += "Value according to "
+        s += str(self.origin)
+        s += ": "
+        s += "\x1b[2;30;42m" + str(self.value_in_origin_catalogue) + "\x1b[0m"
+        s += "\n"
+        s += "Value according to Open Exoplanet Catalogue: "
+        s += "\x1b[6;30;41m" + str(self.value_in_OEC) + "\x1b[0m"
+        s += "\n"
+        s += "Origin Upper Limit: "
+        s += "\x1b[2;30;42m" + str(self.origin_upper) + "\x1b[0m"
+        s += "\n"
+        s += "Origin Lower Limit: "
+        s += "\x1b[2;30;42m" + str(self.origin_lower) + "\x1b[0m"
+        s += "\n"
+        s += "OEC Upper Limit: "
+        s += "\x1b[6;30;41m" + str(self.OEC_upper) + "\x1b[0m"
+        s += "\n"
+        s += "OEC Lower Limit: "
+        s += "\x1b[6;30;41m" + str(self.OEC_lower) + "\x1b[0m"
+        s += "\n"
+
         return s
 
     def get_object_name(self):
