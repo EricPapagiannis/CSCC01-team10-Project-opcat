@@ -11,12 +11,12 @@ eu = {"name": "name", "mass": "mass", "radius": "radius",
       "eccentricity": "eccentricity", "discoverymethod": "detection_type",
       "discoveryyear": "discovered",
       "nameStar": "star_name", "impactparameter": 'impact_parameter',
-      'transittime': 'tzero_vr'}
+      'transittime': 'tzero_vr', 'lastupdate':'updated'}
 nasa = {"name": "pl_hostname", "radius": "pl_radj",
         "eccentricity": "pl_orbeccen", "period": "pl_orbper",
         "discoverymethod": "pl_discmethod", "mass": "pl_bmassj",
         "nameStar": "pl_hostname",
-        'semimajoraxis': 'pl_orbsmax', 'inclination': 'pl_orbincl'}
+        'semimajoraxis': 'pl_orbsmax', 'inclination': 'pl_orbincl', 'lastupdate':'rowupdate'}
 
 eustar = {'rightascension': 'ra', 'declination': 'dec',
           'distance': 'star_distance', 'name': 'star_name', 'mass': 'star_mass',
@@ -72,8 +72,11 @@ def buildPlanet(line, heads, wanted, source):
     planet = Planet(_name)
     for i in _data_field:
         try:
-            # we get the indexed field from line, fix the value and add it to planet
-            planet.addVal(i, _fixVal(i, line[_data_field[i]], source))
+            if(i != 'lastupdate'):
+                # we get the indexed field from line, fix the value and add it to planet
+                planet.addVal(i, _fixVal(i, line[_data_field[i]], source))
+            else:
+                planet.lastupdate = _fixVal(i, line[_data_field[i]], source)
         # if the field DNE then we add empty to it
         except KeyError:
             planet.addVal(i, "")
