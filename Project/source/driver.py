@@ -345,8 +345,17 @@ def setautoupdate(autoupdate_interval):
     autoupdate_daemon will continue to run after program exits
     Returns NoneType
     '''
+
     commandstr = "python3 autoupdate_daemon.py -i " + str(autoupdate_interval)
     subprocess.Popen(commandstr, shell=True)
+
+
+def stopautoupdate():
+    '''(int) -> NoneType
+    Kills the autoupdate_daemon
+    '''
+
+    subprocess.call("pkill -f autoupdate_daemon.py")
 
 
 def main():
@@ -592,8 +601,7 @@ def main():
 
     # stopautoupdate
     if (stopautoupdate_flag):
-        # TODO
-        pass
+        stopautoupdate()
 
     # setautoupdate
     if (setautoupdate_flag):
