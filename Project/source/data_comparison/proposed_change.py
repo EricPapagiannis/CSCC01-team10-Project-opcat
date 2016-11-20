@@ -64,6 +64,7 @@ class Modification(ProposedChange):
                  field_modified, value_in_origin_catalogue, value_in_OEC):
         self.OEC_object = OEC_object
         self.origin_object = origin_object
+        self.lastupdate = origin_object.lastupdate
         self.field_modified = field_modified
         self.value_in_origin_catalogue = value_in_origin_catalogue
         self.value_in_OEC = value_in_OEC
@@ -143,7 +144,13 @@ class Modification(ProposedChange):
             s += "\n"
         s += "Field modified: "
         s += str(self.field_modified)
-        s += "\nValue according to "
+        s += "\n"
+        s += "Last modified by "
+        s += str(self.origin)
+        s += "on: "
+        s += self.lastupdate
+        s += "\n"
+        s += "Value according to "
         s += str(self.origin)
         s += ": "
         s += str(self.value_in_origin_catalogue)
