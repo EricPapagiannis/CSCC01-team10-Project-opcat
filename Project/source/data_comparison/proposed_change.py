@@ -17,6 +17,7 @@ class Addition(ProposedChange):
 
     def __init__(self, origin, object_ptr):
         self.object_ptr = object_ptr
+        self.lastupdate = object_ptr.lastupdate
         ProposedChange.__init__(self, origin)
 
     def __str__(self):
@@ -28,6 +29,11 @@ class Addition(ProposedChange):
         s += "\n"
         s += "Type of object: "
         s += self.object_ptr.__class__.__name__
+        s += "\n"
+        s += "Last modified by "
+        s += str(self.origin)
+        s += " on: "
+        s += self.lastupdate
         s += "\n"
         s += "Stats:\n"
         s += str(self.object_ptr)
@@ -147,7 +153,7 @@ class Modification(ProposedChange):
         s += "\n"
         s += "Last modified by "
         s += str(self.origin)
-        s += "on: "
+        s += " on: "
         s += self.lastupdate
         s += "\n"
         s += "Value according to "
