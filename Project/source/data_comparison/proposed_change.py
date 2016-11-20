@@ -17,6 +17,7 @@ class Addition(ProposedChange):
 
     def __init__(self, origin, object_ptr):
         self.object_ptr = object_ptr
+        self.lastupdate = object_ptr.lastupdate
         ProposedChange.__init__(self, origin)
 
     def __str__(self):
@@ -28,6 +29,11 @@ class Addition(ProposedChange):
         s += "\n"
         s += "Type of object: "
         s += self.object_ptr.__class__.__name__
+        s += "\n"
+        s += "Last modified by "
+        s += str(self.origin)
+        s += " on: "
+        s += self.lastupdate
         s += "\n"
         s += "Stats:\n"
         s += str(self.object_ptr)
@@ -78,6 +84,27 @@ class Modification(ProposedChange):
         self.lower_attrib_name = limits[5]
 
         ProposedChange.__init__(self, origin)
+
+    def __eq__(self, other):
+        return (
+            (type(other) is type(self)) and (self.origin == other.origin) and (
+                self.OEC_object.name == other.OEC_object_name) and (
+                str(self.OEC_object.__class__.__name__) == str(
+                    other.OEC_object.__class__.__name__)) and (
+                self.getSystemName() == other.getSystemName()) and (
+                self.field_modified == other.field_modified) and (
+                self.lastupdate == other.last_update) and (
+                self.value_in_OEC == other.value_in_OEC) and (
+                self.value_in_origin_catalogue == other.value_in_origin_catalogue) and (
+                self.OEC_upper == other.OEC_upper) and (
+                self.OEC_lower == other.OEC_lower) and (
+                self.origin_upper == other.origin_upper) and (
+                self.origin_lower == other.origin_lower) and (
+                self.upper_attrib_name == other.upper_attrib_name) and (
+                self.lower_attrib_name == other.lower_attrib_name))
+
+    def __ne__(self, other):
+        return not (self == other)
 
     def getUpperLowerAttribs(self):
         """() -> (str, str, str,  str, str)
@@ -147,7 +174,7 @@ class Modification(ProposedChange):
         s += "\n"
         s += "Last modified by "
         s += str(self.origin)
-        s += "on: "
+        s += " on: "
         s += self.lastupdate
         s += "\n"
         s += "Value according to "

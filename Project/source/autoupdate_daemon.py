@@ -1,9 +1,15 @@
 import time
 import sys
 import getopt
+import subprocess
 
 # This is the autoupdater daemon
 # Do not use directly
+
+
+class InvalidIntervalException(Exception):
+    pass
+
 
 def main():
     
@@ -19,10 +25,21 @@ def main():
         if opt == "-i":
             sleeptime = int(arg)
 
-    time.sleep(sleeptime)
-    f = open("placeholder.txt","w")
-    f.write("placeholder")
-    f.close()
+    if (sleeptime > 0):
+        # convert hours to seconds
+        sleeptime_hours = sleeptime * 3600
+    else:
+        raise InvalidIntervalException("Interval must be 1 hour or greater")
+
+    # command to call driver.py's update method
+    commandstr = "python3 driver.py --update"
+
+    while(1):
+        # daemon continues to run until it is killed by driver
+        print("Commencing update...")
+        subprocess.Popen(commandstr, shell=True)
+        time.sleep(sleeptime_hours)
 
 if __name__ == "__main__":
     main()
+
