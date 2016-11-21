@@ -46,6 +46,12 @@ class Addition(ProposedChange):
     def fancyStr(self):
         return str(self)
 
+    def __eq__(self, other):
+        return (
+            (type(other) is type(self)) and (self.origin == other.origin) and (
+                self.object_ptr.name == other.object_ptr.name) and (
+                self.object_ptr.data == other.object_ptr.data))
+
     def get_object_name(self):
         '''
         () -> str
@@ -379,6 +385,7 @@ def merge_sort_changes_by_lastupdate(CHANGES):
         return merge_changes_by_last_update(first, second)
     else:
         return CHANGES
+
 
 def sort_changes_lastupdate(changes_list):
     newChangesList = changes_list[:]
