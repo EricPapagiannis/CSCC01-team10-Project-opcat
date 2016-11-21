@@ -125,6 +125,8 @@ def buildPlanet(line, heads, wanted, source, errors=None):
         val = line[_error_field[i]]
         if val.startswith("-"):
             val = val[1:]
+        if val == "inf" or val == "nan":
+            val = "N/A"
         planet.errors[i] = val
     return planet
 
