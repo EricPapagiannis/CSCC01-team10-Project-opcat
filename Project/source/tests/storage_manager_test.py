@@ -2,7 +2,7 @@ import storage_manager.storage_manager as STORAGE
 import data_comparison.proposed_change as Change
 import pickle
 import unittest
-
+import data_parsing.Planet as Planet
 
 class TestStorageManager(unittest.TestCase):
 
@@ -35,8 +35,12 @@ class TestStorageManager(unittest.TestCase):
         # make a mock list of proposed changes
         STORAGE.PROPOSED_CHANGES_PATH = \
             "storage_manager_test_files/mock_changes_storage_file2"
-        c1 = Change.Addition("origin str", None)
-        c2 = Change.Modification("Origin str", None, "field", 10, 15)
+        p = Planet.Planet("a")
+        p.lastupdate = "16/11/20"
+        p2 = Planet.Planet("b")
+        p2.lastupdate = "16/11/20"
+        c1 = Change.Addition("origin str", p)
+        c2 = Change.Modification("Origin str", p, p2, "field", 10, 15)
         changes_list = [c1, c2]
         # write the list to memory
         STORAGE.write_changes_to_memory(changes_list)
@@ -45,10 +49,10 @@ class TestStorageManager(unittest.TestCase):
         self.assertEquals(len(retrieved), 2)
         self.assertEquals(retrieved[0].__class__.__name__, "Addition")
         self.assertEquals(retrieved[0].origin, "origin str")
-        self.assertEquals(retrieved[0].object_ptr, None)
+        self.assertEquals(retrieved[0].get_object_name(), p.name)
         self.assertEquals(retrieved[1].__class__.__name__, "Modification")
         self.assertEquals(retrieved[1].origin, "Origin str")
-        self.assertEquals(retrieved[1].OEC_object, None)
+        self.assertEquals(retrieved[1].get_object_name(), p.name)
         self.assertEquals(retrieved[1].field_modified, "field")
         self.assertEquals(retrieved[1].value_in_origin_catalogue, 10)
         self.assertEquals(retrieved[1].value_in_OEC, 15)
@@ -87,7 +91,11 @@ class TestStorageManager(unittest.TestCase):
         STORAGE.clean_config_file()
         with open(STORAGE.CONFIG_PATH, "rb") as test_file:
             retrieved = pickle.load(test_file)
-        self.assertEquals(list(retrieved.keys()), ["last_update"])
+        resultList = list(retrieved.keys())
+        answer = ['black_list', 'last_update', 'auto_update_settings']
+        self.assertTrue(
+            len(resultList) == len(answer) and all(
+                resultList.count(i) == answer.count(i) for i in resultList))
         self.assertEquals(retrieved["last_update"], "Never")
 
 
@@ -104,7 +112,9 @@ class TestStorageManager(unittest.TestCase):
     def test_config_set_get_object(self):
         STORAGE.CONFIG_PATH = "storage_manager_test_files/mock_config_file"
         STORAGE.clean_config_file()
-        test_object = Change.Addition("origin", None)
+        p = Planet.Planet("a")
+        p.lastupdate = "16/11/20"
+        test_object = Change.Addition("origin", p)
         STORAGE.config_set("key", test_object)
         retrieved = STORAGE.config_get("key")
         self.assertEqual(retrieved.__class__.__name__, "Addition")
