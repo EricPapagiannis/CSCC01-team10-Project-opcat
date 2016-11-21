@@ -214,8 +214,11 @@ def deny_all():
     Returns NoneType
     '''
     unpack_changes()
-    # add all currently pending changes to the blacklist
-    STORAGE.config_set("black_list", CHANGES)
+    # add all currently pending changes to blacklist
+    black_list = STORAGE.config_get("black_list")
+    black_list.extend(CHANGES)
+    # write black list to memory    
+    STORAGE.config_set("black_list", black_list)
     # clear the list of currently pending changes
     STORAGE.write_changes_to_memory([])
     print("Done.")
@@ -307,18 +310,27 @@ def update():
         for key in d:
             if d.get(key).__class__.__name__ != "Star":
                 d.pop(key)
-
-    # add chages from EU to the list
+    # retrieve the blacklist from memory
+    black_list = STORAGE.config_get("black_list")
+    # add chages from EU to the list (if they are not blacklisted by the user)
     for key in EU_stars.keys():
         if key in OEC_stars.keys():
-            C = COMP.Comparator(EU_stars.get(key), OEC_stars.get(key), "eu")
-            CHANGES.extend(C.proposedChangeStarCompare())
+            Comp_object = COMP.Comparator(EU_stars.get(key), 
+                                          OEC_stars.get(key), "eu")
+            LIST = Comp_object.proposedChangeStarCompare()
+            for C in LIST:
+                if (not C in black_list) and (not C in CHANGES):
+                    CHANGES.append(C)
 
     # add chages from NASA to the list
     for key in NASA_stars.keys():
         if key in OEC_stars.keys():
-            C = COMP.Comparator(NASA_stars.get(key), OEC_stars.get(key), "nasa")
-            CHANGES.extend(C.proposedChangeStarCompare())
+            Comp_object = COMP.Comparator(NASA_stars.get(key), 
+                                          OEC_stars.get(key), "nasa")
+            LIST = Comp_object.proposedChangeStarCompare()            
+            for C in LIST:
+                if (not C in black_list) and (not C in CHANGES):
+                    CHANGES.append(C)
 
     # sort the list of proposed changes
     CHANGES = PC.merge_sort_changes(CHANGES)
@@ -643,3 +655,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+    
