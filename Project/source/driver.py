@@ -117,7 +117,7 @@ def show_range(start, end):
     elif isinstance(end, str) and end.lower() == "s":
         end = 1
     bothInts = isinstance(start, int) and isinstance(end, int)
-    validRange = 1 <= start <= len(CHANGES) and 1 <=  end <= len(CHANGES)
+    validRange = 1 <= start <= len(CHANGES) and 1 <= end <= len(CHANGES)
     if (bothInts and validRange):
         if start <= end:
             i = start
@@ -143,7 +143,7 @@ def show_number(n):
         unpack_changes()
     if n <= len(CHANGES) and n > 0:
         print("\nShowing number : " + str(n) + "\n")
-        print(CHANGES[n - 1])
+        print(CHANGES[n - 1].fancyStr())
         print()
     else:
         print("Out of range.")
@@ -179,7 +179,7 @@ def accept_all(strategy):
     i = 0
     # for demo change back after!!!!!!!!
     while i < 25:
-    #while i < len(CHANGES):
+        # while i < len(CHANGES):
         accept(i, strategy)
         i += 1
 
@@ -338,14 +338,24 @@ def clearblacklist():
     STORAGE.config_set("black_list", [])
 
 
-def showlastest(showlastest_marker):
+def showlastest(n):
     '''(int) -> NoneType
     Method for showest the lastest 'n' proposed changes
     "showlastest_marker" is passed in as int
     '''
+    unpack_changes()
 
-    print (showlastest_marker)
-    # TODO
+    if n >= 1 and n <= len(CHANGES):
+        print("Showing the latest " + str(n) + " changes: ")
+        (newChanges, indeces) = PC.bubble_sort_changes_by_lastupdate(CHANGES)
+        i = 0
+        while i < n:
+            print("\nShowing number : " + str(indeces[i] + 1) + "\n")
+            print(newChanges[i].fancyStr())
+            print()
+            i += 1
+    else:
+        print("Out of range.")
     pass
 
 
