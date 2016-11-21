@@ -33,6 +33,9 @@ XML_path = "storage/OEC_XML.gz"
 # list of all proposed changes (accumulated on update())
 CHANGES = []
 
+# the minimum autoupdate interval allowed (in hours)
+MIN_AUTOU_INTERVAL = 1
+
 
 def status():
     '''() -> NoneType
@@ -350,14 +353,20 @@ def showlastest(showlastest_marker):
 
 
 def setautoupdate(autoupdate_interval):
-    '''(int) -> NoneType
+    '''(int) -> int
     Invokes the autoupdate_daemon to run in a seperate process
     autoupdate_daemon will continue to run after program exits
-    Returns NoneType
+    Returns 0 if successful
+    Returns 1 if invalid autoupdate interval
     '''
 
-    commandstr = "python3 autoupdate_daemon.py -i " + str(autoupdate_interval)
-    subprocess.Popen(commandstr, shell=True)
+    if (autoupdate_interval >= MIN_AUTOU_INTERVAL):
+        commandstr = "python3 autoupdate_daemon.py -i " + str(autoupdate_interval)
+        subprocess.Popen(commandstr, shell=True)
+        return 0
+    else:
+        print("Autoupdate interval too short!\n")
+        return 1
 
 
 def stopautoupdate():
