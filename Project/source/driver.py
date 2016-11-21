@@ -214,8 +214,11 @@ def deny_all():
     Returns NoneType
     '''
     unpack_changes()
-    # add all currently pending changes to the blacklist
-    STORAGE.config_set("black_list", CHANGES)
+    # add all currently pending changes to blacklist
+    black_list = STORAGE.config_get("black_list")
+    black_list.extend(CHANGES)
+    # write black list to memory    
+    STORAGE.config_set("black_list", black_list)
     # clear the list of currently pending changes
     STORAGE.write_changes_to_memory([])
     print("Done.")
