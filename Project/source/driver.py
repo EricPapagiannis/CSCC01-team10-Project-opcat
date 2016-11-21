@@ -350,10 +350,10 @@ def showlastest(n):
 
     if n >= 1 and n <= len(CHANGES):
         print("Showing the latest " + str(n) + " changes: ")
-        (newChanges, indeces) = PC.bubble_sort_changes_by_lastupdate(CHANGES)
+        newChanges = PC.sort_changes_lastupdate(CHANGES)
         i = 0
         while i < n:
-            print("\nShowing number : " + str(indeces[i] + 1) + "\n")
+            print("\nShowing number : " + str(newChanges[i]._index + 1) + "\n")
             print(newChanges[i].fancyStr())
             print()
             i += 1
