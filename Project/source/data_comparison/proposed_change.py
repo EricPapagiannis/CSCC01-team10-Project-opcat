@@ -52,6 +52,9 @@ class Addition(ProposedChange):
                 self.object_ptr.name == other.object_ptr.name) and (
                 self.object_ptr.data == other.object_ptr.data))
 
+    def __ne__(self, other):
+        return not (self == other)
+
     def get_object_name(self):
         '''
         () -> str
