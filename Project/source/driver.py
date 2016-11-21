@@ -146,7 +146,7 @@ def show_number(n):
         unpack_changes()
     if n <= len(CHANGES) and n > 0:
         print("\nShowing number : " + str(n) + "\n")
-        print(CHANGES[n - 1].fancyStr())
+        print(str(CHANGES[n - 1]))
         print()
     else:
         print("Out of range.")
@@ -194,11 +194,11 @@ def deny_number(n):
     Returns NoneType
     '''
     unpack_changes()
-    if n >= 0 and n < len(CHANGES) :
+    if n > 0 and n <= len(CHANGES) :
         # if given number is within the range, add the n-th change to black 
         # list and pop it from thelist of changes
         black_list = STORAGE.config_get("black_list")
-        black_list.append(CHANGES.pop(n))
+        black_list.append(CHANGES.pop(n-1))
         # update the blacklist
         STORAGE.config_set("black_list", black_list)
         # update the changes list in memory
@@ -351,6 +351,7 @@ def clearblacklist():
     Method for clearing declined blacklist of proposed changes
     '''
     STORAGE.config_set("black_list", [])
+    print("Done.")
 
 
 def showlastest(n):
