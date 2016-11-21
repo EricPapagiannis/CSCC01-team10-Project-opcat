@@ -94,12 +94,12 @@ class Modification(ProposedChange):
     def __eq__(self, other):
         return (
             (type(other) is type(self)) and (self.origin == other.origin) and (
-                self.OEC_object.name == other.OEC_object_name) and (
+                self.OEC_object.name == other.OEC_object.name) and (
                 str(self.OEC_object.__class__.__name__) == str(
                     other.OEC_object.__class__.__name__)) and (
                 self.getSystemName() == other.getSystemName()) and (
                 self.field_modified == other.field_modified) and (
-                self.lastupdate == other.last_update) and (
+                self.lastupdate == other.lastupdate) and (
                 self.value_in_OEC == other.value_in_OEC) and (
                 self.value_in_origin_catalogue == other.value_in_origin_catalogue) and (
                 self.OEC_upper == other.OEC_upper) and (
@@ -335,7 +335,7 @@ def bubble_sort_changes_by_lastupdate(CHANGES):
             if (dt.strptime(newChanges[k].lastupdate, "%y/%m/%d") > dt.strptime(
                     newChanges[k - 1].lastupdate, "%y/%m/%d")):
                 (newChanges[k], newChanges[k - 1]) = (
-                newChanges[k - 1], newChanges[k])
+                    newChanges[k - 1], newChanges[k])
                 (indeces[k], indeces[k - 1]) = (indeces[k - 1], indeces[k])
     return (newChanges, indeces)
 
