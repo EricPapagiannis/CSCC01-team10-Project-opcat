@@ -11,6 +11,7 @@ import github.gitClone as GIT
 import storage_manager.storage_manager as STORAGE
 import datetime
 import subprocess
+import urllib
 
 # usage string
 usage_str = "usage: driver [--help] [--update] [--output string] [--planet " \
@@ -273,7 +274,11 @@ def update():
     # open exoplanet catalogue
     global CHANGES
     CHANGES = []
-    XML.downloadXML(XML_path)
+    try:
+        XML.downloadXML(XML_path)
+    except urllib.error.URLError:
+        print("No internet connection\n")
+        return
     OEC_lists = XML.buildSystemFromXML(XML_path)
     OEC_systems = OEC_lists[0]
     OEC_stars = OEC_lists[1]
@@ -290,6 +295,8 @@ def update():
     # NASA_getter.getFromAPI("")
     except (TimeoutError, API.CannotRetrieveDataException) as e:
         print("NASA archive is unreacheable.\n")
+    except (urllib.error.URLError):
+        print("No internet connection.\n")
 
     # Saves exoplanetEU database into a text file named exo_file
     exoplanetEU_getter = API.apiGet(exoplanetEU_link, EU_file)
@@ -297,6 +304,8 @@ def update():
         exoplanetEU_getter.getFromAPI("")
     except (TimeoutError, API.CannotRetrieveDataException) as e:
         print("exoplanet.eu is unreacheable.\n")
+    except (urllib.error.URLError):
+        print("No internet connection.\n")
 
     # build the dict of stars from exoplanet.eu
     EU_stars = CSV.buildDictStarExistingField(EU_file, "eu")
