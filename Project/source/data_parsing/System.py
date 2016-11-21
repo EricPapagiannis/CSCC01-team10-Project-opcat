@@ -14,3 +14,5 @@ class System(PlanetaryObject):
         # objects in the system
         self.nameToStar = dict()
         self.otherNamesSystem = []
+        self.errors = dict()
+        self.lastupdate = ""

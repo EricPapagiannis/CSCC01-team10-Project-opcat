@@ -128,12 +128,9 @@ def buildSystemFromXML(path="../storage/OEC_XML.gz"):
                             child.tag.lower() != "name"):
                     star.addVal(child.tag, child.text)
                     for attribute in child.attrib:
-                        print("star")
-                        print(
-                            "attrib: " + attribute + "\tvalue:" + child.attrib[
-                                attribute] + "dataattrib: " + child.tag + attribute)
-                        star.addVal(child.tag + attribute,
-                                    child.attrib[attribute])
+                        if "error" in attribute or "limit" in attribute:
+                            star.errors[child.tag + attribute] = child.attrib[
+                                attribute]
 
             # build a list of planets that are in the star
             planets = []
@@ -173,15 +170,10 @@ def buildSystemFromXML(path="../storage/OEC_XML.gz"):
                                 child.tag.lower() != "lastupdate"):
                         planet.addVal(child.tag, child.text)
                         for attribute in child.attrib:
-                            # later when converting back to change xml use the
-                            # child.tag length to slice off the appendded child
-                            # tag to get the original field name back
-                            print("planet")
-                            print("attrib: " + attribute + "\tvalue:" +
-                                  child.attrib[
-                                      attribute] + "dataattrib: " + child.tag + attribute)
-                            planet.addVal(child.tag + attribute,
-                                          child.attrib[attribute])
+                            if "error" in attribute or "limit" in attribute:
+                                planet.errors[child.tag + attribute] = \
+                                    child.attrib[
+                                        attribute]
 
                 # add the star name that the planet is in
                 planet.nameStar = star.name

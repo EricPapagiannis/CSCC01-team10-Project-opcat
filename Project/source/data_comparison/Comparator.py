@@ -1,4 +1,3 @@
-
 from data_parsing.Planet import *
 from data_parsing.Star import *
 from data_parsing.System import *
@@ -6,7 +5,6 @@ from data_comparison.proposed_change import *
 
 
 class Comparator():
-
     def __init__(self, obj1, obj2, origin):
         '''(PlanetaryObject, PlanetaryObject, str) -> NoneTye
         sets up the comparator with two objects of PlanetaryObject
@@ -77,7 +75,6 @@ class Comparator():
 
         return result_dict
 
-
     def sqlJoinNewOnly(self, left_join):
         '''(bool) -> Dictionary
         Identical to method sqlJoin except excludes all rows
@@ -94,7 +91,6 @@ class Comparator():
                 raw_dict['left'].pop(i)
                 raw_dict['right'].pop(i)
         return raw_dict
-
 
     def innerJoinDiff(self):
         '''() -> Dictionary
@@ -113,13 +109,12 @@ class Comparator():
                 try:
                     if (float(left_data[key]) != float(right_data[key])):
                         result_dict[key] = (
-                        float(left_data[key]), float(right_data[key]))
-                    # otherwise just normal compare
+                            float(left_data[key]), float(right_data[key]))
+                        # otherwise just normal compare
                 except ValueError:
                     if (left_data[key].lower() != right_data[key].lower()):
                         result_dict[key] = (left_data[key], right_data[key])
         return result_dict
-
 
     def proposedChangeStarCompare(self):
         '''() -> list
@@ -134,14 +129,18 @@ class Comparator():
         # return list of proposed changes of the planets in star
         for planet in main_dictionary["planetDC"]:
             for field in main_dictionary["planetDC"][planet]:
-                result_dict.append(
-                    Modification(self.origin,
-                                 self.obj2.nameToPlanet[planet], self.obj1.planetObjects[0],field,
-                                 main_dictionary["planetDC"][
-                                     planet][field][0],
-                                 main_dictionary["planetDC"][
-                                     planet][field][1])
-                )
+                if main_dictionary["planetDC"][
+                    planet][field][0] != "N/A" and main_dictionary["planetDC"][
+                    planet][field][0] != "":
+                    result_dict.append(
+                        Modification(self.origin,
+                                     self.obj2.nameToPlanet[planet],
+                                     self.obj1.planetObjects[0], field,
+                                     main_dictionary["planetDC"][
+                                         planet][field][0],
+                                     main_dictionary["planetDC"][
+                                         planet][field][1])
+                    )
         '''
         for star in main_dictionary["starC"]:
             for field in main_dictionary["starC"][star]:
@@ -167,7 +166,6 @@ class Comparator():
                 main_dictionary["starN"]["right"][i]))
         '''
         return result_dict
-
 
     def starCompare(self):
         '''() -> Dictionary

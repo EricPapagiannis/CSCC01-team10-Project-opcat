@@ -25,7 +25,7 @@ class PlanetaryObject:
         for key in self.data.keys():
             s += str(key)
             s += " :   "
-            if self.data[key].__class__.__name__ in list_objects :
+            if self.data[key].__class__.__name__ in list_objects:
                 s += "Points to an instance of class "
                 s += self.data[key].__class__.__name__
             elif str(self.data[key]) == "":
@@ -95,6 +95,3 @@ class PlanetaryObject:
             return val.replace("\"", "").strip()
         else:
             return val
-
-if __name__ == "__main__":
-    print("\"CH4".replace("\"", "").strip())

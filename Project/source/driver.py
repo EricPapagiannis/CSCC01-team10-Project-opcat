@@ -10,6 +10,7 @@ import data_comparison.proposed_change as PC
 import github.gitClone as GIT
 import storage_manager.storage_manager as STORAGE
 import datetime
+import subprocess
 
 # usage string
 usage_str = "usage: driver [--help] [--update] [--output string] [--planet " \
@@ -32,6 +33,9 @@ XML_path = "storage/OEC_XML.gz"
 # list of all proposed changes (accumulated on update())
 CHANGES = []
 
+# the minimum autoupdate interval allowed (in hours)
+MIN_AUTOU_INTERVAL = 1
+
 
 def status():
     '''() -> NoneType
@@ -39,6 +43,7 @@ def status():
     relevant information: time of last update, current auto-update settings and
     the number of changes pending to be reviewed.
     '''
+
     unpack_changes()
     last_update = STORAGE.config_get("last_update")
     num_changes = len(CHANGES)
@@ -51,15 +56,18 @@ def status():
 
 def usage():
     '''() -> NoneType
-    Example called method
+    Method for printing the usage string to the screen
     Returns NoneType
     '''
+
     print(usage_str)
 
 
 def print_help():
     '''() -> NoneType
+    Method for printing program manual to the screen
     '''
+
     print(STORAGE.manual())
 
 
@@ -68,6 +76,7 @@ def clean_files():
     Removes text files from previous update.
     Returns None
     '''
+
     for name in [nasa_file, EU_file]:
         try:
             os.remove(name)
@@ -77,8 +86,9 @@ def clean_files():
 
 def show_all():
     '''() -> NoneType
-    Skeleton function
+    Method for showing all proposed changes
     '''
+
     unpack_changes()
     # sort the list of proposed changes    
     i = 1
@@ -93,9 +103,12 @@ def show_all():
 
 
 def show_range(start, end):
-    '''() -> NoneType
-    Skeleton function
+    '''(int, int) -> NoneType
+    or (str, str) -> NoneType, where str in [s,e]
+    Method for showing a range of proposed changes between start and end
+    Returns NoneType
     '''
+
     unpack_changes()
     # sort the list of proposed changes
     if isinstance(start, str) and start.lower() == "s":
@@ -107,7 +120,7 @@ def show_range(start, end):
     elif isinstance(end, str) and end.lower() == "s":
         end = 1
     bothInts = isinstance(start, int) and isinstance(end, int)
-    validRange = 1 <= start <= len(CHANGES) and 1 <=  end <= len(CHANGES)
+    validRange = 1 <= start <= len(CHANGES) and 1 <= end <= len(CHANGES)
     if (bothInts and validRange):
         if start <= end:
             i = start
@@ -126,13 +139,14 @@ def show_range(start, end):
 
 def show_number(n):
     '''(int) -> NoneType
-    Skeleton function
+    Method for showing the proposed change designated by 'n'
     '''
+
     if len(CHANGES) == 0:
         unpack_changes()
     if n <= len(CHANGES) and n > 0:
         print("\nShowing number : " + str(n) + "\n")
-        print(CHANGES[n - 1])
+        print(str(CHANGES[n - 1]))
         print()
     else:
         print("Out of range.")
@@ -145,6 +159,7 @@ def accept(n, strategy):
     strategy argument accepts "1" or "2"
     Returns NoneType
     '''
+
     if len(CHANGES) == 0:
         unpack_changes()
     if n < len(CHANGES) and n >= 0:
@@ -162,30 +177,60 @@ def accept_all(strategy):
     Function for accepting all changes/additions
     strategy argument accepts "1" or "2"
     '''
+
     unpack_changes()
     i = 0
     # for demo change back after!!!!!!!!
     while i < 25:
-    #while i < len(CHANGES):
+        # while i < len(CHANGES):
         accept(i, strategy)
         i += 1
 
 
 def deny_number(n):
-    # TODO
-    print("denied ", n)
+    '''(int) -> NoneType
+    Method for declining a specific proposed changed, the one
+    designated by 'n'
+    Returns NoneType
+    '''
+    unpack_changes()
+    if n > 0 and n <= len(CHANGES) :
+        # if given number is within the range, add the n-th change to black 
+        # list and pop it from thelist of changes
+        black_list = STORAGE.config_get("black_list")
+        black_list.append(CHANGES.pop(n-1))
+        # update the blacklist
+        STORAGE.config_set("black_list", black_list)
+        # update the changes list in memory
+        STORAGE.write_changes_to_memory(CHANGES)
+        print("Done.")
+    else:
+        print("Out of range.")
 
 
 def deny_all():
+    '''() -> NoneType
+    Method for declining all proposed changes.
+    Returns NoneType
+    '''
     unpack_changes()
-    i = 1
-    while i <= len(CHANGES):
-        deny_number(i)
-        i += 1
+    # add all currently pending changes to blacklist
+    black_list = STORAGE.config_get("black_list")
+    black_list.extend(CHANGES)
+    # write black list to memory    
+    STORAGE.config_set("black_list", black_list)
+    # clear the list of currently pending changes
+    STORAGE.write_changes_to_memory([])
     print("Done.")
 
 
 def postpone_number(n):
+    '''(int) -> NoneType
+    Method for postponing a specific proposed changed, the one
+    designated by 'n'
+    Returns NoneType
+    '''
+
     global CHANGES
     if len(CHANGES) == 0:
         unpack_changes()
@@ -198,25 +243,33 @@ def postpone_number(n):
 
 
 def postpone_all():
-    unpack_changes()
-    i = 1
-    while i <= len(CHANGES):
-        postpone_number(i)
-        i += 1
+    '''() -> NoneType
+    Method for postponing all proposed changes.
+    Returns NoneType
+    '''
+    STORAGE.write_changes_to_memory([])
     print("Done.")
 
 
 def unpack_changes():
-    # TODO : check that the last time of the update is not "Never"
+    '''
+    () -> None
+    
+    Retrieves the list of ProposedChange objects from memory into global 
+    variable "CHANGES".
+    '''
     global CHANGES
     CHANGES = STORAGE.read_changes_from_memory()
 
 
 def update():
     '''() -> NoneType
-    Example called method
+    Method for updating system from remote databases and generating
+    proposed changes. Network connection required.
     Returns NoneType
     '''
+    # postpone all currently pending changes
+    STORAGE.write_changes_to_memory([])    
     # open exoplanet catalogue
     global CHANGES
     CHANGES = []
@@ -257,18 +310,27 @@ def update():
         for key in d:
             if d.get(key).__class__.__name__ != "Star":
                 d.pop(key)
-
-    # add chages from EU to the list
+    # retrieve the blacklist from memory
+    black_list = STORAGE.config_get("black_list")
+    # add chages from EU to the list (if they are not blacklisted by the user)
     for key in EU_stars.keys():
         if key in OEC_stars.keys():
-            C = COMP.Comparator(EU_stars.get(key), OEC_stars.get(key), "eu")
-            CHANGES.extend(C.proposedChangeStarCompare())
+            Comp_object = COMP.Comparator(EU_stars.get(key), 
+                                          OEC_stars.get(key), "eu")
+            LIST = Comp_object.proposedChangeStarCompare()
+            for C in LIST:
+                if (not C in black_list) and (not C in CHANGES):
+                    CHANGES.append(C)
 
     # add chages from NASA to the list
     for key in NASA_stars.keys():
         if key in OEC_stars.keys():
-            C = COMP.Comparator(NASA_stars.get(key), OEC_stars.get(key), "nasa")
-            CHANGES.extend(C.proposedChangeStarCompare())
+            Comp_object = COMP.Comparator(NASA_stars.get(key), 
+                                          OEC_stars.get(key), "nasa")
+            LIST = Comp_object.proposedChangeStarCompare()            
+            for C in LIST:
+                if (not C in black_list) and (not C in CHANGES):
+                    CHANGES.append(C)
 
     # sort the list of proposed changes
     CHANGES = PC.merge_sort_changes(CHANGES)
@@ -283,25 +345,82 @@ def update():
     print("Update complete.\n")
 
 
+def clearblacklist():
+    '''() -> NoneType
+    
+    Method for clearing declined blacklist of proposed changes
+    '''
+    STORAGE.config_set("black_list", [])
+    print("Done.")
+
+
+def showlastest(n):
+    '''(int) -> NoneType
+    Method for showest the lastest 'n' proposed changes
+    "showlastest_marker" is passed in as int
+    '''
+    unpack_changes()
+
+    if n >= 1 and n <= len(CHANGES):
+        print("Showing the latest " + str(n) + " changes: ")
+        newChanges = PC.sort_changes_lastupdate(CHANGES)
+        i = 0
+        while i < n:
+            print("\nShowing number : " + str(newChanges[i]._index + 1) + "\n")
+            print(newChanges[i].fancyStr())
+            print()
+            i += 1
+    else:
+        print("Out of range.")
+    pass
+
+
+def setautoupdate(autoupdate_interval):
+    '''(int) -> int
+    Invokes the autoupdate_daemon to run in a seperate process
+    autoupdate_daemon will continue to run after program exits
+    Returns 0 if successful
+    Returns 1 if invalid autoupdate interval
+    '''
+
+    if (autoupdate_interval >= MIN_AUTOU_INTERVAL):
+        commandstr = "python3 autoupdate_daemon.py -i " + str(autoupdate_interval)
+        subprocess.Popen(commandstr, shell=True)
+        return 0
+    else:
+        print("Autoupdate interval too short!\n")
+        return 1
+
+
+def stopautoupdate():
+    '''(int) -> NoneType
+    Kills the autoupdate_daemon
+    '''
+
+    subprocess.call("pkill -f autoupdate_daemon.py", shell=True)
+
+
 def main():
     '''() -> NoneType
     Main driver method
     Accepts command line arguments
     Returns NoneType
     '''
+
     # flags which do not expect parameter (--help for example)
     # short opts are single characters, add onto shortOPT to include
     shortOPT = "huacel"
     # log opts are phrases, add onto longOPT to include
     longOPT = ["help", "update", "showall", "acceptall", "acceptall2",
-               "denyall", "status", "postponeall"]
+               "denyall", "status", "postponeall", "clearblacklist",
+               "stopautoupdate"]
 
     # flags that do expect a parameter (--output file.txt for example)
     # similar to shortOPT
     shortARG = "opsntdr"
     # similar to longOTP
     longARG = ["output", "planet", "shownumber", "accept", "accept2", "deny",
-               "showrange", "postpone"]
+               "showrange", "postpone", "setautoupdate", "showlatest"]
 
     # arg, opt pre-processor, do not edit
     short = ':'.join([shortARG[i:i + 1] for i in range(0, len(shortARG), 1)]) \
@@ -335,6 +454,12 @@ def main():
     postpone_flag = None
     postpone_marker = None
     postponeall_flag = None
+    clearblacklist_flag = False
+    stopautoupdate_flag = False
+    setautoupdate_flag = False
+    autoupdate_interval = None
+    showlastest_flag = False
+    showlastest_marker = None
 
     for o, a in opts:
 
@@ -410,9 +535,27 @@ def main():
             postpone_flag = True
             postpone_marker = int(a)
 
-            # postponeall
+        # postponeall
         elif o in ("--" + longOPT[7]):
             postponeall_flag = True
+
+        # clearblacklist
+        elif o in ("--" + longOPT[8]):
+            clearblacklist_flag = True
+
+        # stopautoupdate
+        elif o in ("--" + longOPT[9]):
+            stopautoupdate_flag = True
+
+        # setautoupdate
+        elif o in ("--" + longARG[8]):
+            setautoupdate_flag = True
+            autoupdate_interval = int(a)
+
+        # showlatest
+        elif o in ("--" + longARG[9]):
+            showlastest_flag = True
+            showlastest_marker = int(a)
 
         else:
             usage()
@@ -494,6 +637,24 @@ def main():
     if (postponeall_flag):
         postpone_all()
 
+    # clearblacklist
+    if (clearblacklist_flag):
+        clearblacklist()
+
+    # stopautoupdate
+    if (stopautoupdate_flag):
+        stopautoupdate()
+
+    # setautoupdate
+    if (setautoupdate_flag):
+        setautoupdate(autoupdate_interval)
+
+    # showlatest
+    if (showlastest_flag):
+        showlastest(showlastest_marker)
+
 
 if __name__ == "__main__":
     main()
+
+    
