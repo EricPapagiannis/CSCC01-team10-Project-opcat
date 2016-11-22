@@ -53,13 +53,13 @@ eustar = {"name": "name", 'rightascension': 'ra', 'declination': 'dec',
           'radius': 'star_radius', 'magV': 'mag_v', 'magB': '', 'magI': 'mag_i',
           'magJ': 'mag_j', 'magH': 'mag_h', 'magK': 'mag_k',
           'temperature': 'star_teff', 'metallicity': 'star_metallicity',
-          'spectraltype': 'star_sp_type'}
+          'spectraltype': 'star_sp_type', 'lastupdate':'updated'}
 nasastar = {"name": "pl_hostname", 'rightascension': 'ra_str',
             'declination': 'dec_str',
             'distance': 'st_dist', 'name': 'pl_hostname', 'mass': 'st_mass',
             'radius': 'st_rad', 'magV': 'st_optmag', 'magB': '', 'magJ': '',
             'magH': '', 'magK': '', 'temperature': 'st_teff', 'metallicity': '',
-            'spectraltype': ''}
+            'spectraltype': '', 'lastupdate':'rowupdate'}
 
 # discovery method correction to xml
 discoveryCorrection = {"Radial Velocity": "RV", "Primary Transit": "transit",
@@ -287,7 +287,11 @@ def buildStar(line, heads, source, errors=None):
     star = Star(_name)
     for i in _data_field:
         try:
-            star.addVal(i, _fixVal(i, line[_data_field[i]], source))
+            if (i != 'lastupdate'):
+                # we get the indexed field from line, fix the value and add it to planet
+                star.addVal(i, _fixVal(i, line[_data_field[i]], source))
+            else:
+                star.lastupdate = _fixVal(i, line[_data_field[i]], source)
         except KeyError:
             star.addVal(i, '')
     for i in _error_field:

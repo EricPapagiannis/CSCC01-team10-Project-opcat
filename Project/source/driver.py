@@ -146,7 +146,7 @@ def show_number(n):
         unpack_changes()
     if n <= len(CHANGES) and n > 0:
         print("\nShowing number : " + str(n) + "\n")
-        print(str(CHANGES[n - 1]))
+        print(CHANGES[n - 1].fancyStr())
         print()
     else:
         print("Out of range.")

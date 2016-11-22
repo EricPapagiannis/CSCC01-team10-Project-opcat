@@ -141,16 +141,14 @@ class Comparator():
                                      main_dictionary["planetDC"][
                                          planet][field][1])
                     )
-        '''
-        for star in main_dictionary["starC"]:
-            for field in main_dictionary["starC"][star]:
+        for field in main_dictionary["starC"]:
+            if ((main_dictionary["starC"][field][0] != "N/A") and (
+                        main_dictionary["starC"][field][0] != "")):
                 result_dict.append(
                     Modification(self.origin,
-                                 self.obj2, field,
-                                 main_dictionary["starC"][star][field][0],
-                                 main_dictionary["starC"][star][field][1])
-                )
-        '''
+                                 self.obj2, self.obj1, field,
+                                 main_dictionary["starC"][field][0],
+                                 main_dictionary["starC"][field][1]))
         for planet in main_dictionary["planetA"]:
             result_dict.append(Addition(self.origin, main_dictionary["planetA"][
                 planet]))
@@ -225,8 +223,8 @@ class Comparator():
                 found = 0
                 for planetName in self.obj2.nameToPlanet:
                     cleanName = ''.join(
-                            ch for ch in planet.name if
-                            ch.isalnum()).lower()
+                        ch for ch in planet.name if
+                        ch.isalnum()).lower()
                     if (planet.name == planetName):
                         # create comparartor instance on planets
                         planetCompare = Comparator(planet,
