@@ -72,16 +72,24 @@ def buildSystemFromXML(path="../storage/OEC_XML.gz"):
                     systemName = child.text
                     system = System(systemName)
                     allSystemsDict[child.text] = system
+                    system.otherNamesSystem.append(''.join(
+                        ch for ch in child.text if ch.isalnum()).lower())
                 # if there are more names, create / add them to other names list
                 elif i == 1:
                     system.otherNamesSystem.append(child.text)
+                    system.otherNamesSystem.append(''.join(
+                        ch for ch in child.text if ch.isalnum()).lower())
                     allSystemsDict[child.text] = system
                 else:
                     system.otherNamesSystem.append(child.text)
+                    system.otherNamesSystem.append(''.join(
+                        ch for ch in child.text if ch.isalnum()).lower())
                     allSystemsDict[child.text] = system
                 i += 1
             else:
                 system.otherNamesSystem.append(child.text)
+                system.otherNamesSystem.append(''.join(
+                    ch for ch in child.text if ch.isalnum()).lower())
                 allSystemsDict[child.text] = system
 
         # build the system data dictionary mapping the tag name to the tag value
@@ -105,21 +113,37 @@ def buildSystemFromXML(path="../storage/OEC_XML.gz"):
                         star = Star(child.text)
                         allStarsDict[child.text] = star
                         localStarsDict[child.text] = star
+                        localStarsDict[(''.join(
+                            ch for ch in child.text if ch.isalnum()).lower())] = star
+                        star.otherNamesStar.append(''.join(
+                            ch for ch in child.text if ch.isalnum()).lower())
                     # if there are more names, create / add them to other names
                     # list
                     elif ii == 1:
                         star.otherNamesStar.append(child.text)
+                        star.otherNamesStar.append(''.join(
+                            ch for ch in child.text if ch.isalnum()).lower())
                         allStarsDict[child.text] = star
                         localStarsDict[child.text] = star
+                        localStarsDict[(''.join(
+                            ch for ch in child.text if ch.isalnum()).lower())] = star
                     else:
                         star.otherNamesStar.append(child.text)
+                        star.otherNamesStar.append(''.join(
+                            ch for ch in child.text if ch.isalnum()).lower())
                         allStarsDict[child.text] = star
                         localStarsDict[child.text] = star
+                        localStarsDict[(''.join(
+                            ch for ch in child.text if ch.isalnum()).lower())] = star
                     ii += 1
                 else:
                     star.otherNamesStar.append(child.text)
+                    star.otherNamesStar.append(''.join(
+                        ch for ch in child.text if ch.isalnum()).lower())
                     allStarsDict[child.text] = star
                     localStarsDict[child.text] = star
+                    localStarsDict[(''.join(
+                    ch for ch in child.text if ch.isalnum()).lower())] = star
 
             # build the star data dictionary mapping the tag name to the tag
             # value in the system
@@ -147,21 +171,40 @@ def buildSystemFromXML(path="../storage/OEC_XML.gz"):
                             planet = Planet(child.text)
                             allPlanetsDict[child.text] = planet
                             localPlanetsDict[child.text] = planet
+                            localPlanetsDict[(''.join(
+                                ch for ch in child.text if
+                                ch.isalnum()).lower())] = planet
+                            planet.otherNamesPlanet.append(''.join(
+                                ch for ch in child.text if ch.isalnum()).lower())
                         # if there are more names, create / add them to other
                         # names list
                         elif iii == 1:
                             planet.otherNamesPlanet.append(child.text)
+                            planet.otherNamesPlanet.append(''.join(
+                                ch for ch in child.text if ch.isalnum()).lower())
                             allPlanetsDict[child.text] = planet
                             localPlanetsDict[child.text] = planet
+                            localPlanetsDict[(''.join(
+                                ch for ch in child.text if
+                                ch.isalnum()).lower())] = planet
                         else:
                             planet.otherNamesPlanet.append(child.text)
+                            planet.otherNamesPlanet.append(''.join(
+                                ch for ch in child.text if ch.isalnum()).lower())
                             allPlanetsDict[child.text] = planet
                             localPlanetsDict[child.text] = planet
+                            localPlanetsDict[(''.join(
+                                ch for ch in child.text if
+                                ch.isalnum()).lower())] = planet
                         iii += 1
                     else:
                         planet.otherNamesPlanet.append(child.text)
+                        planet.otherNamesPlanet.append(''.join(
+                            ch for ch in child.text if ch.isalnum()).lower())
                         allPlanetsDict[child.text] = planet
                         localPlanetsDict[child.text] = planet
+                        localPlanetsDict[(''.join(
+                            ch for ch in child.text if ch.isalnum()).lower())] = planet
 
                 # build the planet data dictionary mapping the tag name to the
                 # tag value in the system
@@ -178,12 +221,17 @@ def buildSystemFromXML(path="../storage/OEC_XML.gz"):
                 # add the star name that the planet is in
                 planet.nameStar = star.name
                 planet.starObjectNamesToStar[star.name] = star
+                planet.starObjectNamesToStar[''.join(
+                    ch for ch in star.name if ch.isalnum()).lower()] = star
+
                 starData = star.getData()
                 # and others if there are any
                 planet.otherNamesStar = star.otherNamesStar
                 for starObject in star.otherNamesStar:
                     planet.starObjectNamesToStar[
                         starObject] = star
+                    planet.starObjectNamesToStar[
+                        ''.join(ch for ch in starObject if ch.isalnum()).lower()] = star
                 # add this planet to the list of planets in the star
                 planets.append(planet)
                 # and all planets list
@@ -196,6 +244,8 @@ def buildSystemFromXML(path="../storage/OEC_XML.gz"):
             # add the name of the system that the star is in
             star.nameSystem = system.name
             star.systemObjectNamesToSystem[star.nameSystem] = system
+            star.systemObjectNamesToSystem[
+                ''.join(ch for ch in star.nameSystem if ch.isalnum()).lower()] = system
             star.nameToPlanet = localPlanetsDict
             systemData = system.getData()
             # and others if there are any
@@ -203,6 +253,8 @@ def buildSystemFromXML(path="../storage/OEC_XML.gz"):
             for systemObject in system.otherNamesSystem:
                 star.systemObjectNamesToSystem[
                     systemObject] = system
+                star.systemObjectNamesToSystem[
+                    ''.join(ch for ch in systemObject if ch.isalnum()).lower()] = system
             # add the stars to the list of stars in the system
             stars.append(star)
             # and all stars list

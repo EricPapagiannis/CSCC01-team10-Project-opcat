@@ -222,18 +222,41 @@ class Comparator():
 
             for planet in self.obj1.planetObjects:
                 # if (planet in self.obj2.planetObjects):
-                if (planet.name in self.obj2.nameToPlanet):
-                    # create comparartor instance on planets
-                    planetCompare = Comparator(planet,
-                                               self.obj2.nameToPlanet[
-                                                   planet.name], self.origin)
-                    # get dictionary of new planet data for that planet
-                    newPlanetsData[planet.name] = planetCompare.sqlJoin(
-                        True)
-                    # get dictionary of changed planet data for that planet
-                    planetsDataChange[planet.name] = \
-                        planetCompare.innerJoinDiff()
-                else:
+                found = 0
+                for planetName in self.obj2.nameToPlanet:
+                    cleanName = ''.join(
+                            ch for ch in planet.name if
+                            ch.isalnum()).lower()
+                    if (planet.name == planetName):
+                        # create comparartor instance on planets
+                        planetCompare = Comparator(planet,
+                                                   self.obj2.nameToPlanet[
+                                                       planet.name],
+                                                   self.origin)
+                        # get dictionary of new planet data for that planet
+                        newPlanetsData[planet.name] = planetCompare.sqlJoin(
+                            True)
+                        # get dictionary of changed planet data for that planet
+                        planetsDataChange[planet.name] = \
+                            planetCompare.innerJoinDiff()
+                        found = 1
+                    elif (cleanName == ''.join(
+                            ch for ch in planetName if
+                            ch.isalnum()).lower()):
+                        # create comparartor instance on planets
+                        planetCompare = Comparator(planet,
+                                                   self.obj2.nameToPlanet[
+                                                       cleanName],
+                                                   self.origin)
+                        # get dictionary of new planet data for that planet
+                        newPlanetsData[cleanName] = planetCompare.sqlJoin(
+                            True)
+                        # get dictionary of changed planet data for that planet
+                        planetsDataChange[cleanName] = \
+                            planetCompare.innerJoinDiff()
+                        found = 1
+
+                if found == 0:
                     planetsAddition[planet.name] = planet
 
             # generates output
