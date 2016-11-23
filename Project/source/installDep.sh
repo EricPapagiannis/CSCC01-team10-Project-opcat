@@ -2,11 +2,36 @@ current=$(pip list | grep "requests (2")
 
 if [ -z "$current" ]; then
 
-    pip install requests
-    echo "Done"
+    echo installing requests
+    pip3 install requests
+    echo "installed requests"
 
 else
 
-    echo "Already installed"
+    echo "Requests already installed"
 
 fi
+
+current=`brew`
+if test $current == "The program \'brew\' is currently not installed. You can install it by typing:\nsudo apt install linuxbrew-wrapper\n"
+then
+	echo installing brew
+	sudo apt install linuxbrew-wrapper
+	echo installed brew
+else
+	echo brew already installed
+fi
+
+current=`brew list | grep hub`
+if test $current == 'hub'
+then
+	echo hub already installed
+else
+	echo installing hub
+	git clone https://github.com/github/hub.git && cd hub
+	script/build
+	echo installed hub
+fi
+
+echo
+echo installation complete
