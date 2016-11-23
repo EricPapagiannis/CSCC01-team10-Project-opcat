@@ -41,15 +41,23 @@ def initGit2():
     return link
 
 
+
 def finalizeGit2():
     """ () -> None
     Does any final commands to use github with strategy 2
     """
+    print("Performing cleanup...")
+    call(["python3", "cleanup.py"], cwd="github")
+    call(["git", "add", "systems"], cwd=direc)
+    call(["git", "commit", "-m", "Cleanup"], cwd=direc)
+    print("...Cleanup complete")
+
     call(["git", "push", "upstream", "OPCAT"], cwd=direc)
 
     # pull-request
     call(["hub", "pull-request", "-f", "-h", "OPCAT", "-m",
           "Compiled modifications"], cwd=direc)
+
 
 
 def saveDirName(direc):
@@ -140,7 +148,13 @@ def modifyXML(proposedChange, n, mode=False):
             path2 = "systems/" + proposedChange.getSystemName() + ".xml"
             call(["git", "add", path2], cwd=direc)
             commitMessage = str(proposedChange)
+
             call(["git", "commit", "-m", commitMessage], cwd=direc)
+            print("Performing cleanup...")
+            call(["python3", "cleanup.py"], cwd="github")
+            call(["git", "add", "systems"], cwd=direc)
+            call(["git", "commit", "-m", "Cleanup"], cwd=direc)
+            print("...Cleanup complete")
             call(["git", "push", "upstream", branch], cwd=direc)
             # pull-request
             call(["hub", "pull-request", "-f", "-h", branch, "-m",
@@ -199,7 +213,6 @@ def modifyPlanet(oec, proposedChange):
     child = specificPlanetXML.find(".//" + str(proposedChange.field_modified))
     child.text = str(proposedChange.value_in_origin_catalogue)
     if proposedChange.origin_upper != "N/A" and proposedChange.upper_attrib_name != "N/A":
-        print(proposedChange.OEC_upper, proposedChange.origin_upper)
         if proposedChange.OEC_upper != "N/A" and float(proposedChange.OEC_upper) != float(proposedChange.origin_upper):
             child.attrib[
                 proposedChange.upper_attrib_name] = proposedChange.origin_upper
