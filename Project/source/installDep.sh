@@ -12,8 +12,9 @@ else
 
 fi
 
-current=`brew`
-if test $current == "The program \'brew\' is currently not installed. You can install it by typing:\nsudo apt install linuxbrew-wrapper\n"
+`brew>temp 2>&1`
+current=`<temp`
+if test "$current" == "The program \'brew\' is currently not installed. You can install it by typing:\nsudo apt install linuxbrew-wrapper\n"
 then
 	echo installing brew
 	sudo apt install linuxbrew-wrapper
@@ -22,7 +23,8 @@ else
 	echo brew already installed
 fi
 
-current=`brew list | grep hub`
+`brew list | grep hub>temp 2>&1`
+current=`<temp`
 if test $current == 'hub'
 then
 	echo hub already installed
