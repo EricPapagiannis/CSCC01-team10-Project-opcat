@@ -1,0 +1,133 @@
+#!/bin/bash
+# story tests for Opcat
+cd ..
+echo Test starts now
+echo Do not interrupt until \'Test complete\' has been printed
+echo
+
+passed=''
+failed=''
+# test update
+python3 driver.py --update >tempOut
+
+if test `ls storage/program_data | grep CHANGES_STORAGE` == 'CHANGES_STORAGE'
+then
+	echo update... passed.
+    count=`cat tempOut | grep "Number of differences discovered : [0-9]*" | grep -o [0-9][0-9]*`
+    passed=`echo update`
+
+else
+    echo update... failed. CHANGES_STORAGE does not exist
+    failed=`echo update`
+fi
+
+python3 driver.py --showall >tempOut
+
+# test showall
+current=`cat tempOut | grep .*Error.*`
+if test -z $current
+then
+    echo showall... passed.
+    passed=`echo $passed showall`
+else
+    echo showall... failed. An error occurred.
+    cat tempOut
+    failed=`echo $failed showall`
+fi
+
+# test postpone
+if test $count -gt 0
+then
+    python3 driver.py --postpone 1 >/dev/null
+    current=`python3 driver.py --showall | grep "Number of changes shown : [0-9]*" | grep -o [0-9][0-9]*`
+    if test `expr $count - 1` -eq $current
+    then
+        echo postpone... passed.
+        passed=`echo $passed postpone`
+    else
+        echo postpone... failed.
+        echo pre-postpone number of changes: $count
+        echo post-postpone number of changes: $current
+        failed=`echo $failed postpone`
+    fi
+    count=$current
+fi
+
+if test $count -gt 0
+then
+    python3 driver.py --deny 1 >/dev/null
+    current=`python3 driver.py --showall | grep "Number of changes shown : [0-9]*" | grep -o [0-9][0-9]*`
+    if test `expr $count - 1` -eq $current
+    then
+        echo deny... passed.
+        passed=`echo $passed deny`
+    else
+        echo deny... failed.
+        echo pre-deny number of changes: $count
+        echo post-deny number of changes: $current
+        failed=`echo $failed deny`
+    fi
+    count=$current
+fi
+
+if test $count -gt 0
+then
+    python3 driver.py --postponeall >/dev/null
+    current=`python3 driver.py --showall | grep "Number of changes shown : [0-9]*" | grep -o [0-9][0-9]*`
+    if test $current -eq 0
+    then
+        echo postpone all... passed.
+        passed=`echo $passed postponeall`
+    else
+        echo postpone all... failed.
+        echo expected number of changes shown after postpone all: $count
+        echo actual number of changes shown after postpone all: $current
+        failed=`echo $failed postponeall`
+    fi
+    count=$current
+fi
+
+echo updating again
+current=`python3 driver.py --update | grep "Number of differences discovered : [0-9]*" | grep -o [0-9][0-9]*`
+if test $current -gt 0
+then
+    echo update after postpone... passed.
+    passed=`echo $passed post-postpone`
+else
+    echo update after postpone... failed.
+    echo postponed updates not recalled.
+    failed=`echo $failed post-postpone`
+count=$current
+fi
+
+python3 driver.py --denyall >/dev/null
+current=`python3 driver.py --showall | grep "Number of changes shown : [0-9]*" | grep -o [0-9][0-9]*`
+if test $current -eq 0
+then
+    echo denyall... passed.
+    passed=`echo $passed denyall`
+else
+    echo denyall... failed.
+    echo expected 0 remaining changes, there are $current changes left \(`expr $count - $current` denied\)
+    failed=`echo $failed denyall`
+fi
+
+# fixing failed and passed
+
+if test -z "$failed"
+then
+    failed='None'
+fi
+if test -z "$passed"
+then
+    passed='None'
+fi
+
+rm ./tempOut
+
+echo
+echo Test complete
+echo Failed tests:
+echo $failed
+echo Passed tests:
+echo $passed
