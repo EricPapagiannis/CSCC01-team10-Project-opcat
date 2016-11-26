@@ -35,5 +35,7 @@ else
 	echo installed hub
 fi
 
+rm temp
+
 echo
 echo installation complete
