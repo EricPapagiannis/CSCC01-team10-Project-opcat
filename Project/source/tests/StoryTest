@@ -4,7 +4,7 @@ echo 'You can only run the test once, and all changes will be denied at the end 
 echo 'After the test, you must run git reset --hard HEAD'
 echo 'Continue? (y/n)'
 read input
-if test $input != 'y' || test $input != 'Y'
+if test $input != 'y' && test $input != 'Y'
 then
     exit
 fi
