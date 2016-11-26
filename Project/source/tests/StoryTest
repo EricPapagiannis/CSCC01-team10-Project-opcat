@@ -1,5 +1,14 @@
 #!/bin/bash
 # story tests for Opcat
+echo 'You can only run the test once, and all changes will be denied at the end of the test.'
+echo 'After the test, you must run git reset --hard HEAD'
+echo 'Continue? (y/n)'
+read input
+if test $input != 'y' || test $input != 'Y'
+then
+    exit
+fi
+
 cd ..
 echo Test starts now
 echo Do not interrupt until \'Test complete\' has been printed
