@@ -334,6 +334,9 @@ class UnitConverter:
             return re
 
         def convertEURA(data):
+            '''(str)->(str)
+            Converts EU's right ascension to OEC's
+            '''
             deg = float(data)
             hour = deg / 15.0
             hours = int(hour)
@@ -345,6 +348,9 @@ class UnitConverter:
             return re
 
         def convertNASARA(data):
+            '''(str)->(str)
+            Converts NASA's right ascension to OEC's
+            '''
             re = ''
             re += data[:2] + ' '
             re += data[3:5] + ' '
@@ -352,6 +358,9 @@ class UnitConverter:
             return re
 
         def convertNASADEC(data):
+            '''(str)->(str)
+            Converts NASA's declination to OEC's
+            '''
             re = ''
             re += data[:3] + ' '
             re += data[4:6] + ' '
@@ -359,6 +368,9 @@ class UnitConverter:
             return re
 
         def convertEUDEC(data):
+            '''(str)->(str)
+            Converts EU's declination to OEC's
+            '''
             deg = float(data)
             hour = deg / 15.0
             hours = int(hour)

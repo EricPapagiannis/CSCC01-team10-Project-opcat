@@ -1,0 +1,129 @@
+CSCC01 Deliverable 3 Marking Guide
+-----------------------------------
+
+Total: 86/100
+
+Project Management:  __________ (38/40%)
+
+  Release plan:
+    - each release corresponds to end of Sprint
+    - project fully laid out:
+      for each release date, list of user stories to implement
+    - project velocity specified and used
+    - highest priority user stories first modulo dependencies
+    - reasonable goals for each release
+
+[score: 5/5]
+- good
+
+  Product Backlog:
+    - user stories follow the correct format.
+    - user stories, together, reflect all the user requirements (from
+      all personas).
+    - user stories correspond to actual requirements (no "invented"
+      features).
+    - user stories contain enough information for devs to estimate how
+      long it would take to implement it.
+    - each user story addresses one specific requirement (no "world
+      peace" stories).
+
+[score: 5/5]
+- good
+
+  Sprint Backlog(s):
+     - user stories taken from the Product Backlog
+     - estimated costs
+     - estimated values
+
+[score: 5/5]
+- good
+
+  Sprint Plan(s):
+    - user stories divided into tasks when appropriate.
+    - each Sprint Plan contains all the necessary information:
+        who is working on which task on which day
+    - sum of costs of user stories in the sprint = project velocity
+    - good planning decisions
+
+[score: 5/5]
+- good
+
+  Use of Task Board:
+    - correct format of task boards
+    - snapshots in the begginning and end of each Sprint are provided
+
+[score: 3/5]
+- task board should come with little explanations (-2)
+
+  Use of Burndown Charts:
+    - snapshots in the begginning and end of each Sprint are provided
+    - correctness of burndown charts
+
+[score: 5/5]
+- good
+
+  Use of Repo:
+    (good use of branches not required here, but is required for next deliverable)
+
+[score: 5/5]
+- good
+
+  Use of communication tools:
+     - evidence of using communication tools of their choice effectively
+
+[score: 5/5]
+- good
+
+Design and Implementation:  __________ (20/30%)
+
+   System Design:
+      - good modular design
+      - general and easy to extend
+      - it is clear how the current implementation is going to be
+        extended into an application that satisfies the client's needs
+
+[score: 0/10]
+- no design submitted
+
+   Implementation:
+     - 0 marks if it doesn't run
+     - at least one feature is either fully implemented of nearly implemented
+     - quality and maturity of code
+
+[score: 20/20]
+- very good (including instructions to install and run the software)
+
+Report: __________ (18/20%)
+
+  - well-presented, is easy to read and to navigate
+  - spelling and grammar
+  - looks professional
+  - quality of the README file
+
+[comments]
+- good quality report
+- snapshots of the taskboard is low quality and not readable (-2)
+
+Interview: ________ (10/10%)
+
+1) Changes to Product Backlog [2/2]:
+
+- Very good answer overall
+- Some of them were vague, make them more specific and so create new ones.
+- + clarification with the client
+
+2) Sprint Backlog [2/2]:
+
+- good breakdown and schedule
+
+3) System Design [2/2]:
+
+- good
+
+4) Task Board and Burndown Chart [2/2]:
+
+- All good
+
+5) Implementation [2/2]:
+
+- Good

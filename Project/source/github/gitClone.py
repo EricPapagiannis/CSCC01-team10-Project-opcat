@@ -3,11 +3,12 @@ import xml.etree.ElementTree as ET
 import data_comparison.proposed_change as PC
 import os
 import datetime
+import storage_manager.storage_manager as STORAGE
 
 # 'static' vars
 files = []
 direc = "github/open_exoplanet_catalogue"
-link = 'https://github.com/EricPapagiannis/open_exoplanet_catalogue.git'
+link = STORAGE.config_get("repo_url")
 
 
 def initGit():

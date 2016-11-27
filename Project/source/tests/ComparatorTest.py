@@ -119,9 +119,6 @@ class TestComparator(unittest.TestCase):
         answer = {"mass": (100.0, 112.0)}
         self.assertEqual(starC, answer)
 
-    def testStarCWithDifferentNumberFields(self):
-        self.Star2.addVal("temperature", 144)
-
     def testStarCompareStarWithOneFieldStarN(self):
         comparator = Comparator(self.Star1, self.Star2, "eu")
         result = comparator.starCompare()
