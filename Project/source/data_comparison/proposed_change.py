@@ -1,3 +1,6 @@
+from datetime import datetime as dt
+
+
 class ProposedChange:
     '''
     Abstract class. Not used directly. Parent Class of Addition and 
@@ -39,6 +42,18 @@ class Addition(ProposedChange):
         s += str(self.object_ptr)
         s += "\n"
         return s
+
+    def fancyStr(self):
+        return str(self)
+
+    def __eq__(self, other):
+        return (
+            (type(other) is type(self)) and (self.origin == other.origin) and (
+                self.object_ptr.name == other.object_ptr.name) and (
+                self.object_ptr.data == other.object_ptr.data))
+
+    def __ne__(self, other):
+        return not (self == other)
 
     def get_object_name(self):
         '''
@@ -82,18 +97,18 @@ class Modification(ProposedChange):
         self.origin_lower = limits[3]
         self.upper_attrib_name = limits[4]
         self.lower_attrib_name = limits[5]
-
+        self._index = None
         ProposedChange.__init__(self, origin)
 
     def __eq__(self, other):
         return (
             (type(other) is type(self)) and (self.origin == other.origin) and (
-                self.OEC_object.name == other.OEC_object_name) and (
+                self.OEC_object.name == other.OEC_object.name) and (
                 str(self.OEC_object.__class__.__name__) == str(
                     other.OEC_object.__class__.__name__)) and (
                 self.getSystemName() == other.getSystemName()) and (
                 self.field_modified == other.field_modified) and (
-                self.lastupdate == other.last_update) and (
+                self.lastupdate == other.lastupdate) and (
                 self.value_in_OEC == other.value_in_OEC) and (
                 self.value_in_origin_catalogue == other.value_in_origin_catalogue) and (
                 self.OEC_upper == other.OEC_upper) and (
@@ -199,6 +214,54 @@ class Modification(ProposedChange):
         s += "\n"
         return s
 
+    def fancyStr(self):
+        s = "Proposed modification:\n\n"
+        s += "Name of object modified: "
+        s += self.OEC_object.name
+        s += "\nOrigin : "
+        s += str(self.origin)
+        s += "\n"
+        s += "Type of object modified: "
+        s += str(self.OEC_object.__class__.__name__)
+        s += "\n"
+        if self.OEC_object.__class__.__name__ != "System":
+            s += "Part of System: "
+            if self.OEC_object.__class__.__name__ == "Star":
+                s += self.OEC_object.nameSystem
+            elif self.OEC_object.__class__.__name__ == "Planet":
+                s += self.OEC_object.starObject.nameSystem
+            s += "\n"
+        s += "Field modified: "
+        s += str(self.field_modified)
+        s += "\n"
+        s += "Last modified by "
+        s += str(self.origin)
+        s += " on: "
+        s += self.lastupdate
+        s += "\n"
+        s += "Value according to "
+        s += str(self.origin)
+        s += ": "
+        s += "\x1b[2;30;42m" + str(self.value_in_origin_catalogue) + "\x1b[0m"
+        s += "\n"
+        s += "Value according to Open Exoplanet Catalogue: "
+        s += "\x1b[6;30;41m" + str(self.value_in_OEC) + "\x1b[0m"
+        s += "\n"
+        s += "Origin Upper Limit: "
+        s += "\x1b[2;30;42m" + str(self.origin_upper) + "\x1b[0m"
+        s += "\n"
+        s += "Origin Lower Limit: "
+        s += "\x1b[2;30;42m" + str(self.origin_lower) + "\x1b[0m"
+        s += "\n"
+        s += "OEC Upper Limit: "
+        s += "\x1b[6;30;41m" + str(self.OEC_upper) + "\x1b[0m"
+        s += "\n"
+        s += "OEC Lower Limit: "
+        s += "\x1b[6;30;41m" + str(self.OEC_lower) + "\x1b[0m"
+        s += "\n"
+
+        return s
+
     def get_object_name(self):
         '''
         () -> str
@@ -269,6 +332,70 @@ def merge_sort_changes(CHANGES):
         return merge_changes(first, second)
     else:
         return CHANGES
+
+
+def bubble_sort_changes_by_lastupdate(CHANGES):
+    """ ([ProposedChanged]) -> ([ProposedChange], [int])
+    """
+    newChanges = CHANGES[:]
+    indeces = list(range(len(newChanges)))
+    for i in range(len(newChanges)):
+        for k in range(len(newChanges) - 1, i, -1):
+            if (dt.strptime(newChanges[k].lastupdate, "%y/%m/%d") > dt.strptime(
+                    newChanges[k - 1].lastupdate, "%y/%m/%d")):
+                (newChanges[k], newChanges[k - 1]) = (
+                    newChanges[k - 1], newChanges[k])
+                (indeces[k], indeces[k - 1]) = (indeces[k - 1], indeces[k])
+    return (newChanges, indeces)
+
+
+def merge_changes_by_last_update(first, second):
+    '''
+    ([ProposedChange], [ProposedChange]) -> [ProposedChange]
+
+    Helper method for merge_sort_changes() method. Merges 2 sorted lists of
+    proposed changes; returns single sorted list.
+    '''
+    # List res will contain all the elements from both lists
+    res = []
+    # Append ProposedChange objects by lexicographical order of the name of the
+    # planetaryObject ProposedChanges are referring to
+    while len(first) != 0 and len(second) != 0:
+        if (dt.strptime(first[0].lastupdate, "%y/%m/%d") > dt.strptime(
+                second[0].lastupdate, "%y/%m/%d")):
+            res.append(first.pop(0))
+        else:
+            res.append(second.pop(0))
+    # Add all the elements from the list that is not empty to the res
+    for i in [first, second]:
+        res.extend(i)
+    return res
+
+
+def merge_sort_changes_by_lastupdate(CHANGES):
+    '''
+    ([ProposedChange]) -> [ProposedChange]
+
+    Recursively sorts the list of proposed changes in lexicographical order by
+    the name of the object the change is referring to. Returns sorted list.
+    '''
+    if len(CHANGES) > 1:
+        mid = len(CHANGES) // 2
+        # Recursive calls on first and second halves.
+        first = merge_sort_changes_by_lastupdate(CHANGES[:mid])
+        second = merge_sort_changes_by_lastupdate(CHANGES[mid:])
+        # Merging and returning 2 sublists
+        return merge_changes_by_last_update(first, second)
+    else:
+        return CHANGES
+
+
+def sort_changes_lastupdate(changes_list):
+    newChangesList = changes_list[:]
+    for i in range(len(changes_list)):
+        newChangesList[i]._index = i
+    newChangesList = merge_sort_changes_by_lastupdate(newChangesList)
+    return newChangesList
 
 
 def sort_changes(changes_list):

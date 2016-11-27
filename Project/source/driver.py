@@ -11,6 +11,7 @@ import github.gitClone as GIT
 import storage_manager.storage_manager as STORAGE
 import datetime
 import subprocess
+import urllib
 
 # usage string
 usage_str = "usage: driver [--help] [--update] [--output string] [--planet " \
@@ -32,6 +33,9 @@ XML_path = "storage/OEC_XML.gz"
 
 # list of all proposed changes (accumulated on update())
 CHANGES = []
+
+# the minimum autoupdate interval allowed (in hours)
+MIN_AUTOU_INTERVAL = 1
 
 
 def status():
@@ -117,7 +121,7 @@ def show_range(start, end):
     elif isinstance(end, str) and end.lower() == "s":
         end = 1
     bothInts = isinstance(start, int) and isinstance(end, int)
-    validRange = 1 <= start <= len(CHANGES) and 1 <=  end <= len(CHANGES)
+    validRange = 1 <= start <= len(CHANGES) and 1 <= end <= len(CHANGES)
     if (bothInts and validRange):
         if start <= end:
             i = start
@@ -143,7 +147,7 @@ def show_number(n):
         unpack_changes()
     if n <= len(CHANGES) and n > 0:
         print("\nShowing number : " + str(n) + "\n")
-        print(CHANGES[n - 1])
+        print(str(CHANGES[n - 1]))
         print()
     else:
         print("Out of range.")
@@ -179,7 +183,7 @@ def accept_all(strategy):
     i = 0
     # for demo change back after!!!!!!!!
     while i < 25:
-    #while i < len(CHANGES):
+        # while i < len(CHANGES):
         accept(i, strategy)
         i += 1
 
@@ -190,8 +194,19 @@ def deny_number(n):
     designated by 'n'
     Returns NoneType
     '''
-
-    print("denied ", n)
+    unpack_changes()
+    if n > 0 and n <= len(CHANGES) :
+        # if given number is within the range, add the n-th change to black 
+        # list and pop it from thelist of changes
+        black_list = STORAGE.config_get("black_list")
+        black_list.append(CHANGES.pop(n-1))
+        # update the blacklist
+        STORAGE.config_set("black_list", black_list)
+        # update the changes list in memory
+        STORAGE.write_changes_to_memory(CHANGES)
+        print("Done.")
+    else:
+        print("Out of range.")
 
 
 def deny_all():
@@ -199,12 +214,14 @@ def deny_all():
     Method for declining all proposed changes.
     Returns NoneType
     '''
-
     unpack_changes()
-    i = 1
-    while i <= len(CHANGES):
-        deny_number(i)
-        i += 1
+    # add all currently pending changes to blacklist
+    black_list = STORAGE.config_get("black_list")
+    black_list.extend(CHANGES)
+    # write black list to memory    
+    STORAGE.config_set("black_list", black_list)
+    # clear the list of currently pending changes
+    STORAGE.write_changes_to_memory([])
     print("Done.")
 
 
@@ -231,17 +248,17 @@ def postpone_all():
     Method for postponing all proposed changes.
     Returns NoneType
     '''
-
-    unpack_changes()
-    i = 1
-    while i <= len(CHANGES):
-        postpone_number(i)
-        i += 1
+    STORAGE.write_changes_to_memory([])
     print("Done.")
 
 
 def unpack_changes():
-    # TODO : check that the last time of the update is not "Never"
+    '''
+    () -> None
+    
+    Retrieves the list of ProposedChange objects from memory into global 
+    variable "CHANGES".
+    '''
     global CHANGES
     CHANGES = STORAGE.read_changes_from_memory()
 
@@ -252,11 +269,16 @@ def update():
     proposed changes. Network connection required.
     Returns NoneType
     '''
-
+    # postpone all currently pending changes
+    STORAGE.write_changes_to_memory([])    
     # open exoplanet catalogue
     global CHANGES
     CHANGES = []
-    XML.downloadXML(XML_path)
+    try:
+        XML.downloadXML(XML_path)
+    except urllib.error.URLError:
+        print("No internet connection\n")
+        return
     OEC_lists = XML.buildSystemFromXML(XML_path)
     OEC_systems = OEC_lists[0]
     OEC_stars = OEC_lists[1]
@@ -273,6 +295,8 @@ def update():
     # NASA_getter.getFromAPI("")
     except (TimeoutError, API.CannotRetrieveDataException) as e:
         print("NASA archive is unreacheable.\n")
+    except (urllib.error.URLError):
+        print("No internet connection.\n")
 
     # Saves exoplanetEU database into a text file named exo_file
     exoplanetEU_getter = API.apiGet(exoplanetEU_link, EU_file)
@@ -280,6 +304,8 @@ def update():
         exoplanetEU_getter.getFromAPI("")
     except (TimeoutError, API.CannotRetrieveDataException) as e:
         print("exoplanet.eu is unreacheable.\n")
+    except (urllib.error.URLError):
+        print("No internet connection.\n")
 
     # build the dict of stars from exoplanet.eu
     EU_stars = CSV.buildDictStarExistingField(EU_file, "eu")
@@ -293,18 +319,27 @@ def update():
         for key in d:
             if d.get(key).__class__.__name__ != "Star":
                 d.pop(key)
-
-    # add chages from EU to the list
+    # retrieve the blacklist from memory
+    black_list = STORAGE.config_get("black_list")
+    # add chages from EU to the list (if they are not blacklisted by the user)
     for key in EU_stars.keys():
         if key in OEC_stars.keys():
-            C = COMP.Comparator(EU_stars.get(key), OEC_stars.get(key), "eu")
-            CHANGES.extend(C.proposedChangeStarCompare())
+            Comp_object = COMP.Comparator(EU_stars.get(key), 
+                                          OEC_stars.get(key), "eu")
+            LIST = Comp_object.proposedChangeStarCompare()
+            for C in LIST:
+                if (not C in black_list) and (not C in CHANGES):
+                    CHANGES.append(C)
 
     # add chages from NASA to the list
     for key in NASA_stars.keys():
         if key in OEC_stars.keys():
-            C = COMP.Comparator(NASA_stars.get(key), OEC_stars.get(key), "nasa")
-            CHANGES.extend(C.proposedChangeStarCompare())
+            Comp_object = COMP.Comparator(NASA_stars.get(key), 
+                                          OEC_stars.get(key), "nasa")
+            LIST = Comp_object.proposedChangeStarCompare()            
+            for C in LIST:
+                if (not C in black_list) and (not C in CHANGES):
+                    CHANGES.append(C)
 
     # sort the list of proposed changes
     CHANGES = PC.merge_sort_changes(CHANGES)
@@ -321,33 +356,49 @@ def update():
 
 def clearblacklist():
     '''() -> NoneType
+    
     Method for clearing declined blacklist of proposed changes
     '''
+    STORAGE.config_set("black_list", [])
+    print("Done.")
 
-    # TODO
-    pass
 
-
-def showlastest(showlastest_marker):
+def showlastest(n):
     '''(int) -> NoneType
     Method for showest the lastest 'n' proposed changes
     "showlastest_marker" is passed in as int
     '''
+    unpack_changes()
 
-    print (showlastest_marker)
-    # TODO
+    if n >= 1 and n <= len(CHANGES):
+        print("Showing the latest " + str(n) + " changes: ")
+        newChanges = PC.sort_changes_lastupdate(CHANGES)
+        i = 0
+        while i < n:
+            print("\nShowing number : " + str(newChanges[i]._index + 1) + "\n")
+            print(newChanges[i].fancyStr())
+            print()
+            i += 1
+    else:
+        print("Out of range.")
     pass
 
 
 def setautoupdate(autoupdate_interval):
-    '''(int) -> NoneType
+    '''(int) -> int
     Invokes the autoupdate_daemon to run in a seperate process
     autoupdate_daemon will continue to run after program exits
-    Returns NoneType
+    Returns 0 if successful
+    Returns 1 if invalid autoupdate interval
     '''
 
-    commandstr = "python3 autoupdate_daemon.py -i " + str(autoupdate_interval)
-    subprocess.Popen(commandstr, shell=True)
+    if (autoupdate_interval >= MIN_AUTOU_INTERVAL):
+        commandstr = "python3 autoupdate_daemon.py -i " + str(autoupdate_interval)
+        subprocess.Popen(commandstr, shell=True)
+        return 0
+    else:
+        print("Autoupdate interval too short!\n")
+        return 1
 
 
 def stopautoupdate():
@@ -614,3 +665,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+    

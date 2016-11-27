@@ -7,6 +7,11 @@ import subprocess
 # Do not use directly
 
 
+# Verbose mode
+# By default, daemon does not output to stdout
+VERBOSE = False
+
+
 class InvalidIntervalException(Exception):
     pass
 
@@ -36,7 +41,8 @@ def main():
 
     while(1):
         # daemon continues to run until it is killed by driver
-        print("Commencing update...")
+        if (VERBOSE):
+            print("Commencing update...")
         subprocess.Popen(commandstr, shell=True)
         time.sleep(sleeptime_hours)
 
