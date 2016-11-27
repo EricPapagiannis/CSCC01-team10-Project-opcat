@@ -737,7 +737,7 @@ def main():
 
     # setrepo
     if (setrepo_flag):
-        setrepo(setrepo_marker)
+        setrepo(repo_marker)
 
     # clearrepo
     if (clearrepo_flag):
