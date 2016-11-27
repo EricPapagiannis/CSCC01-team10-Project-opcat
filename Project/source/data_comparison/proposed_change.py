@@ -46,6 +46,15 @@ class Addition(ProposedChange):
     def fancyStr(self):
         return str(self)
 
+    def __eq__(self, other):
+        return (
+            (type(other) is type(self)) and (self.origin == other.origin) and (
+                self.object_ptr.name == other.object_ptr.name) and (
+                self.object_ptr.data == other.object_ptr.data))
+
+    def __ne__(self, other):
+        return not (self == other)
+
     def get_object_name(self):
         '''
         () -> str
@@ -88,7 +97,7 @@ class Modification(ProposedChange):
         self.origin_lower = limits[3]
         self.upper_attrib_name = limits[4]
         self.lower_attrib_name = limits[5]
-
+        self._index = None
         ProposedChange.__init__(self, origin)
 
     def __eq__(self, other):
@@ -338,6 +347,55 @@ def bubble_sort_changes_by_lastupdate(CHANGES):
                     newChanges[k - 1], newChanges[k])
                 (indeces[k], indeces[k - 1]) = (indeces[k - 1], indeces[k])
     return (newChanges, indeces)
+
+
+def merge_changes_by_last_update(first, second):
+    '''
+    ([ProposedChange], [ProposedChange]) -> [ProposedChange]
+
+    Helper method for merge_sort_changes() method. Merges 2 sorted lists of
+    proposed changes; returns single sorted list.
+    '''
+    # List res will contain all the elements from both lists
+    res = []
+    # Append ProposedChange objects by lexicographical order of the name of the
+    # planetaryObject ProposedChanges are referring to
+    while len(first) != 0 and len(second) != 0:
+        if (dt.strptime(first[0].lastupdate, "%y/%m/%d") > dt.strptime(
+                second[0].lastupdate, "%y/%m/%d")):
+            res.append(first.pop(0))
+        else:
+            res.append(second.pop(0))
+    # Add all the elements from the list that is not empty to the res
+    for i in [first, second]:
+        res.extend(i)
+    return res
+
+
+def merge_sort_changes_by_lastupdate(CHANGES):
+    '''
+    ([ProposedChange]) -> [ProposedChange]
+
+    Recursively sorts the list of proposed changes in lexicographical order by
+    the name of the object the change is referring to. Returns sorted list.
+    '''
+    if len(CHANGES) > 1:
+        mid = len(CHANGES) // 2
+        # Recursive calls on first and second halves.
+        first = merge_sort_changes_by_lastupdate(CHANGES[:mid])
+        second = merge_sort_changes_by_lastupdate(CHANGES[mid:])
+        # Merging and returning 2 sublists
+        return merge_changes_by_last_update(first, second)
+    else:
+        return CHANGES
+
+
+def sort_changes_lastupdate(changes_list):
+    newChangesList = changes_list[:]
+    for i in range(len(changes_list)):
+        newChangesList[i]._index = i
+    newChangesList = merge_sort_changes_by_lastupdate(newChangesList)
+    return newChangesList
 
 
 def sort_changes(changes_list):

@@ -47,7 +47,6 @@ class TestCSV_parser(unittest.TestCase):
         self.assertEqual(data["period"],'0.7')
         self.assertEqual(data["eccentricity"], '1')
         self.assertEqual(data["discoverymethod"], "RV")
-        self.assertEqual(data["lastupdate"],"04/05/16")
 
 if __name__ == '__main__':
     unittest.main(exit=False)

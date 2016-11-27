@@ -96,15 +96,15 @@ def buildPlanet(line, heads, wanted, source, errors=None):
             _data_field[i] = tempval
         except ValueError:  # not parsing fields we can't find
             pass
-
-    for i in errors:
-        try:
-            temp = _actualerror[i]
-            tempval = heads.index(temp)
-            # the dict saves the indii
-            _error_field[i] = tempval
-        except ValueError:  # not parsing fields we can't find
-            pass
+    if errors:
+        for i in errors:
+            try:
+                temp = _actualerror[i]
+                tempval = heads.index(temp)
+                # the dict saves the indii
+                _error_field[i] = tempval
+            except ValueError:  # not parsing fields we can't find
+                pass
     # name of planet is always first field
     _name = line[_name_index]
     # nasa is weird, it's first 2 field
@@ -121,6 +121,7 @@ def buildPlanet(line, heads, wanted, source, errors=None):
         # if the field DNE then we add empty to it
         except KeyError:
             planet.addVal(i, "")
+
     for i in _error_field:
         val = line[_error_field[i]]
         if val.startswith("-"):
@@ -272,15 +273,15 @@ def buildStar(line, heads, source, errors=None):
             _data_field[i] = heads.index(_actual[i])
         except ValueError:
             pass
-
-    for i in errors:
-        try:
-            temp = _actualerror[i]
-            tempval = heads.index(temp)
-            # the dict saves the indii
-            _error_field[i] = tempval
-        except ValueError:  # not parsing fields we can't find
-            pass
+    if errors:
+        for i in errors:
+            try:
+                temp = _actualerror[i]
+                tempval = heads.index(temp)
+                # the dict saves the indii
+                _error_field[i] = tempval
+            except ValueError:  # not parsing fields we can't find
+                pass
     _name = line[_data_field['name']]
 
     star = Star(_name)
@@ -329,6 +330,9 @@ class UnitConverter:
             return re
 
         def convertEURA(data):
+            '''(str)->(str)
+            Converts EU's right ascension to OEC's
+            '''
             deg = float(data)
             hour = deg / 15.0
             hours = int(hour)
@@ -340,6 +344,9 @@ class UnitConverter:
             return re
 
         def convertNASARA(data):
+            '''(str)->(str)
+            Converts NASA's right ascension to OEC's
+            '''
             re = ''
             re += data[:2] + ' '
             re += data[3:5] + ' '
@@ -347,6 +354,9 @@ class UnitConverter:
             return re
 
         def convertNASADEC(data):
+            '''(str)->(str)
+            Converts NASA's declination to OEC's
+            '''
             re = ''
             re += data[:3] + ' '
             re += data[4:6] + ' '
@@ -354,6 +364,9 @@ class UnitConverter:
             return re
 
         def convertEUDEC(data):
+            '''(str)->(str)
+            Converts EU's declination to OEC's
+            '''
             deg = float(data)
             hour = deg / 15.0
             hours = int(hour)

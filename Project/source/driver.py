@@ -11,6 +11,7 @@ import github.gitClone as GIT
 import storage_manager.storage_manager as STORAGE
 import datetime
 import subprocess
+import urllib
 
 # usage string
 usage_str = "usage: driver [--help] [--update] [--output string] [--planet " \
@@ -146,7 +147,7 @@ def show_number(n):
         unpack_changes()
     if n <= len(CHANGES) and n > 0:
         print("\nShowing number : " + str(n) + "\n")
-        print(CHANGES[n - 1].fancyStr())
+        print(str(CHANGES[n - 1]))
         print()
     else:
         print("Out of range.")
@@ -194,11 +195,11 @@ def deny_number(n):
     Returns NoneType
     '''
     unpack_changes()
-    if n >= 0 and n < len(CHANGES) :
+    if n > 0 and n <= len(CHANGES) :
         # if given number is within the range, add the n-th change to black 
         # list and pop it from thelist of changes
         black_list = STORAGE.config_get("black_list")
-        black_list.append(CHANGES.pop(n))
+        black_list.append(CHANGES.pop(n-1))
         # update the blacklist
         STORAGE.config_set("black_list", black_list)
         # update the changes list in memory
@@ -220,8 +221,11 @@ def deny_all():
     Returns NoneType
     '''
     unpack_changes()
-    # add all currently pending changes to the blacklist
-    STORAGE.config_set("black_list", CHANGES)
+    # add all currently pending changes to blacklist
+    black_list = STORAGE.config_get("black_list")
+    black_list.extend(CHANGES)
+    # write black list to memory    
+    STORAGE.config_set("black_list", black_list)
     # clear the list of currently pending changes
     STORAGE.write_changes_to_memory([])
     print("Done.")
@@ -280,7 +284,11 @@ def update():
     # open exoplanet catalogue
     global CHANGES
     CHANGES = []
-    XML.downloadXML(XML_path)
+    try:
+        XML.downloadXML(XML_path)
+    except urllib.error.URLError:
+        print("No internet connection\n")
+        return
     OEC_lists = XML.buildSystemFromXML(XML_path)
     OEC_systems = OEC_lists[0]
     OEC_stars = OEC_lists[1]
@@ -297,6 +305,8 @@ def update():
     # NASA_getter.getFromAPI("")
     except (TimeoutError, API.CannotRetrieveDataException) as e:
         print("NASA archive is unreacheable.\n")
+    except (urllib.error.URLError):
+        print("No internet connection.\n")
 
     # Saves exoplanetEU database into a text file named exo_file
     exoplanetEU_getter = API.apiGet(exoplanetEU_link, EU_file)
@@ -304,6 +314,8 @@ def update():
         exoplanetEU_getter.getFromAPI("")
     except (TimeoutError, API.CannotRetrieveDataException) as e:
         print("exoplanet.eu is unreacheable.\n")
+    except (urllib.error.URLError):
+        print("No internet connection.\n")
 
     # build the dict of stars from exoplanet.eu
     EU_stars = CSV.buildDictStarExistingField(EU_file, "eu")
@@ -317,18 +329,27 @@ def update():
         for key in d:
             if d.get(key).__class__.__name__ != "Star":
                 d.pop(key)
-
-    # add chages from EU to the list
+    # retrieve the blacklist from memory
+    black_list = STORAGE.config_get("black_list")
+    # add chages from EU to the list (if they are not blacklisted by the user)
     for key in EU_stars.keys():
         if key in OEC_stars.keys():
-            C = COMP.Comparator(EU_stars.get(key), OEC_stars.get(key), "eu")
-            CHANGES.extend(C.proposedChangeStarCompare())
+            Comp_object = COMP.Comparator(EU_stars.get(key), 
+                                          OEC_stars.get(key), "eu")
+            LIST = Comp_object.proposedChangeStarCompare()
+            for C in LIST:
+                if (not C in black_list) and (not C in CHANGES):
+                    CHANGES.append(C)
 
     # add chages from NASA to the list
     for key in NASA_stars.keys():
         if key in OEC_stars.keys():
-            C = COMP.Comparator(NASA_stars.get(key), OEC_stars.get(key), "nasa")
-            CHANGES.extend(C.proposedChangeStarCompare())
+            Comp_object = COMP.Comparator(NASA_stars.get(key), 
+                                          OEC_stars.get(key), "nasa")
+            LIST = Comp_object.proposedChangeStarCompare()            
+            for C in LIST:
+                if (not C in black_list) and (not C in CHANGES):
+                    CHANGES.append(C)
 
     # sort the list of proposed changes
     CHANGES = PC.merge_sort_changes(CHANGES)
@@ -349,6 +370,7 @@ def clearblacklist():
     Method for clearing declined blacklist of proposed changes
     '''
     STORAGE.config_set("black_list", [])
+    print("Done.")
 
 
 def showlastest(n):
@@ -360,10 +382,10 @@ def showlastest(n):
 
     if n >= 1 and n <= len(CHANGES):
         print("Showing the latest " + str(n) + " changes: ")
-        (newChanges, indeces) = PC.bubble_sort_changes_by_lastupdate(CHANGES)
+        newChanges = PC.sort_changes_lastupdate(CHANGES)
         i = 0
         while i < n:
-            print("\nShowing number : " + str(indeces[i] + 1) + "\n")
+            print("\nShowing number : " + str(newChanges[i]._index + 1) + "\n")
             print(newChanges[i].fancyStr())
             print()
             i += 1
@@ -710,3 +732,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+    
