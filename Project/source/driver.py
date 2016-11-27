@@ -244,6 +244,10 @@ def postpone_number(n):
     else:
         print("Out of range.")
 
+def postpone_range(start, end):
+    '''(int, int) -> NoneType
+    pass
+    '''
 
 def postpone_all():
     '''() -> NoneType
@@ -453,13 +457,7 @@ def main():
     accept_marker = None
     accept2_flag = False
     accept2_marker = None
-    # 0 for off, 1 for single select, 2 for range select
-    deny_flag = 0
     deny_all_flag = None
-    # 1 element if single, 2 elements if range
-    deny_marker = None
-    postpone_flag = None
-    postpone_marker = None
     postponeall_flag = None
     clearblacklist_flag = False
     stopautoupdate_flag = False
@@ -470,6 +468,15 @@ def main():
     clearrepo_flag = False
     setrepo_flag = False
     repo_marker = None
+
+    # 0 for off, 1 for single select, 2 for range select
+    deny_flag = 0    
+    # 0 for off, 1 for single select, 2 for range select
+    postpone_flag = 0
+    # list 1 element if single, 2 elements if range
+    deny_marker = None
+    # list 1 element if single, 2 elements if range
+    postpone_marker = None
 
     for o, a in opts:
 
@@ -548,8 +555,14 @@ def main():
 
         # postpone
         elif o in ("--" + longARG[7]):
-            postpone_flag = True
-            postpone_marker = int(a)
+            if ("-" in str(a)):
+                # a range was specified
+                postpone_flag = 2
+                postpone_marker = [int(i) for i in str(a).split("-")]
+            else:
+                # a single value was specified
+                postpone_flag = 1
+                postpone_marker = [int(a)]
 
         # postponeall
         elif o in ("--" + longOPT[7]):
@@ -649,7 +662,7 @@ def main():
     # deny
     if (deny_flag == 1):
         deny_number(deny_marker[0])
-        
+
     # deny range
     if (deny_flag == 2):
         deny_range(deny_marker[0], deny_marker[1])    
@@ -659,8 +672,12 @@ def main():
         deny_all()
 
     # postpone
-    if (postpone_flag):
-        postpone_number(postpone_marker)
+    if (postpone_flag == 1):
+        postpone_number(postpone_marker[0])
+
+    # postpone range
+    if (postpone_flag == 2):
+        postpone_number(postpone_marker[0], postpone_marker[1])    
 
     # postponeall
     if (postponeall_flag):
