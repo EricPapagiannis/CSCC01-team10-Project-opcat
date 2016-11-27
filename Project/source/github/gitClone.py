@@ -177,7 +177,7 @@ def modifyDateToCurrent(oec, proposedChange):
            proposedChange.getSystemName() + ".xml"
     child = oec.find(".//lastupdate")
     child.text = datetime.datetime.strftime(datetime.datetime.now(),
-                                            '%Y/%m/%d/')[2:]
+                                            '%Y/%m/%d')[2:]
     oec.write(path)
 
 
