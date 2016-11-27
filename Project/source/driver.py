@@ -207,6 +207,12 @@ def deny_number(n):
         print("Done.")
     else:
         print("Out of range.")
+        
+
+def deny_range(start, end):
+    '''(int, int) -> NoneType
+    '''
+    pass
 
 
 def deny_all():
@@ -242,6 +248,10 @@ def postpone_number(n):
     else:
         print("Out of range.")
 
+def postpone_range(start, end):
+    '''(int, int) -> NoneType
+    pass
+    '''
 
 def postpone_all():
     '''() -> NoneType
@@ -407,6 +417,17 @@ def stopautoupdate():
     '''
 
     subprocess.call("pkill -f autoupdate_daemon.py", shell=True)
+    
+    
+def setrepo(repo_name):
+    '''(str) -> NoneType
+    '''
+    pass
+
+def clearrepo():
+    '''() -> NoneType
+    '''
+    pass
 
 
 def main():
@@ -422,14 +443,15 @@ def main():
     # log opts are phrases, add onto longOPT to include
     longOPT = ["help", "update", "showall", "acceptall", "acceptall2",
                "denyall", "status", "postponeall", "clearblacklist",
-               "stopautoupdate"]
+               "stopautoupdate", "clearrepo"]
 
     # flags that do expect a parameter (--output file.txt for example)
     # similar to shortOPT
     shortARG = "opsntdr"
     # similar to longOTP
     longARG = ["output", "planet", "shownumber", "accept", "accept2", "deny",
-               "showrange", "postpone", "setautoupdate", "showlatest"]
+               "showrange", "postpone", "setautoupdate", "showlatest",
+               "setrepo"]
 
     # arg, opt pre-processor, do not edit
     short = ':'.join([shortARG[i:i + 1] for i in range(0, len(shortARG), 1)]) \
@@ -457,11 +479,7 @@ def main():
     accept_marker = None
     accept2_flag = False
     accept2_marker = None
-    deny_flag = None
     deny_all_flag = None
-    deny_marker = None
-    postpone_flag = None
-    postpone_marker = None
     postponeall_flag = None
     clearblacklist_flag = False
     stopautoupdate_flag = False
@@ -469,6 +487,18 @@ def main():
     autoupdate_interval = None
     showlastest_flag = False
     showlastest_marker = None
+    clearrepo_flag = False
+    setrepo_flag = False
+    repo_marker = None
+
+    # 0 for off, 1 for single select, 2 for range select
+    deny_flag = 0    
+    # 0 for off, 1 for single select, 2 for range select
+    postpone_flag = 0
+    # list 1 element if single, 2 elements if range
+    deny_marker = None
+    # list 1 element if single, 2 elements if range
+    postpone_marker = None
 
     for o, a in opts:
 
@@ -522,8 +552,14 @@ def main():
 
         # deny
         elif o in ("-" + shortARG[5], "--" + longARG[5]):
-            deny_flag = True
-            deny_marker = int(a)
+            if ("-" in str(a)):
+                # a range was specified
+                deny_flag = 2
+                deny_marker = [int(i) for i in str(a).split("-")]
+            else:
+                # a single value was specified
+                deny_flag = 1
+                deny_marker = [int(a)]
 
         # denyall
         elif o in ("-" + shortOPT[5], "--" + longOPT[5]):
@@ -541,8 +577,14 @@ def main():
 
         # postpone
         elif o in ("--" + longARG[7]):
-            postpone_flag = True
-            postpone_marker = int(a)
+            if ("-" in str(a)):
+                # a range was specified
+                postpone_flag = 2
+                postpone_marker = [int(i) for i in str(a).split("-")]
+            else:
+                # a single value was specified
+                postpone_flag = 1
+                postpone_marker = [int(a)]
 
         # postponeall
         elif o in ("--" + longOPT[7]):
@@ -565,6 +607,15 @@ def main():
         elif o in ("--" + longARG[9]):
             showlastest_flag = True
             showlastest_marker = int(a)
+            
+        # set repo
+        elif o in ("--" + longARG[10]):
+            setrepo_flag = True
+            repo_marker = str(a)        
+
+        # clear repo
+        elif o in ("--" + longOPT[10]):
+            clearrepo_flag = True
 
         else:
             usage()
@@ -631,16 +682,24 @@ def main():
         print("Accepted all2")
 
     # deny
-    if (deny_flag):
-        deny_number(deny_marker)
+    if (deny_flag == 1):
+        deny_number(deny_marker[0])
+
+    # deny range
+    if (deny_flag == 2):
+        deny_range(deny_marker[0], deny_marker[1])    
 
     # deny all
     if (deny_all_flag):
         deny_all()
 
     # postpone
-    if (postpone_flag):
-        postpone_number(postpone_marker)
+    if (postpone_flag == 1):
+        postpone_number(postpone_marker[0])
+
+    # postpone range
+    if (postpone_flag == 2):
+        postpone_number(postpone_marker[0], postpone_marker[1])    
 
     # postponeall
     if (postponeall_flag):
@@ -661,6 +720,14 @@ def main():
     # showlatest
     if (showlastest_flag):
         showlastest(showlastest_marker)
+
+    # setrepo
+    if (setrepo_flag):
+        setrepo(setrepo_marker)
+
+    # clearrepo
+    if (clearrepo_flag):
+        clearrepo()
 
 
 if __name__ == "__main__":
