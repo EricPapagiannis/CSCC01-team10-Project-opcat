@@ -79,6 +79,7 @@ def clean_config_file():
     "auto_update_settings" -> None for never | int for number of hours between
     updates
     '''
+    global DEFAULT_REPO_URL
     content = {}
     # set the required fields to their default value
     content["last_update"] = "Never"
