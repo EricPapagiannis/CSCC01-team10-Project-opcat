@@ -45,6 +45,7 @@ else
     failed=`echo $failed showall`
 fi
 
+current=`python3 driver.py --showall  | grep "Number of changes shown : [0-9]*" | grep -o [0-9][0-9]*`
 if test $current -gt 0
 then
     count=$current
@@ -54,6 +55,12 @@ then
     then
         echo accept... passed.
         passed=`echo $passed accept`
+    else
+        echo accept... failed.
+        echo expected `expr $count - 1` changes remaining, but $current changes remain.
+        failed=`echo $fialed accept`
+    fi
+fi
 
 # test postpone
 if test $count -gt 0
