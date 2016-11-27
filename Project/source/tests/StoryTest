@@ -133,7 +133,7 @@ else
 fi
 
 echo WARNING
-echo git reset is about to be ran in order to test acceptall, continue? (y/n)
+echo 'git reset is about to be ran in order to test acceptall, continue? (y/n)'
 read input
 if test $input != 'Y' && test $input != 'y'
 then
