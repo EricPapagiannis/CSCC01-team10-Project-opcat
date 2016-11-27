@@ -10,6 +10,9 @@ files = []
 direc = "github/open_exoplanet_catalogue"
 link = STORAGE.config_get("repo_url")
 
+def getLink():
+    return STORAGE.config_get("repo_url")
+
 
 def initGit():
     ''' () -> None
@@ -17,10 +20,10 @@ def initGit():
     '''
     # change to actual repository later
     global link
-    call(["git", "--bare", "clone", link], cwd="github")
-    link = link.split('/')[-1][0:-4]
+    call(["git", "--bare", "clone", getLink()], cwd="github")
+    link = getLink().split('/')[-1][0:-4]
     call(["git", "remote", "add", "upstream",
-          link],
+          getLink()],
          cwd=direc)
     call(["git", "push", "--set-upstream", "origin", "master"], cwd=direc)
     return link
@@ -32,10 +35,10 @@ def initGit2():
     '''
     # change to actual later
     global link
-    call(["git", "--bare", "clone", link], cwd="github")
-    link = link.split('/')[-1][0:-4]
+    call(["git", "--bare", "clone", getLink()], cwd="github")
+    link = getLink().split('/')[-1][0:-4]
     call(["git", "remote", "add", "upstream",
-          link],
+          getLink()],
          cwd=direc)
     call(["git", "push", "--set-upstream", "origin", "master"], cwd=direc)
     call(["git", "checkout", "-b", "OPCAT"], cwd=direc)

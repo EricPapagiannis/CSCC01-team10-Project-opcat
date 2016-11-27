@@ -713,7 +713,7 @@ def main():
 
     # postpone range
     if (postpone_flag == 2):
-        postpone_number(postpone_marker[0], postpone_marker[1])    
+        postpone_range(postpone_marker[0], postpone_marker[1])
 
     # postponeall
     if (postponeall_flag):
@@ -737,7 +737,7 @@ def main():
 
     # setrepo
     if (setrepo_flag):
-        setrepo(setrepo_marker)
+        setrepo(repo_marker)
 
     # clearrepo
     if (clearrepo_flag):
