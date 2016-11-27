@@ -53,6 +53,7 @@ def status():
     else:
         print("\nLast Update: " + str(last_update))
         print("Number of proposed changes stored : " + str(num_changes) + "\n")
+    print("Current repo setting: " + str(STORAGE.config_get("repo_url")))
 
 
 def usage():
@@ -422,12 +423,25 @@ def stopautoupdate():
 def setrepo(repo_name):
     '''(str) -> NoneType
     '''
-    pass
+    STORAGE.config_set("repo_url", repo_name)
 
 def clearrepo():
     '''() -> NoneType
     '''
-    pass
+    STORAGE.config_set("repo_url", STORAGE.DEFAULT_REPO_URL)
+
+
+def fullreset():
+    '''
+    () -> NoneType
+    
+    Clears all the settings set by the user; restores the program configuration
+    to default state (Including list of stored proposed chages, autoupdate
+    settings, target github repo url, etc.)
+    '''
+    stopautoupdate()
+    STORAGE.reset_to_default()
+    
 
 
 def main():
