@@ -748,7 +748,11 @@ def main():
 
     # deny
     if (deny_flag == 1):
-        deny_number(deny_marker[0])
+        try:
+            number = int(deny_marker[0])
+            deny_number(number)
+        except:
+            print("Invalid Number")
 
     # deny range
     if (deny_flag == 2):
@@ -771,7 +775,12 @@ def main():
 
     # postpone
     if (postpone_flag == 1):
-        postpone_number(postpone_marker[0])
+        try:
+            number = int(postpone_marker[0])
+            postpone_number(number)
+        except:
+            print("Invalid Number")
+
 
     # postpone range
     if (postpone_flag == 2):
