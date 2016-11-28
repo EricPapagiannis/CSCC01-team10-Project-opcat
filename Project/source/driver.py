@@ -205,7 +205,6 @@ def deny_number(n):
         STORAGE.config_set("black_list", black_list)
         # update the changes list in memory
         STORAGE.write_changes_to_memory(CHANGES)
-        print("Done.")
     else:
         print("Out of range.")
         
@@ -213,7 +212,32 @@ def deny_number(n):
 def deny_range(start, end):
     '''(int, int) -> NoneType
     '''
-    pass
+    unpack_changes()
+    # sort the list of proposed changes
+    if isinstance(start, str) and start.lower() == "s":
+        start = 1
+    elif isinstance(start, str) and start.lower() == "e":
+        start = len(CHANGES)
+    if isinstance(end, str) and end.lower() == "e":
+        end = len(CHANGES)
+    elif isinstance(end, str) and end.lower() == "s":
+        end = 1
+    bothInts = isinstance(start, int) and isinstance(end, int)
+    validRange = 1 <= start <= len(CHANGES) and 1 <= end <= len(CHANGES)
+    if (bothInts and validRange):
+        if start <= end:
+            i = start
+            while i <= end:
+                deny_number(i)
+                i += 1
+        else:  # start > end
+            # reverse range
+            i = start
+            while i >= end:
+                deny_number(i)
+                i -= 1
+    else:
+        print("Invalid range")
 
 
 def deny_all():
@@ -253,6 +277,33 @@ def postpone_range(start, end):
     '''(int, int) -> NoneType
     pass
     '''
+    unpack_changes()
+    # sort the list of proposed changes
+    if isinstance(start, str) and start.lower() == "s":
+        start = 1
+    elif isinstance(start, str) and start.lower() == "e":
+        start = len(CHANGES)
+    if isinstance(end, str) and end.lower() == "e":
+        end = len(CHANGES)
+    elif isinstance(end, str) and end.lower() == "s":
+        end = 1
+    print(start, end)
+    bothInts = isinstance(start, int) and isinstance(end, int)
+    validRange = 1 <= start <= len(CHANGES) and 1 <= end <= len(CHANGES)
+    if (bothInts and validRange):
+        if start <= end:
+            i = start
+            while i <= end:
+                postpone_number(i)
+                i += 1
+        else:  # start > end
+            # reverse range
+            i = start
+            while i >= end:
+                postpone_number(i)
+                i -= 1
+    else:
+        print("Invalid range.")
 
 def postpone_all():
     '''() -> NoneType
@@ -569,11 +620,11 @@ def main():
             if ("-" in str(a)):
                 # a range was specified
                 deny_flag = 2
-                deny_marker = [int(i) for i in str(a).split("-")]
+                deny_marker = [str(i) for i in str(a).split("-")]
             else:
                 # a single value was specified
                 deny_flag = 1
-                deny_marker = [int(a)]
+                deny_marker = [str(a)]
 
         # denyall
         elif o in ("-" + shortOPT[5], "--" + longOPT[5]):
@@ -594,7 +645,7 @@ def main():
             if ("-" in str(a)):
                 # a range was specified
                 postpone_flag = 2
-                postpone_marker = [int(i) for i in str(a).split("-")]
+                postpone_marker = [str(i) for i in str(a).split("-")]
             else:
                 # a single value was specified
                 postpone_flag = 1
@@ -697,11 +748,28 @@ def main():
 
     # deny
     if (deny_flag == 1):
-        deny_number(deny_marker[0])
+        try:
+            number = int(deny_marker[0])
+            deny_number(number)
+            print("Done.")
+        except:
+            print("Invalid Number")
 
     # deny range
     if (deny_flag == 2):
-        deny_range(deny_marker[0], deny_marker[1])    
+        try:
+            if deny_marker[0].lower() == "s" or deny_marker[0].lower() == "e":
+                start = deny_marker[0]
+            else:
+                start = int(deny_marker[0])
+            if deny_marker[1].lower() == "s" or deny_marker[1].lower() == "e":
+                end = deny_marker[1]
+            else:
+                end = int(deny_marker[1])
+            deny_range(start, end)
+            print("Done.")
+        except:
+            print("Invalid Range")
 
     # deny all
     if (deny_all_flag):
@@ -709,11 +777,29 @@ def main():
 
     # postpone
     if (postpone_flag == 1):
-        postpone_number(postpone_marker[0])
+        try:
+            number = int(postpone_marker[0])
+            postpone_number(number)
+            print("Done.")
+        except:
+            print("Invalid Number")
+
 
     # postpone range
     if (postpone_flag == 2):
-        postpone_range(postpone_marker[0], postpone_marker[1])
+        try:
+            if postpone_marker[0].lower() == "s" or postpone_marker[0].lower() == "e":
+                start = postpone_marker[0]
+            else:
+                start = int(postpone_marker[0])
+            if postpone_marker[1].lower() == "s" or postpone_marker[1].lower() == "e":
+                end = postpone_marker[1]
+            else:
+                end = int(postpone_marker[1])
+            postpone_range(start, end)
+            print("Done.")
+        except:
+            print("Invalid Range")
 
     # postponeall
     if (postponeall_flag):
