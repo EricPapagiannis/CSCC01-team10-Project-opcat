@@ -205,7 +205,6 @@ def deny_number(n):
         STORAGE.config_set("black_list", black_list)
         # update the changes list in memory
         STORAGE.write_changes_to_memory(CHANGES)
-        print("Done.")
     else:
         print("Out of range.")
         
@@ -288,6 +287,7 @@ def postpone_range(start, end):
         end = len(CHANGES)
     elif isinstance(end, str) and end.lower() == "s":
         end = 1
+    print(start, end)
     bothInts = isinstance(start, int) and isinstance(end, int)
     validRange = 1 <= start <= len(CHANGES) and 1 <= end <= len(CHANGES)
     if (bothInts and validRange):
@@ -303,7 +303,7 @@ def postpone_range(start, end):
                 postpone_number(i)
                 i -= 1
     else:
-        print("Invalid range")
+        print("Invalid range.")
 
 def postpone_all():
     '''() -> NoneType
@@ -751,6 +751,7 @@ def main():
         try:
             number = int(deny_marker[0])
             deny_number(number)
+            print("Done.")
         except:
             print("Invalid Number")
 
@@ -766,6 +767,7 @@ def main():
             else:
                 end = int(deny_marker[1])
             deny_range(start, end)
+            print("Done.")
         except:
             print("Invalid Range")
 
@@ -778,6 +780,7 @@ def main():
         try:
             number = int(postpone_marker[0])
             postpone_number(number)
+            print("Done.")
         except:
             print("Invalid Number")
 
@@ -788,12 +791,13 @@ def main():
             if postpone_marker[0].lower() == "s" or postpone_marker[0].lower() == "e":
                 start = postpone_marker[0]
             else:
-                start = int(deny_marker[0])
+                start = int(postpone_marker[0])
             if postpone_marker[1].lower() == "s" or postpone_marker[1].lower() == "e":
                 end = postpone_marker[1]
             else:
                 end = int(postpone_marker[1])
             postpone_range(start, end)
+            print("Done.")
         except:
             print("Invalid Range")
 
