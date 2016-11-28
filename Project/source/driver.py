@@ -196,46 +196,43 @@ def deny_number(n):
     Returns NoneType
     '''
     unpack_changes()
-    if n > 0 and n <= len(CHANGES) :
+    if n > 0 and n <= len(CHANGES):
         # if given number is within the range, add the n-th change to black 
         # list and pop it from thelist of changes
         black_list = STORAGE.config_get("black_list")
-        black_list.append(CHANGES.pop(n-1))
+        black_list.append(CHANGES.pop(n - 1))
         # update the blacklist
         STORAGE.config_set("black_list", black_list)
         # update the changes list in memory
         STORAGE.write_changes_to_memory(CHANGES)
     else:
         print("Out of range.")
-        
+
 
 def deny_range(start, end):
     '''(int, int) -> NoneType
     '''
+    global CHANGES
     unpack_changes()
     # sort the list of proposed changes
     if isinstance(start, str) and start.lower() == "s":
-        start = 1
+        start = 0
     elif isinstance(start, str) and start.lower() == "e":
         start = len(CHANGES)
     if isinstance(end, str) and end.lower() == "e":
         end = len(CHANGES)
     elif isinstance(end, str) and end.lower() == "s":
-        end = 1
+        end = 0
     bothInts = isinstance(start, int) and isinstance(end, int)
-    validRange = 1 <= start <= len(CHANGES) and 1 <= end <= len(CHANGES)
+    validRange = 0 <= start <= len(CHANGES) and 0 <= end <= len(CHANGES)
     if (bothInts and validRange):
-        if start <= end:
-            i = start
-            while i <= end:
-                deny_number(i)
-                i += 1
-        else:  # start > end
-            # reverse range
-            i = start
-            while i >= end:
-                deny_number(i)
-                i -= 1
+        black_list = STORAGE.config_get("black_list")
+        for i in range(end-1, start-1, -1):
+            black_list.append(CHANGES.pop(i-1))
+            # update the blacklist
+        STORAGE.config_set("black_list", black_list)
+        # update the changes list in memory
+        STORAGE.write_changes_to_memory(CHANGES)
     else:
         print("Invalid range")
 
@@ -273,37 +270,32 @@ def postpone_number(n):
     else:
         print("Out of range.")
 
+
 def postpone_range(start, end):
     '''(int, int) -> NoneType
     pass
     '''
+    global CHANGES
     unpack_changes()
     # sort the list of proposed changes
     if isinstance(start, str) and start.lower() == "s":
-        start = 1
+        start = 0
     elif isinstance(start, str) and start.lower() == "e":
         start = len(CHANGES)
     if isinstance(end, str) and end.lower() == "e":
         end = len(CHANGES)
     elif isinstance(end, str) and end.lower() == "s":
-        end = 1
-    print(start, end)
+        end = 0
     bothInts = isinstance(start, int) and isinstance(end, int)
-    validRange = 1 <= start <= len(CHANGES) and 1 <= end <= len(CHANGES)
+    validRange = 0 <= start <= len(CHANGES) and 0 <= end <= len(CHANGES)
     if (bothInts and validRange):
-        if start <= end:
-            i = start
-            while i <= end:
-                postpone_number(i)
-                i += 1
-        else:  # start > end
-            # reverse range
-            i = start
-            while i >= end:
-                postpone_number(i)
-                i -= 1
+        indeces = set(range(start, end))
+        CHANGES = [i for j, i in enumerate(CHANGES) if j not in indeces]
+        STORAGE.write_changes_to_memory(CHANGES)
+
     else:
         print("Invalid range.")
+
 
 def postpone_all():
     '''() -> NoneType
@@ -332,7 +324,7 @@ def update():
     Returns NoneType
     '''
     # postpone all currently pending changes
-    STORAGE.write_changes_to_memory([])    
+    STORAGE.write_changes_to_memory([])
     # open exoplanet catalogue
     global CHANGES
     CHANGES = []
@@ -386,7 +378,7 @@ def update():
     # add chages from EU to the list (if they are not blacklisted by the user)
     for key in EU_stars.keys():
         if key in OEC_stars.keys():
-            Comp_object = COMP.Comparator(EU_stars.get(key), 
+            Comp_object = COMP.Comparator(EU_stars.get(key),
                                           OEC_stars.get(key), "eu")
             LIST = Comp_object.proposedChangeStarCompare()
             for C in LIST:
@@ -396,9 +388,9 @@ def update():
     # add chages from NASA to the list
     for key in NASA_stars.keys():
         if key in OEC_stars.keys():
-            Comp_object = COMP.Comparator(NASA_stars.get(key), 
+            Comp_object = COMP.Comparator(NASA_stars.get(key),
                                           OEC_stars.get(key), "nasa")
-            LIST = Comp_object.proposedChangeStarCompare()            
+            LIST = Comp_object.proposedChangeStarCompare()
             for C in LIST:
                 if (not C in black_list) and (not C in CHANGES):
                     CHANGES.append(C)
@@ -455,7 +447,8 @@ def setautoupdate(autoupdate_interval):
     '''
 
     if (autoupdate_interval >= MIN_AUTOU_INTERVAL):
-        commandstr = "python3 autoupdate_daemon.py -i " + str(autoupdate_interval)
+        commandstr = "python3 autoupdate_daemon.py -i " + str(
+            autoupdate_interval)
         subprocess.Popen(commandstr, shell=True)
         return 0
     else:
@@ -469,12 +462,13 @@ def stopautoupdate():
     '''
 
     subprocess.call("pkill -f autoupdate_daemon.py", shell=True)
-    
-    
+
+
 def setrepo(repo_name):
     '''(str) -> NoneType
     '''
     STORAGE.config_set("repo_url", repo_name)
+
 
 def clearrepo():
     '''() -> NoneType
@@ -492,7 +486,6 @@ def fullreset():
     '''
     stopautoupdate()
     STORAGE.reset_to_default()
-    
 
 
 def main():
@@ -557,7 +550,7 @@ def main():
     repo_marker = None
 
     # 0 for off, 1 for single select, 2 for range select
-    deny_flag = 0    
+    deny_flag = 0
     # 0 for off, 1 for single select, 2 for range select
     postpone_flag = 0
     # list 1 element if single, 2 elements if range
@@ -672,13 +665,13 @@ def main():
         elif o in ("--" + longARG[9]):
             showlastest_flag = True
             showlastest_marker = int(a)
-            
+
         # set repo
         elif o in ("--" + longARG[10]):
             setrepo_flag = True
-            repo_marker = str(a)        
+            repo_marker = str(a)
 
-        # clear repo
+            # clear repo
         elif o in ("--" + longOPT[10]):
             clearrepo_flag = True
 
@@ -771,6 +764,7 @@ def main():
         except:
             print("Invalid Range")
 
+
     # deny all
     if (deny_all_flag):
         deny_all()
@@ -784,15 +778,16 @@ def main():
         except:
             print("Invalid Number")
 
-
     # postpone range
     if (postpone_flag == 2):
         try:
-            if postpone_marker[0].lower() == "s" or postpone_marker[0].lower() == "e":
+            if postpone_marker[0].lower() == "s" or postpone_marker[
+                0].lower() == "e":
                 start = postpone_marker[0]
             else:
                 start = int(postpone_marker[0])
-            if postpone_marker[1].lower() == "s" or postpone_marker[1].lower() == "e":
+            if postpone_marker[1].lower() == "s" or postpone_marker[
+                1].lower() == "e":
                 end = postpone_marker[1]
             else:
                 end = int(postpone_marker[1])
@@ -832,5 +827,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-    
