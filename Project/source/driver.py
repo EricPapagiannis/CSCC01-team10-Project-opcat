@@ -189,6 +189,34 @@ def accept_all(strategy):
         i += 1
 
 
+def accept_range(start, end, strategy):
+    unpack_changes()
+    # sort the list of proposed changes
+    if isinstance(start, str) and start.lower() == "s":
+        start = 1
+    elif isinstance(start, str) and start.lower() == "e":
+        start = len(CHANGES)
+    if isinstance(end, str) and end.lower() == "e":
+        end = len(CHANGES)
+    elif isinstance(end, str) and end.lower() == "s":
+        end = 1
+    bothInts = isinstance(start, int) and isinstance(end, int)
+    validRange = 1 <= start <= len(CHANGES) and 1 <= end <= len(CHANGES)
+    if (bothInts and validRange):
+        if start <= end:
+            i = start
+            while i <= end:
+                accept(i, strategy)
+                i += 1
+        else:  # start > end
+            # reverse range
+            i = start
+            while i >= end:
+                accept(i, strategy)
+                i -= 1
+    else:
+        print("Invalid range")
+
 def deny_number(n):
     '''(int) -> NoneType
     Method for declining a specific proposed changed, the one
@@ -719,11 +747,13 @@ def main():
     if (accept_flag):
         GIT.initGit()
         accept(accept_marker, 1)
+        postpone_number(accept2_marker)
 
     # accept all
     if (accept_all_flag):
         GIT.initGit()
         accept_all(1)
+        postpone_all()
         print("Accepted all.")
 
     # accept
@@ -731,12 +761,14 @@ def main():
         GIT.initGit2()
         accept(accept2_marker, 2)
         GIT.finalizeGit2()
+        postpone_number(accept2_marker)
 
     # accept all
     if (accept_all2_flag):
         GIT.initGit2()
         accept_all(2)
         GIT.finalizeGit2()
+        postpone_all()
         print("Accepted all2")
 
     # deny
