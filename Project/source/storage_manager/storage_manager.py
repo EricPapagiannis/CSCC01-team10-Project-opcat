@@ -88,6 +88,7 @@ def clean_config_file():
     content["black_list"] = []
     content["auto_update_settings"] = None
     content["repo_url"] = DEFAULT_REPO_URL
+    content["branch_number"] = 1
     with open(CONFIG_PATH, "wb") as File:
         pickle.dump(content, File)
 
