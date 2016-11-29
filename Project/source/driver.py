@@ -65,7 +65,7 @@ def main():
     repo_marker = None
 
     # 0 for off, 1 for single select, 2 for range select
-    deny_flag = 0    
+    deny_flag = 0
     # 0 for off, 1 for single select, 2 for range select
     postpone_flag = 0
     # 0 for off, 1 for single select, 2 for range select
@@ -116,7 +116,7 @@ def main():
                 accept_marker = str(a).split("-")
             else:
                 accept_flag = 1
-                accept_marker = [str(a)]
+                accept_marker = [int(a)]
 
         # accept2
         elif o in ("-" + shortARG[4], "--" + longARG[4]):
@@ -125,7 +125,7 @@ def main():
                 accept2_marker = str(a).split("-")
             else:
                 accept2_flag = 1
-                accept2_marker = [str(a)]
+                accept2_marker = [int(a)]
 
         # acceptall
         elif o in ("-" + shortOPT[3], "--" + longOPT[3]):
@@ -140,7 +140,7 @@ def main():
             if ("-" in str(a)):
                 # a range was specified
                 deny_flag = 2
-                deny_marker = [int(i) for i in str(a).split("-")]
+                deny_marker = [str(i) for i in str(a).split("-")]
             else:
                 # a single value was specified
                 deny_flag = 1
@@ -165,7 +165,7 @@ def main():
             if ("-" in str(a)):
                 # a range was specified
                 postpone_flag = 2
-                postpone_marker = [int(i) for i in str(a).split("-")]
+                postpone_marker = [str(i) for i in str(a).split("-")]
             else:
                 # a single value was specified
                 postpone_flag = 1
@@ -192,13 +192,13 @@ def main():
         elif o in ("--" + longARG[9]):
             showlastest_flag = True
             showlastest_marker = int(a)
-            
+
         # set repo
         elif o in ("--" + longARG[10]):
             setrepo_flag = True
-            repo_marker = str(a)        
+            repo_marker = str(a)
 
-        # clear repo
+            # clear repo
         elif o in ("--" + longOPT[10]):
             clearrepo_flag = True
 
@@ -256,6 +256,7 @@ def main():
     if (accept_all_flag):
         GIT.initGit()
         accept_all(1)
+        postpone_all()
         print("Accepted all.")
 
     # accept2
@@ -275,15 +276,34 @@ def main():
         GIT.initGit2()
         accept_all(2)
         GIT.finalizeGit2()
+        postpone_all()
         print("Accepted all2")
 
     # deny
     if (deny_flag == 1):
-        deny_number(deny_marker[0])
+        try:
+            number = int(deny_marker[0])
+            deny_number(number)
+            print("Done.")
+        except:
+            print("Invalid Number")
 
     # deny range
     if (deny_flag == 2):
-        deny_range(deny_marker[0], deny_marker[1])    
+        try:
+            if deny_marker[0].lower() == "s" or deny_marker[0].lower() == "e":
+                start = deny_marker[0]
+            else:
+                start = int(deny_marker[0])
+            if deny_marker[1].lower() == "s" or deny_marker[1].lower() == "e":
+                end = deny_marker[1]
+            else:
+                end = int(deny_marker[1])
+            deny_range(start, end)
+            print("Done.")
+        except:
+            print("Invalid Range")
+
 
     # deny all
     if (deny_all_flag):
@@ -291,11 +311,30 @@ def main():
 
     # postpone
     if (postpone_flag == 1):
-        postpone_number(postpone_marker[0])
+        try:
+            number = int(postpone_marker[0])
+            postpone_number(number)
+            print("Done.")
+        except:
+            print("Invalid Number")
 
     # postpone range
     if (postpone_flag == 2):
-        postpone_number(postpone_marker[0], postpone_marker[1])    
+        try:
+            if postpone_marker[0].lower() == "s" or postpone_marker[
+                0].lower() == "e":
+                start = postpone_marker[0]
+            else:
+                start = int(postpone_marker[0])
+            if postpone_marker[1].lower() == "s" or postpone_marker[
+                1].lower() == "e":
+                end = postpone_marker[1]
+            else:
+                end = int(postpone_marker[1])
+            postpone_range(start, end)
+            print("Done.")
+        except:
+            print("Invalid Range")
 
     # postponeall
     if (postponeall_flag):
@@ -319,7 +358,7 @@ def main():
 
     # setrepo
     if (setrepo_flag):
-        setrepo(setrepo_marker)
+        setrepo(repo_marker)
 
     # clearrepo
     if (clearrepo_flag):
@@ -328,5 +367,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-    

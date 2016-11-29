@@ -1,5 +1,7 @@
 import pickle
 
+DEFAULT_REPO_URL \
+    = "https://github.com/EricPapagiannis/open_exoplanet_catalogue.git"
 MANUAL_PATH = "storage/program_data/manual"
 PROPOSED_CHANGES_PATH = "storage/program_data/CHANGES_STORAGE"
 CONFIG_PATH = "storage/program_data/program_config"
@@ -77,11 +79,13 @@ def clean_config_file():
     "auto_update_settings" -> None for never | int for number of hours between
     updates
     '''
+    global DEFAULT_REPO_URL
     content = {}
     # set the required fields to their default value
     content["last_update"] = "Never"
     content["black_list"] = []
     content["auto_update_settings"] = None
+    content["repo_url"] = DEFAULT_REPO_URL
     with open(CONFIG_PATH, "wb") as File:
         pickle.dump(content, File)    
 

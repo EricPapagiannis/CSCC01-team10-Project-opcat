@@ -3,10 +3,15 @@ import xml.etree.ElementTree as ET
 import data_comparison.proposed_change as PC
 import os
 import datetime
+import storage_manager.storage_manager as STORAGE
 
 # 'static' vars
 files = []
 direc = "github/open_exoplanet_catalogue"
+link = STORAGE.config_get("repo_url")
+
+def getLink():
+    return STORAGE.config_get("repo_url")
 
 
 def initGit():
@@ -14,11 +19,11 @@ def initGit():
     Does any initialization to use github with strategy 1
     '''
     # change to actual repository later
-    link = 'https://github.com/EricPapagiannis/open_exoplanet_catalogue.git'
-    call(["git", "--bare", "clone", link], cwd="github")
-    link = link.split('/')[-1][0:-4]
+    global link
+    call(["git", "--bare", "clone", getLink()], cwd="github")
+    link = getLink().split('/')[-1][0:-4]
     call(["git", "remote", "add", "upstream",
-          "https://github.com/EricPapagiannis/open_exoplanet_catalogue.git"],
+          getLink()],
          cwd=direc)
     call(["git", "push", "--set-upstream", "origin", "master"], cwd=direc)
     return link
@@ -29,17 +34,16 @@ def initGit2():
     Does any initialization to use github with strategy 1
     '''
     # change to actual later
-    link = 'https://github.com/EricPapagiannis/open_exoplanet_catalogue.git'
-    call(["git", "--bare", "clone", link], cwd="github")
-    link = link.split('/')[-1][0:-4]
+    global link
+    call(["git", "--bare", "clone", getLink()], cwd="github")
+    link = getLink().split('/')[-1][0:-4]
     call(["git", "remote", "add", "upstream",
-          "https://github.com/EricPapagiannis/open_exoplanet_catalogue.git"],
+          getLink()],
          cwd=direc)
     call(["git", "push", "--set-upstream", "origin", "master"], cwd=direc)
     call(["git", "checkout", "-b", "OPCAT"], cwd=direc)
     call(["git", "push", "upstream", "OPCAT"], cwd=direc)
     return link
-
 
 
 def finalizeGit2():
@@ -57,7 +61,6 @@ def finalizeGit2():
     # pull-request
     call(["hub", "pull-request", "-f", "-h", "OPCAT", "-m",
           "Compiled modifications"], cwd=direc)
-
 
 
 def saveDirName(direc):
@@ -213,17 +216,21 @@ def modifyPlanet(oec, proposedChange):
     child = specificPlanetXML.find(".//" + str(proposedChange.field_modified))
     child.text = str(proposedChange.value_in_origin_catalogue)
     if proposedChange.origin_upper != "N/A" and proposedChange.upper_attrib_name != "N/A":
-        if proposedChange.OEC_upper != "N/A" and float(proposedChange.OEC_upper) != float(proposedChange.origin_upper):
+        if proposedChange.OEC_upper != "N/A" and float(
+                proposedChange.OEC_upper) != float(proposedChange.origin_upper):
             child.attrib[
                 proposedChange.upper_attrib_name] = proposedChange.origin_upper
         elif proposedChange.OEC_upper == "N/A":
-            child.attrib[proposedChange.upper_attrib_name] = proposedChange.origin_upper
+            child.attrib[
+                proposedChange.upper_attrib_name] = proposedChange.origin_upper
     if proposedChange.origin_lower != "N/A" and proposedChange.lower_attrib_name != "N/A":
-        if proposedChange.OEC_lower != "N/A" and float(proposedChange.OEC_lower) != float(proposedChange.origin_lower):
+        if proposedChange.OEC_lower != "N/A" and float(
+                proposedChange.OEC_lower) != float(proposedChange.origin_lower):
             child.attrib[
                 proposedChange.lower_attrib_name] = proposedChange.origin_lower
         elif proposedChange.OEC_lower == "N/A":
-            child.attrib[proposedChange.lower_attrib_name] = proposedChange.origin_lower
+            child.attrib[
+                proposedChange.lower_attrib_name] = proposedChange.origin_lower
     oec.write(path)
     modifyDateToCurrent(oec, proposedChange)
 
