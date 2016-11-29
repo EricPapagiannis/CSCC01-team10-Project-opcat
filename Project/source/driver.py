@@ -424,8 +424,17 @@ def setrepo(repo_name):
     '''
     pass
 
+
 def clearrepo():
     '''() -> NoneType
+    '''
+    pass
+
+
+def accept_range(start, end, strategy):
+    '''(str, str, int)
+    start and end should be int, otherwise "s" or "e"
+    strategy should be 1 or 2
     '''
     pass
 
@@ -539,19 +548,19 @@ def main():
         elif o in ("-" + shortARG[3], "--" + longARG[3]):
             if ("-" in str(a)):
                 accept_flag = 2
-                accept_marker = [int(i) for i in str(a).split("-")]
+                accept_marker = str(a).split("-")
             else:
                 accept_flag = 1
-                accept_marker = [int(a)]
+                accept_marker = [str(a)]
 
         # accept2
         elif o in ("-" + shortARG[4], "--" + longARG[4]):
             if ("-" in str(a)):
                 accept2_flag = 2
-                accept2_marker = [int(i) for i in str(a).split("-")]
+                accept2_marker = str(a).split("-")
             else:
                 accept2_flag = 1
-                accept2_marker = [int(a)]
+                accept2_marker = [str(a)]
 
         # acceptall
         elif o in ("-" + shortOPT[3], "--" + longOPT[3]):
@@ -693,7 +702,7 @@ def main():
     # accept2 range
     if (accept2_flag == 2):
         GIT.initGit2()
-        accept(accept2_marker[0], accept2_marker[0], 2)
+        accept_range(accept2_marker[0], accept2_marker[0], 2)
         GIT.finalizeGit2()        
 
     # accept all
