@@ -9,6 +9,7 @@ from data_parsing.Planet import *
 from tests.PlanetaryObjectTest import *
 import unittest
 
+
 class TestPlanet(TestPlanetaryObject):
     def testInit(self):
         planet1 = Planet("testPlanet")
@@ -19,7 +20,8 @@ class TestPlanet(TestPlanetaryObject):
         self.assertEquals([], planet1.otherNamesPlanet)
         self.assertEquals(dict(), planet1.data)
         self.assertEquals("", planet1.nameStar)
-        self.assertEquals("", planet1.lastupdate)
+        self.assertEquals("00/00/00", planet1.lastupdate)
+
 
 if __name__ == '__main__':
     unittest.main(exit=False)

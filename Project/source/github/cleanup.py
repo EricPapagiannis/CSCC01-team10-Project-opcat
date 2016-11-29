@@ -248,14 +248,14 @@ def checkForTransitingPlanets(root):
                     if planetName not in excludeList:
                         if not discoveryMethod == 'imaging':
                             print(
-                            '{} in {} has a radius but is is missing a istransiting tag'.format(
-                                planetName, filename))
+                                '{} in {} has a radius but is is missing a istransiting tag'.format(
+                                    planetName, filename))
                             issues += 1
 
             if addtag:
                 ET.SubElement(planet, "istransiting").text = '1'
                 print(
-                'Added istransiting tag to {}'.format(filename))
+                    'Added istransiting tag to {}'.format(filename))
                 fileschanged += 1
 
 

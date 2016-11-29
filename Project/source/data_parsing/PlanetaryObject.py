@@ -89,7 +89,7 @@ class PlanetaryObject:
         Returns all the data kept in the planetary object as a dictionary
         '''
         return self.data
-        
+
     def getName(self):
         '''() -> String
         returns the object's name
