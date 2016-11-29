@@ -37,6 +37,7 @@ def initGit():
           getLink()],
          cwd=direc)
     call(["git", "push", "--set-upstream", "origin", "master"], cwd=direc)
+    call(["git", "checkout", "-b", "master"])
     return link
 
 
@@ -53,6 +54,7 @@ def initGit2():
           getLink()],
          cwd=direc)
     call(["git", "push", "--set-upstream", "origin", "master"], cwd=direc)
+    call(["git", "checkout", "-b", "master"])
     call(["git", "checkout", "-b", branch], cwd=direc)
     call(["git", "push", "upstream", branch], cwd=direc)
     return link
