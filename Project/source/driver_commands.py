@@ -195,11 +195,11 @@ def deny_number(n):
     Returns NoneType
     '''
     unpack_changes()
-    if n > 0 and n <= len(CHANGES) :
+    if n > 0 and n <= len(CHANGES):
         # if given number is within the range, add the n-th change to black 
         # list and pop it from thelist of changes
         black_list = STORAGE.config_get("black_list")
-        black_list.append(CHANGES.pop(n-1))
+        black_list.append(CHANGES.pop(n - 1))
         # update the blacklist
         STORAGE.config_set("black_list", black_list)
         # update the changes list in memory
@@ -207,7 +207,7 @@ def deny_number(n):
         print("Done.")
     else:
         print("Out of range.")
-        
+
 
 def deny_range(start, end):
     '''(int, int) -> NoneType
@@ -248,10 +248,12 @@ def postpone_number(n):
     else:
         print("Out of range.")
 
+
 def postpone_range(start, end):
     '''(int, int) -> NoneType
     pass
     '''
+
 
 def postpone_all():
     '''() -> NoneType
@@ -280,7 +282,7 @@ def update():
     Returns NoneType
     '''
     # postpone all currently pending changes
-    STORAGE.write_changes_to_memory([])    
+    STORAGE.write_changes_to_memory([])
     # open exoplanet catalogue
     global CHANGES
     CHANGES = []
@@ -334,7 +336,7 @@ def update():
     # add chages from EU to the list (if they are not blacklisted by the user)
     for key in EU_stars.keys():
         if key in OEC_stars.keys():
-            Comp_object = COMP.Comparator(EU_stars.get(key), 
+            Comp_object = COMP.Comparator(EU_stars.get(key),
                                           OEC_stars.get(key), "eu")
             LIST = Comp_object.proposedChangeStarCompare()
             for C in LIST:
@@ -344,9 +346,9 @@ def update():
     # add chages from NASA to the list
     for key in NASA_stars.keys():
         if key in OEC_stars.keys():
-            Comp_object = COMP.Comparator(NASA_stars.get(key), 
+            Comp_object = COMP.Comparator(NASA_stars.get(key),
                                           OEC_stars.get(key), "nasa")
-            LIST = Comp_object.proposedChangeStarCompare()            
+            LIST = Comp_object.proposedChangeStarCompare()
             for C in LIST:
                 if (not C in black_list) and (not C in CHANGES):
                     CHANGES.append(C)
@@ -403,7 +405,8 @@ def setautoupdate(autoupdate_interval):
     '''
 
     if (autoupdate_interval >= MIN_AUTOU_INTERVAL):
-        commandstr = "python3 autoupdate_daemon.py -i " + str(autoupdate_interval)
+        commandstr = "python3 autoupdate_daemon.py -i " + str(
+            autoupdate_interval)
         subprocess.Popen(commandstr, shell=True)
         return 0
     else:
@@ -417,8 +420,8 @@ def stopautoupdate():
     '''
 
     subprocess.call("pkill -f autoupdate_daemon.py", shell=True)
-    
-    
+
+
 def setrepo(repo_name):
     '''(str) -> NoneType
     '''

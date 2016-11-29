@@ -10,6 +10,7 @@ files = []
 direc = "github/open_exoplanet_catalogue"
 link = STORAGE.config_get("repo_url")
 
+
 def getLink():
     return STORAGE.config_get("repo_url")
 
