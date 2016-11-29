@@ -127,3 +127,20 @@ postpone
 	to the blacklist
 
 setautoupdate
+
+	arg: [int]
+
+	starts the autoupdate daemon which will run update
+	every provided hours
+
+showlastest
+
+	arg: [int]
+
+	show lastest provided number of prposed changes
+
+setrepo
+
+	arg: [str]
+
+	sets the repo for the pull requests to be sent to
