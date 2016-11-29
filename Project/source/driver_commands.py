@@ -479,4 +479,41 @@ def accept_range(start, end, strategy):
     start and end should be int, otherwise "s" or "e"
     strategy should be 1 or 2
     '''
-    pass
+    unpack_changes()
+    # sort the list of proposed changes
+    if isinstance(start, str) and start.lower() == "s":
+        start = 1
+    elif isinstance(start, str) and start.lower() == "e":
+        start = len(CHANGES)
+    if isinstance(end, str) and end.lower() == "e":
+        end = len(CHANGES)
+    elif isinstance(end, str) and end.lower() == "s":
+        end = 1
+    bothInts = isinstance(start, int) and isinstance(end, int)
+    validRange = 1 <= start <= len(CHANGES) and 1 <= end <= len(CHANGES)
+    if (bothInts and validRange):
+        if start <= end:
+            i = start
+            while i <= end:
+                accept(i, strategy)
+                i += 1
+        else:  # start > end
+            # reverse range
+            i = start
+            while i >= end:
+                accept(i, strategy)
+                i -= 1
+    else:
+        print("Invalid range")
+
+
+def fullreset():
+    '''
+    () -> NoneType
+
+    Clears all the settings set by the user; restores the program configuration
+    to default state (Including list of stored proposed chages, autoupdate
+    settings, target github repo url, etc.)
+    '''
+    stopautoupdate()
+    STORAGE.reset_to_default()
