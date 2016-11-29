@@ -473,7 +473,6 @@ def main():
     update_flag = False
     show_flag = False
     all_flag = False
-    accept_flag = False
     accept_all_flag = False
     accept_all2_flag = False
     accept_marker = None
@@ -495,6 +494,10 @@ def main():
     deny_flag = 0    
     # 0 for off, 1 for single select, 2 for range select
     postpone_flag = 0
+    # 0 for off, 1 for single select, 2 for range select
+    accept_flag = 0
+    # 0 for off, 1 for single select, 2 for range select
+    accept2_flag = 0
     # list 1 element if single, 2 elements if range
     deny_marker = None
     # list 1 element if single, 2 elements if range
@@ -534,19 +537,27 @@ def main():
 
         # accept
         elif o in ("-" + shortARG[3], "--" + longARG[3]):
-            accept_flag = True
-            accept_marker = int(a)
+            if ("-" in str(a)):
+                accept_flag = 2
+                accept_marker = [int(i) for i in str(a).split("-")]
+            else:
+                accept_flag = 1
+                accept_marker = [int(a)]
 
-        # accept
+        # accept2
         elif o in ("-" + shortARG[4], "--" + longARG[4]):
-            accept2_flag = True
-            accept2_marker = int(a)
+            if ("-" in str(a)):
+                accept2_flag = 2
+                accept2_marker = [int(i) for i in str(a).split("-")]
+            else:
+                accept2_flag = 1
+                accept2_marker = [int(a)]
 
         # acceptall
         elif o in ("-" + shortOPT[3], "--" + longOPT[3]):
             accept_all_flag = True
 
-        # acceptall
+        # acceptall2
         elif o in ("-" + shortOPT[4], "--" + longOPT[4]):
             accept_all2_flag = True
 
@@ -658,9 +669,14 @@ def main():
         update()
 
     # accept
-    if (accept_flag):
+    if (accept_flag == 1):
         GIT.initGit()
-        accept(accept_marker, 1)
+        accept(accept_marker[0], 1)
+        
+    # accept range
+    if (accept_flag == 2):
+        GIT.initGit()
+        accept_range(accept_marker[0], accept_marker[1], 1)
 
     # accept all
     if (accept_all_flag):
@@ -668,11 +684,17 @@ def main():
         accept_all(1)
         print("Accepted all.")
 
-    # accept
-    if (accept2_flag):
+    # accept2
+    if (accept2_flag == 1):
         GIT.initGit2()
-        accept(accept2_marker, 2)
+        accept(accept2_marker[0], 2)
         GIT.finalizeGit2()
+        
+    # accept2 range
+    if (accept2_flag == 2):
+        GIT.initGit2()
+        accept(accept2_marker[0], accept2_marker[0], 2)
+        GIT.finalizeGit2()        
 
     # accept all
     if (accept_all2_flag):
