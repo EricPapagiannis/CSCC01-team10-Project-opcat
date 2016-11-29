@@ -140,7 +140,7 @@ def main():
             if ("-" in str(a)):
                 # a range was specified
                 deny_flag = 2
-                deny_marker = [str(i) for i in str(a).split("-")]
+                deny_marker = str(a).split("-")
             else:
                 # a single value was specified
                 deny_flag = 1
@@ -165,7 +165,7 @@ def main():
             if ("-" in str(a)):
                 # a range was specified
                 postpone_flag = 2
-                postpone_marker = [str(i) for i in str(a).split("-")]
+                postpone_marker = str(a).split("-")
             else:
                 # a single value was specified
                 postpone_flag = 1
