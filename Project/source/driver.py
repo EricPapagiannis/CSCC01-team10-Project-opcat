@@ -250,7 +250,19 @@ def main():
     # accept range
     if (accept_flag == 2):
         GIT.initGit()
-        accept_range(accept_marker[0], accept_marker[1], 1)
+        try:
+            if accept_marker[0].lower() == "s" or accept_marker[0].lower() == "e":
+                start = accept_marker[0]
+            else:
+                start = int(accept_marker[0])
+            if accept_marker[1].lower() == "s" or accept_marker[1].lower() == "e":
+                end = accept_marker[1]
+            else:
+                end = int(accept_marker[1])
+            accept_range(start, end, 1)
+            print("Done.")
+        except:
+            print("Invalid Range")
 
     # accept all
     if (accept_all_flag):
@@ -268,8 +280,20 @@ def main():
     # accept2 range
     if (accept2_flag == 2):
         GIT.initGit2()
-        accept_range(accept2_marker[0], accept2_marker[0], 2)
-        GIT.finalizeGit2()        
+        try:
+            if accept2_marker[0].lower() == "s" or accept2_marker[0].lower() == "e":
+                start = accept2_marker[0]
+            else:
+                start = int(accept2_marker[0])
+            if accept2_marker[1].lower() == "s" or accept2_marker[1].lower() == "e":
+                end = accept2_marker[1]
+            else:
+                end = int(accept2_marker[1])
+            accept_range(start, end, 2)
+            print("Done.")
+        except:
+            print("Invalid Range")
+        GIT.finalizeGit2()
 
     # accept all
     if (accept_all2_flag):
