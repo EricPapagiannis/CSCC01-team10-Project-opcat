@@ -1,0 +1,28 @@
+Manual
+
+Valid Commands
+
+help
+
+	no args
+
+	prints information about program usage
+
+update
+
+	no args
+
+	updates system from set up remote databases and presents
+	proposed changes to user
+
+showall
+
+	no args
+
+	presents all proposed changes to user
+
+acceptall
+
+	no args
+
+	approves all proposed changes
