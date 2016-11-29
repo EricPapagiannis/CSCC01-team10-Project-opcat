@@ -247,7 +247,7 @@ def main():
     if (accept_flag == 1):
         GIT.initGit()
         accept(accept_marker[0], 1)
-        postpone_number(accept2_marker[0])
+        postpone_number(accept_marker[0])
 
     # accept range
     if (accept_flag == 2):
