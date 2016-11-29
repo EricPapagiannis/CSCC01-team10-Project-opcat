@@ -47,12 +47,16 @@ def status():
 
     unpack_changes()
     last_update = STORAGE.config_get("last_update")
+    repo_url = STORAGE.config_get("repo_url")
+
     num_changes = len(CHANGES)
     if last_update == "Never":
         print("Last Update: Never" + "\n")
+        print("Repo: " + repo_url)
     else:
         print("\nLast Update: " + str(last_update))
         print("Number of proposed changes stored : " + str(num_changes) + "\n")
+        print("Repo: " + repo_url)
 
 
 def usage():
