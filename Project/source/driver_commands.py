@@ -210,7 +210,29 @@ def deny_number(n):
 def deny_range(start, end):
     '''(int, int) -> NoneType
     '''
-    pass
+    global CHANGES
+    unpack_changes()
+    # sort the list of proposed changes
+    if isinstance(start, str) and start.lower() == "s":
+        start = 0
+    elif isinstance(start, str) and start.lower() == "e":
+        start = len(CHANGES)
+    if isinstance(end, str) and end.lower() == "e":
+        end = len(CHANGES)
+    elif isinstance(end, str) and end.lower() == "s":
+        end = 0
+    bothInts = isinstance(start, int) and isinstance(end, int)
+    validRange = 0 <= start <= len(CHANGES) and 0 <= end <= len(CHANGES)
+    if (bothInts and validRange):
+        black_list = STORAGE.config_get("black_list")
+        for i in range(end - 1, start - 1, -1):
+            black_list.append(CHANGES.pop(i - 1))
+            # update the blacklist
+        STORAGE.config_set("black_list", black_list)
+        # update the changes list in memory
+        STORAGE.write_changes_to_memory(CHANGES)
+    else:
+        print("Invalid range")
 
 
 def deny_all():
@@ -251,6 +273,26 @@ def postpone_range(start, end):
     '''(int, int) -> NoneType
     pass
     '''
+    global CHANGES
+    unpack_changes()
+    # sort the list of proposed changes
+    if isinstance(start, str) and start.lower() == "s":
+        start = 0
+    elif isinstance(start, str) and start.lower() == "e":
+        start = len(CHANGES)
+    if isinstance(end, str) and end.lower() == "e":
+        end = len(CHANGES)
+    elif isinstance(end, str) and end.lower() == "s":
+        end = 0
+    bothInts = isinstance(start, int) and isinstance(end, int)
+    validRange = 0 <= start <= len(CHANGES) and 0 <= end <= len(CHANGES)
+    if (bothInts and validRange):
+        indeces = set(range(start, end))
+        CHANGES = [i for j, i in enumerate(CHANGES) if j not in indeces]
+        STORAGE.write_changes_to_memory(CHANGES)
+
+    else:
+        print("Invalid range.")
 
 
 def postpone_all():
@@ -423,13 +465,13 @@ def stopautoupdate():
 def setrepo(repo_name):
     '''(str) -> NoneType
     '''
-    pass
+    STORAGE.config_set("repo_url", repo_name)
 
 
 def clearrepo():
     '''() -> NoneType
     '''
-    pass
+    STORAGE.config_set("repo_url", STORAGE.DEFAULT_REPO_URL)
 
 
 def accept_range(start, end, strategy):
