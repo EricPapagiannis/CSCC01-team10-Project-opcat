@@ -167,7 +167,7 @@ def accept(n, strategy):
 
     if len(CHANGES) == 0:
         unpack_changes()
-    if n < len(CHANGES) and n >= 0:
+    if n <= len(CHANGES) and n > 0:
         if (strategy == 1):
             GIT.modifyXML(CHANGES[n], n)
         else:
