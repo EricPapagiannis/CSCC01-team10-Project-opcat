@@ -7,6 +7,7 @@ PROPOSED_CHANGES_PATH = "storage/program_data/CHANGES_STORAGE"
 CONFIG_PATH = "storage/program_data/program_config"
 ENCODING = "ASCII"
 
+
 def manual():
     '''
     () -> str
@@ -15,6 +16,7 @@ def manual():
     path is declared above.
     '''
     return read_file(MANUAL_PATH)
+
 
 def read_file(path):
     '''
@@ -87,7 +89,7 @@ def clean_config_file():
     content["auto_update_settings"] = None
     content["repo_url"] = DEFAULT_REPO_URL
     with open(CONFIG_PATH, "wb") as File:
-        pickle.dump(content, File)    
+        pickle.dump(content, File)
 
 
 def config_set(key, val):
@@ -153,7 +155,7 @@ def reset_to_default():
     clean_config_file()
 
 
-if __name__ == "__main__" :
+if __name__ == "__main__":
     MANUAL_PATH = "../" + MANUAL_PATH
     PROPOSED_CHANGES_PATH = "../" + PROPOSED_CHANGES_PATH
     CONFIG_PATH = "../" + CONFIG_PATH

@@ -17,14 +17,13 @@ class InvalidIntervalException(Exception):
 
 
 def main():
-    
     sleeptime = 0
-    
+
     try:
         opts, args = getopt.getopt(sys.argv[1:], "i:")
     except getopt.GetoptError:
         print(sys.argv)
-        print ("autoupdate_daemon.py -i hours")
+        print("autoupdate_daemon.py -i hours")
         sys.exit(2)
     for opt, arg, in opts:
         if opt == "-i":
@@ -39,13 +38,13 @@ def main():
     # command to call driver.py's update method
     commandstr = "python3 driver.py --update"
 
-    while(1):
+    while (1):
         # daemon continues to run until it is killed by driver
         if (VERBOSE):
             print("Updating...")
         subprocess.Popen(commandstr, shell=True)
         time.sleep(sleeptime_hours)
 
+
 if __name__ == "__main__":
     main()
-

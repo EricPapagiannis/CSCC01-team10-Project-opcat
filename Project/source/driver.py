@@ -4,6 +4,7 @@ import getopt, sys, os
 
 from driver_commands import *
 
+
 def main():
     '''() -> NoneType
     Main driver method
@@ -246,20 +247,24 @@ def main():
     if (accept_flag == 1):
         GIT.initGit()
         accept(accept_marker[0], 1)
-        
+        postpone_number(accept2_marker[0])
+
     # accept range
     if (accept_flag == 2):
         GIT.initGit()
         try:
-            if accept_marker[0].lower() == "s" or accept_marker[0].lower() == "e":
+            if accept_marker[0].lower() == "s" or accept_marker[
+                0].lower() == "e":
                 start = accept_marker[0]
             else:
                 start = int(accept_marker[0])
-            if accept_marker[1].lower() == "s" or accept_marker[1].lower() == "e":
+            if accept_marker[1].lower() == "s" or accept_marker[
+                1].lower() == "e":
                 end = accept_marker[1]
             else:
                 end = int(accept_marker[1])
             accept_range(start, end, 1)
+            postpone_range(start, end)
             print("Done.")
         except:
             print("Invalid Range")
@@ -275,21 +280,25 @@ def main():
     if (accept2_flag == 1):
         GIT.initGit2()
         accept(accept2_marker[0], 2)
+        postpone_number((accept2_marker[0]))
         GIT.finalizeGit2()
-        
+
     # accept2 range
     if (accept2_flag == 2):
         GIT.initGit2()
         try:
-            if accept2_marker[0].lower() == "s" or accept2_marker[0].lower() == "e":
+            if accept2_marker[0].lower() == "s" or accept2_marker[
+                0].lower() == "e":
                 start = accept2_marker[0]
             else:
                 start = int(accept2_marker[0])
-            if accept2_marker[1].lower() == "s" or accept2_marker[1].lower() == "e":
+            if accept2_marker[1].lower() == "s" or accept2_marker[
+                1].lower() == "e":
                 end = accept2_marker[1]
             else:
                 end = int(accept2_marker[1])
             accept_range(start, end, 2)
+            postpone_range(start, end)
             print("Done.")
         except:
             print("Invalid Range")
@@ -327,7 +336,6 @@ def main():
             print("Done.")
         except:
             print("Invalid Range")
-
 
     # deny all
     if (deny_all_flag):

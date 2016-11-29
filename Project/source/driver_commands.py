@@ -181,9 +181,7 @@ def accept_all(strategy):
 
     unpack_changes()
     i = 0
-    # for demo change back after!!!!!!!!
-    while i < 25:
-        # while i < len(CHANGES):
+    while i < len(CHANGES):
         accept(i, strategy)
         i += 1
 
@@ -195,11 +193,11 @@ def deny_number(n):
     Returns NoneType
     '''
     unpack_changes()
-    if n > 0 and n <= len(CHANGES) :
+    if n > 0 and n <= len(CHANGES):
         # if given number is within the range, add the n-th change to black 
         # list and pop it from thelist of changes
         black_list = STORAGE.config_get("black_list")
-        black_list.append(CHANGES.pop(n-1))
+        black_list.append(CHANGES.pop(n - 1))
         # update the blacklist
         STORAGE.config_set("black_list", black_list)
         # update the changes list in memory
@@ -207,12 +205,34 @@ def deny_number(n):
         print("Done.")
     else:
         print("Out of range.")
-        
+
 
 def deny_range(start, end):
     '''(int, int) -> NoneType
     '''
-    pass
+    global CHANGES
+    unpack_changes()
+    # sort the list of proposed changes
+    if isinstance(start, str) and start.lower() == "s":
+        start = 0
+    elif isinstance(start, str) and start.lower() == "e":
+        start = len(CHANGES)
+    if isinstance(end, str) and end.lower() == "e":
+        end = len(CHANGES)
+    elif isinstance(end, str) and end.lower() == "s":
+        end = 0
+    bothInts = isinstance(start, int) and isinstance(end, int)
+    validRange = 0 <= start <= len(CHANGES) and 0 <= end <= len(CHANGES)
+    if (bothInts and validRange):
+        black_list = STORAGE.config_get("black_list")
+        for i in range(end - 1, start - 1, -1):
+            black_list.append(CHANGES.pop(i - 1))
+            # update the blacklist
+        STORAGE.config_set("black_list", black_list)
+        # update the changes list in memory
+        STORAGE.write_changes_to_memory(CHANGES)
+    else:
+        print("Invalid range")
 
 
 def deny_all():
@@ -248,10 +268,32 @@ def postpone_number(n):
     else:
         print("Out of range.")
 
+
 def postpone_range(start, end):
     '''(int, int) -> NoneType
     pass
     '''
+    global CHANGES
+    unpack_changes()
+    # sort the list of proposed changes
+    if isinstance(start, str) and start.lower() == "s":
+        start = 0
+    elif isinstance(start, str) and start.lower() == "e":
+        start = len(CHANGES)
+    if isinstance(end, str) and end.lower() == "e":
+        end = len(CHANGES)
+    elif isinstance(end, str) and end.lower() == "s":
+        end = 0
+    bothInts = isinstance(start, int) and isinstance(end, int)
+    validRange = 0 <= start <= len(CHANGES) and 0 <= end <= len(CHANGES)
+    if (bothInts and validRange):
+        indeces = set(range(start, end))
+        CHANGES = [i for j, i in enumerate(CHANGES) if j not in indeces]
+        STORAGE.write_changes_to_memory(CHANGES)
+
+    else:
+        print("Invalid range.")
+
 
 def postpone_all():
     '''() -> NoneType
@@ -280,7 +322,7 @@ def update():
     Returns NoneType
     '''
     # postpone all currently pending changes
-    STORAGE.write_changes_to_memory([])    
+    STORAGE.write_changes_to_memory([])
     # open exoplanet catalogue
     global CHANGES
     CHANGES = []
@@ -334,7 +376,7 @@ def update():
     # add chages from EU to the list (if they are not blacklisted by the user)
     for key in EU_stars.keys():
         if key in OEC_stars.keys():
-            Comp_object = COMP.Comparator(EU_stars.get(key), 
+            Comp_object = COMP.Comparator(EU_stars.get(key),
                                           OEC_stars.get(key), "eu")
             LIST = Comp_object.proposedChangeStarCompare()
             for C in LIST:
@@ -344,9 +386,9 @@ def update():
     # add chages from NASA to the list
     for key in NASA_stars.keys():
         if key in OEC_stars.keys():
-            Comp_object = COMP.Comparator(NASA_stars.get(key), 
+            Comp_object = COMP.Comparator(NASA_stars.get(key),
                                           OEC_stars.get(key), "nasa")
-            LIST = Comp_object.proposedChangeStarCompare()            
+            LIST = Comp_object.proposedChangeStarCompare()
             for C in LIST:
                 if (not C in black_list) and (not C in CHANGES):
                     CHANGES.append(C)
@@ -403,7 +445,8 @@ def setautoupdate(autoupdate_interval):
     '''
 
     if (autoupdate_interval >= MIN_AUTOU_INTERVAL):
-        commandstr = "python3 autoupdate_daemon.py -i " + str(autoupdate_interval)
+        commandstr = "python3 autoupdate_daemon.py -i " + str(
+            autoupdate_interval)
         subprocess.Popen(commandstr, shell=True)
         return 0
     else:
@@ -417,18 +460,18 @@ def stopautoupdate():
     '''
 
     subprocess.call("pkill -f autoupdate_daemon.py", shell=True)
-    
-    
+
+
 def setrepo(repo_name):
     '''(str) -> NoneType
     '''
-    pass
+    STORAGE.config_set("repo_url", repo_name)
 
 
 def clearrepo():
     '''() -> NoneType
     '''
-    pass
+    STORAGE.config_set("repo_url", STORAGE.DEFAULT_REPO_URL)
 
 
 def accept_range(start, end, strategy):
@@ -436,4 +479,41 @@ def accept_range(start, end, strategy):
     start and end should be int, otherwise "s" or "e"
     strategy should be 1 or 2
     '''
-    pass
+    unpack_changes()
+    # sort the list of proposed changes
+    if isinstance(start, str) and start.lower() == "s":
+        start = 1
+    elif isinstance(start, str) and start.lower() == "e":
+        start = len(CHANGES)
+    if isinstance(end, str) and end.lower() == "e":
+        end = len(CHANGES)
+    elif isinstance(end, str) and end.lower() == "s":
+        end = 1
+    bothInts = isinstance(start, int) and isinstance(end, int)
+    validRange = 1 <= start <= len(CHANGES) and 1 <= end <= len(CHANGES)
+    if (bothInts and validRange):
+        if start <= end:
+            i = start
+            while i <= end:
+                accept(i, strategy)
+                i += 1
+        else:  # start > end
+            # reverse range
+            i = start
+            while i >= end:
+                accept(i, strategy)
+                i -= 1
+    else:
+        print("Invalid range")
+
+
+def fullreset():
+    '''
+    () -> NoneType
+
+    Clears all the settings set by the user; restores the program configuration
+    to default state (Including list of stored proposed chages, autoupdate
+    settings, target github repo url, etc.)
+    '''
+    stopautoupdate()
+    STORAGE.reset_to_default()
