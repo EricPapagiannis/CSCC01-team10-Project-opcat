@@ -229,7 +229,7 @@ def deny_range(start, end):
     validRange = 0 <= start <= len(CHANGES) and 0 <= end <= len(CHANGES)
     if (bothInts and validRange):
         black_list = STORAGE.config_get("black_list")
-        for i in range(end - 1, start - 1, -1):
+        for i in range(end, start - 1, -1):
             black_list.append(CHANGES.pop(i - 1))
             # update the blacklist
         STORAGE.config_set("black_list", black_list)

@@ -152,6 +152,7 @@ def modifyXML(proposedChange, n, mode=False):
         else:
             branch = "opcat" + str(getNextBranchNumber())
             # if the proposed change is a star, modify the star fields
+            call(["git", "checkout", "master"], cwd=direc)
             call(["git", "checkout", "-b", branch], cwd=direc)
             call(["git", "push", "upstream", branch], cwd=direc)
             # modify
