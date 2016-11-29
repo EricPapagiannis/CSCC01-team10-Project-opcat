@@ -1,4 +1,10 @@
-Manual
+Team 10 OEC Updater Manual
+
+An utility for updating the open exoplanet catelogue with external sources
+
+Copyright (c) 2016 [Chain Coders], All Right Reserved
+
+----------------------------------------------------------------
 
 Valid Commands
 
@@ -12,8 +18,8 @@ update
 
 	no args
 
-	updates system from set up remote databases and presents
-	proposed changes to user
+	updates system from set up remote databases; generates and
+	presents proposed changes to user
 
 showall
 
@@ -26,3 +32,45 @@ acceptall
 	no args
 
 	approves all proposed changes
+
+acceptall2
+
+	no args
+
+	approves all proposed change alternative mode
+
+denyall
+
+	no args
+
+	disregards all proposed changes
+
+status
+
+	no args
+
+	view information about the current system
+
+postponeall
+
+	no args
+
+	sends all proposed changes to blacklist
+
+clearblacklist
+
+	no args
+
+	removes all proposed changes currently in blacklist
+
+stopautoupdate
+
+	no args
+
+	stops the autoupdate daemon
+
+clearrepo
+
+	no args
+
+	clears the configured repo
