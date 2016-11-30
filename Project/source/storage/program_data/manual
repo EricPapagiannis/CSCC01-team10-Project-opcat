@@ -1,8 +1,8 @@
 Team 10 OEC Updater Manual
 
-An utility for updating the open exoplanet catelogue with external sources
+An utility for updating the Open Exoplanet Catalogue with external sources
 
-Copyright (c) 2016 [Chain Coders], All Right Reserved
+Copyright (c) 2016 [Chain Coders], All Rights Reserved
 
 ----------------------------------------------------------------
 
@@ -30,23 +30,26 @@ showall
 acceptall
 
 	no args
-
-	approves all proposed changes with many branches with one
-	pull request on each branch
+	
+	approves all proposed changes with many branches that
+	include one proposed change per branch and one pull
+	request	per branch
 
 acceptall2
 
 	no args
 
-	approves all proposed changes with one pull request on one
-	branch, with many commits
+	approves all proposed changes with one branch including
+	all of the proposed changes on this branch with a single
+	pull request
 
 denyall
 
 	no args
 
 	denies all proposed all proposed changes and sends them
-	to the blacklist
+	to the blacklist where they will never re-appear in
+	later updates
 
 status
 
@@ -59,7 +62,7 @@ postponeall
 	no args
 
 	denies all proposed changes, without sending them to the
-	blacklist
+	blacklist, so that they will appear in later updates
 
 clearblacklist
 
@@ -88,32 +91,43 @@ shownumber
 accept
 
 	arg: [int] or [int]-[int] or "s"-"e"
+	"s" means from the start of the proposed changes list
+	"e" means to the end of the proposed changes list
 
 	accepts a single proposed change filed under that number,
 	or range of number seperated by a "-"
 
-	uses many branches with one pull request on each branch
-
+	uses many branches with one proposed change per branch
+	and one pull request on each branch
+	
 accept2
 
 	arg: [int] or [int]-[int] or "s"-"e"
-
+	"s" means from the start of the proposed changes list
+	"e" means to the end of the proposed changes list
+	
 	accepts a single proposed change filed under that number,
 	or range of number seperated by a "-"
 
-	uses one single branch, with many commits on each
+	uses one single branch with many proposed changes on that
+	one branch with one pull request on that branch
 
 deny
 
 	arg: [int] or [int]-[int] or "s"-"e"
+	"s" means from the start of the proposed changes list
+	"e" means to the end of the proposed changes list
 
 	denies a single proposed change filed under that number,
 	or range of number seperated by a "-", and sends them
-	to the blacklist
+	to the blacklist where they will never re-appear in
+	later updates
 
 showrange
 
 	arg: [int]-[int] or "s"-"e"
+	"s" means from the start of the proposed changes list
+	"e" means to the end of the proposed changes list
 
 	displays a range of proposed changes filed by the
 	specified input
@@ -121,6 +135,8 @@ showrange
 postpone
 
 	arg: [int] or [int]-[int] or "s"-"e"
+	"s" means from the start of the proposed changes list
+	"e" means to the end of the proposed changes list
 
 	denies a single proposed change filed under that number,
 	or range of number seperated by a "-", without sending it
@@ -137,7 +153,8 @@ showlastest
 
 	arg: [int]
 
-	show lastest provided number of prposed changes
+	show the [int] provided number of the lastest proposed
+	changes sorted by their time of lastupdate
 
 setrepo
 
