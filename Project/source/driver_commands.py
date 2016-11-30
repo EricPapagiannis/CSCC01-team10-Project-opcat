@@ -14,8 +14,7 @@ import subprocess
 import urllib
 
 # usage string
-usage_str = "usage: driver [--help] [--update] [--output string] [--planet " \
-            + "string] [--showall | --shownumber int]\n"
+usage_str = "usage: driver --command [number | range]\n"
 
 # link to NASA catalogue
 NASA_link = "http://exoplanetarchive.ipac.caltech.edu/cgi-bin/nsted\
@@ -437,7 +436,7 @@ def showlastest(n):
         i = 0
         while i < n:
             print("\nShowing number : " + str(newChanges[i]._index + 1) + "\n")
-            print(newChanges[i].fancyStr())
+            print(str(newChanges[i]))
             print()
             i += 1
     else:

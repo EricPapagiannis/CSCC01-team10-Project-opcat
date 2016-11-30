@@ -1,8 +1,8 @@
 Team 10 OEC Updater Manual
 
-An utility for updating the open exoplanet catelogue with external sources
+An utility for updating the Open Exoplanet Catalogue with external sources
 
-Copyright (c) 2016 [Chain Coders], All Right Reserved
+Copyright (c) 2016 [Chain Coders], All Rights Reserved
 
 ----------------------------------------------------------------
 
@@ -19,108 +19,125 @@ update
 	no args
 
 	updates system from set up remote databases; generates and
-	presents proposed changes to user
+	stores a list of proposed changes
 
 showall
 
 	no args
 
-	presents all proposed changes to user
+	presents all proposed changes generated during the last 
+	update to user
 
 acceptall
 
 	no args
-
-	approves all proposed changes with many branches with one
-	pull request on each branch
+	
+	approves all proposed changes with many branches that
+	include one proposed change per branch and one pull
+	request	per branch
 
 acceptall2
 
 	no args
 
-	approves all proposed changes with one pull request on one
-	branch, with many commits
+	approves all proposed changes with one branch including
+	all of the proposed changes on this branch with a single
+	pull request
 
 denyall
 
 	no args
 
-	denies all proposed all proposed changes and sends them
-	to the blacklist
+	denies all proposed all proposed changes and adds them
+	to the blacklist, meaning this proposed changes will 
+	not apear again in later updates.
 
 status
 
 	no args
 
-	view information about the current system
+	view information about the current program settings, time
+	of last update and number of proposed changes stored
 
 postponeall
 
 	no args
 
 	denies all proposed changes, without sending them to the
-	blacklist
+	blacklist, meaning they will reappear after the next 
+	update
 
 clearblacklist
 
 	no args
 
-	removes all proposed changes currently in blacklist
+	removes all proposed changes currently in blacklist, 
+	enabling them show up in future updates
 
 stopautoupdate
 
 	no args
 
-	stops the autoupdate daemon
+	stops the autoupdate daemon; no effect if there is no
+	autoupdate in progress
 
 clearrepo
 
 	no args
 
-	clears the configured repo back to the default
+	clears the configured repo back to the default:
+	https://github.com/EricPapagiannis/open_exoplanet_catalogue.git
 
-shownumber
+show
 
-	arg: [int]
+	arg: [int] or [int]-[int] or "s"-"e"
+	
+	displays the proposed change with specified number,	or 
+	a range of proposed changes filed by the specified input
 
-	displays the proposed change filed under specified number
+	"s" means from the start of the proposed changes list
+	"e" means to the end of the proposed changes list
 
 accept
 
 	arg: [int] or [int]-[int] or "s"-"e"
+	"s" means from the start of the proposed changes list
+	"e" means to the end of the proposed changes list
 
 	accepts a single proposed change filed under that number,
-	or range of number seperated by a "-"
+	or range of numbers seperated by a "-"
 
-	uses many branches with one pull request on each branch
-
+	uses many branches with one proposed change per branch
+	and one pull request on each branch
+	
 accept2
 
 	arg: [int] or [int]-[int] or "s"-"e"
-
+	"s" means from the start of the proposed changes list
+	"e" means to the end of the proposed changes list
+	
 	accepts a single proposed change filed under that number,
-	or range of number seperated by a "-"
+	or range of numbers seperated by a "-"
 
-	uses one single branch, with many commits on each
+	uses one single branch with many proposed changes on that
+	one branch with one pull request on that branch
 
 deny
 
 	arg: [int] or [int]-[int] or "s"-"e"
+	"s" means from the start of the proposed changes list
+	"e" means to the end of the proposed changes list
 
 	denies a single proposed change filed under that number,
-	or range of number seperated by a "-", and sends them
-	to the blacklist
-
-showrange
-
-	arg: [int]-[int] or "s"-"e"
-
-	displays a range of proposed changes filed by the
-	specified input
+	or range of numbers seperated by a "-", and adds them
+	to the blacklist, meaning this particular proposed change
+	will not apear again in later updates
 
 postpone
 
 	arg: [int] or [int]-[int] or "s"-"e"
+	"s" means from the start of the proposed changes list
+	"e" means to the end of the proposed changes list
 
 	denies a single proposed change filed under that number,
 	or range of number seperated by a "-", without sending it
@@ -130,14 +147,15 @@ setautoupdate
 
 	arg: [int]
 
-	starts the autoupdate daemon which will run update
-	every provided hours
+	starts the autoupdate daemon which will run update 
+	periodically, every [int] hours
 
 showlastest
 
 	arg: [int]
 
-	show lastest provided number of prposed changes
+	show lastest provided number of prposed changes, based 
+	on "last update time" field in their respective catalogues
 
 setrepo
 

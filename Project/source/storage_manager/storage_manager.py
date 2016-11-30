@@ -58,12 +58,12 @@ def read_changes_from_memory():
     Throws EOFError if file is empty.
     Throws FileNotFoundError if file DNE.
     '''
-    with open(PROPOSED_CHANGES_PATH, "rb") as File:
-        try:
+    try:
+        with open(PROPOSED_CHANGES_PATH, "rb") as File:
             changes_list = pickle.load(File, encoding=ENCODING)
-        # if the storage file is empty, return an empty list
-        except EOFError:
-            changes_list = []
+    # if the storage file is empty, return an empty list
+    except (EOFError, FileNotFoundError) as e:
+        changes_list = []
     return changes_list
 
 
@@ -104,13 +104,13 @@ def config_set(key, val):
     calls clean_config_file() to reset it to default state.
     '''
     reset = False
-    with open(CONFIG_PATH, "rb") as File:
-        try:
+    try:
+        with open(CONFIG_PATH, "rb") as File:
             config_dict = pickle.load(File, encoding=ENCODING)
-        # if the storage file is unreadable, reset the file to default state
-        except EOFError:
-            reset = True
-            config_dict = None
+    # if the storage file is unreadable, reset the file to default state
+    except (EOFError, FileNotFoundError) as e:
+        reset = True
+        config_dict = None
     if reset:
         clean_config_file()
         with open(CONFIG_PATH, "rb") as File:
@@ -130,15 +130,15 @@ def config_get(key):
     calls clean_config_file() to reset it to default state.
     '''
     reset = False
-    with open(CONFIG_PATH, "rb") as File:
-        try:
+    try:
+        with open(CONFIG_PATH, "rb") as File:
             config_dict = pickle.load(File, encoding=ENCODING)
             result = config_dict.get(key)
-        # if the storage file is unreadable, return None, reset the file to
-        # default state
-        except EOFError:
-            result = None
-            reset = True
+    # if the storage file is unreadable, return None, reset the file to default
+    # state
+    except (EOFError, FileNotFoundError) as e:
+        result = None
+        reset = True
     if reset:
         clean_config_file()
     return result
