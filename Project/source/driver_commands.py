@@ -213,6 +213,9 @@ def deny_number(n):
 
 def deny_range(start, end):
     '''(int, int) -> NoneType
+    or (str, str) -> NoneType, where str in [s,e]
+    Method for denying a range of proposed changes between start and end
+    Returns NoneType
     '''
     global CHANGES
     unpack_changes()
@@ -275,7 +278,9 @@ def postpone_number(n):
 
 def postpone_range(start, end):
     '''(int, int) -> NoneType
-    pass
+    or (str, str) -> NoneType, where str in [s,e]
+    Method for postponing a range of proposed changes between start and end
+    Returns NoneType
     '''
     global CHANGES
     unpack_changes()
@@ -479,9 +484,11 @@ def clearrepo():
 
 
 def accept_range(start, end, strategy):
-    '''(str, str, int)
-    start and end should be int, otherwise "s" or "e"
-    strategy should be 1 or 2
+    '''(int, int, int) -> NoneType
+    or (str, str, int) -> NoneType, where str in [s,e]
+    Method for accepting a range of proposed changes between start and end
+    where strategy designated the related strategy of accepting changes
+    Returns NoneType
     '''
     unpack_changes()
     # sort the list of proposed changes

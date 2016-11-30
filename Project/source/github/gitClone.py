@@ -12,16 +12,26 @@ link = STORAGE.config_get("repo_url")
 
 
 def getLink():
+    """ () -> str
+    Return the link of the repository
+    """
     return STORAGE.config_get("repo_url")
 
 
 def getNextBranchNumber():
+    """ () -> int
+    Return the next valid branch number, and increment the next branch so it is
+    valid still
+    """
     branch_number = STORAGE.config_get("branch_number")
     STORAGE.config_set("branch_number", branch_number + 1)
     return branch_number
 
 
 def getCurrentBranchNumber():
+    """ () -> int
+    Return the current branch number, without incrementing it
+    """
     return STORAGE.config_get("branch_number") - 1
 
 
@@ -40,11 +50,11 @@ def initGit():
     call(["git", "checkout", "master"], cwd=direc)
     return link
 
+
 def initGit2():
     ''' () -> None
     Does any initialization to use github with strategy 1
     '''
-    # change to actual later
     global link
     branch = "OPCAT" + str(getNextBranchNumber())
     call(["git", "--bare", "clone", getLink()], cwd="github")
@@ -230,6 +240,7 @@ def modifyPlanet(oec, proposedChange):
     # now modify our data field we want
     child = specificPlanetXML.find(".//" + str(proposedChange.field_modified))
     child.text = str(proposedChange.value_in_origin_catalogue)
+    # modify the related error bounds if they exist
     if proposedChange.origin_upper != "N/A" and proposedChange.upper_attrib_name != "N/A":
         if proposedChange.OEC_upper != "N/A" and float(
                 proposedChange.OEC_upper) != float(proposedChange.origin_upper):
@@ -247,21 +258,5 @@ def modifyPlanet(oec, proposedChange):
             child.attrib[
                 proposedChange.lower_attrib_name] = proposedChange.origin_lower
     oec.write(path)
+    # update the date to the current
     modifyDateToCurrent(oec, proposedChange)
-
-# def getSystemName(proposedChange):
-# def commitAndPull():
-
-# INSTALL THIS STUFF TO TO PULL REQUESTS:
-# sudo apt-get install ruby-full
-# sudo curl -O https://storage.googleapis.com/golang/go1.6.linux-amd64.tar.gz
-# sudo tar -xvf go1.6.linux-amd64.tar.gz
-# sudo mv go /usr/local
-# vi ~/.profile
-# add export PATH=$PATH:/usr/local/go/bin to end of file
-# source ~/.profile
-# cd back to hub checkedout and then: make
-# git clone https://github.com/github/hub.git
-# sudo ln -s /home/eric/Desktop/bob/hub/bin/hub /usr/local/bin/hub
-# sudo apt-install linuxbrew-wrapper
-# brew install hub
