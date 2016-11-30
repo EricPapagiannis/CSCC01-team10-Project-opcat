@@ -88,11 +88,15 @@ clearrepo
 	clears the configured repo back to the default:
 	https://github.com/EricPapagiannis/open_exoplanet_catalogue.git
 
-shownumber
+show
 
-	arg: [int]
+	arg: [int] or [int]-[int] or "s"-"e"
+	
+	displays the proposed change with specified number,	or 
+	a range of proposed changes filed by the specified input
 
-	displays the proposed change with specified number
+	"s" means from the start of the proposed changes list
+	"e" means to the end of the proposed changes list
 
 accept
 
@@ -128,15 +132,6 @@ deny
 	or range of numbers seperated by a "-", and adds them
 	to the blacklist, meaning this particular proposed change
 	will not apear again in later updates
-
-showrange
-
-	arg: [int]-[int] or "s"-"e"
-	"s" means from the start of the proposed changes list
-	"e" means to the end of the proposed changes list
-
-	displays a range of proposed changes filed by the
-	specified input
 
 postpone
 
