@@ -168,9 +168,9 @@ def accept(n, strategy):
         unpack_changes()
     if n <= len(CHANGES) and n > 0:
         if (strategy == 1):
-            GIT.modifyXML(CHANGES[n], n)
+            GIT.modifyXML(CHANGES[n], n - 1)
         else:
-            GIT.modifyXML(CHANGES[n], n, mode=True)
+            GIT.modifyXML(CHANGES[n], n - 1, mode=True)
     else:
         print("Out of range.")
     print("\nAccepted: \n" + str(n))
@@ -183,8 +183,8 @@ def accept_all(strategy):
     '''
 
     unpack_changes()
-    i = 0
-    while i < len(CHANGES):
+    i = 1
+    while i <= len(CHANGES):
         accept(i, strategy)
         i += 1
 
