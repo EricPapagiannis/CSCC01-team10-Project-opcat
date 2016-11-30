@@ -14,8 +14,7 @@ import subprocess
 import urllib
 
 # usage string
-usage_str = "usage: driver [--help] [--update] [--output string] [--planet " \
-            + "string] [--showall | --shownumber int]\n"
+usage_str = "usage: driver --command [number | range]\n"
 
 # link to NASA catalogue
 NASA_link = "http://exoplanetarchive.ipac.caltech.edu/cgi-bin/nsted\
