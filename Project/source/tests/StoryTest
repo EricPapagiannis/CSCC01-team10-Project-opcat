@@ -1,6 +1,5 @@
 #!/bin/bash
 # story tests for Opcat
-echo 'You can only run the test once, and all changes will be denied at the end of the test.'
 echo 'If you have any unstaged or staged work that has not been pushed, do not continue.'
 echo 'After the test, you must run git reset --hard HEAD'
 echo 'Continue? (y/n)'
@@ -10,6 +9,10 @@ then
     exit
 fi
 
+echo 'please provide the link to a repo'
+read repo
+python3 driver.py --setrepo $repo >/dev/null 2>&1
+
 cd ..
 echo Test starts now
 echo Do not interrupt until \'Test complete\' has been printed
@@ -17,6 +20,17 @@ echo
 
 passed=''
 failed=''
+
+current=`python3 driver.py --status | grep 'Last Update: .*' | sed 's/Last Update: \(.*\)/\1/'`
+if test 'Never' == "$current"
+then
+    echo initial status... passed.
+    passed=`echo $passed init-status`
+else
+    echo initial status... failed.
+    failed=`echo $failed init-status`
+fi
+
 # test update
 python3 driver.py --update >tempOut
 
@@ -24,11 +38,60 @@ if test `ls storage/program_data | grep CHANGES_STORAGE` == 'CHANGES_STORAGE'
 then
     echo update... passed.
     count=`cat tempOut | grep "Number of differences discovered : [0-9]*" | grep -o [0-9][0-9]*`
-    passed=`echo update`
+    passed=`echo $passed update`
 
 else
     echo update... failed. CHANGES_STORAGE does not exist
-    failed=`echo update`
+    failed=`echo $failed update`
+fi
+
+if test $current -gt 0
+then
+    $out=`python3 driver.py --show 1 | grep 'Showing number : 1'`
+    if test -z "$out"
+    then
+        echo show number... failed.
+        failed=`echo $failed show-num`
+    else
+        echo show number... passed.
+        passed=`echo $passed show-num`
+    fi
+fi
+
+if test $current -gt 0
+then
+    $out=`python3 driver.py --show 1-3 | grep 'Showing number : [0-9]' | wc -l`
+    if test $out -eq 3
+    then
+        echo show number... passed.
+        passed=`echo $passed show-ran`
+    else
+        echo show number... failed.
+        failed=`echo $failed show-ran`
+    fi
+fi
+
+if test $current -gt 0
+then
+    $out=`python3 driver.py --showlatest 1 | grep 'Showing number : [0-9]' | wc -l`
+    if test $out -eq 1
+    then
+        echo showlatest... passed.
+        passed=`echo $passed showlatest`
+    else
+        echo showlatest... failed.
+        failed=`echo $failed showlatest`
+    fi
+fi
+
+current=`python3 driver.py --status | grep 'Last Update: .*' | sed 's/Last Update: \(.*\)/\1/'`
+if test 'Never' != "$current"
+then
+    echo first status... passed.
+    passed=`echo $passed f-status`
+else
+    echo first status... failed.
+    failed=`echo $failed f-status`
 fi
 
 python3 driver.py --showall >tempOut
@@ -54,11 +117,27 @@ then
     if test $current -eq `expr $count - 1`
     then
         echo accept... passed.
-        passed=`echo $passed accept`
+        passed=`echo $passed accept-num`
     else
         echo accept... failed.
         echo expected `expr $count - 1` changes remaining, but $current changes remain.
-        failed=`echo $fialed accept`
+        failed=`echo $fialed accept-num`
+    fi
+fi
+
+if test $current -gt 0
+then
+    count=$current
+    python3 driver.py --accept 1-3 >/dev/null 2>&1
+    current=`python3 driver.py --showall  | grep "Number of changes shown : [0-9]*" | grep -o [0-9][0-9]*`
+    if test $current -eq `expr $count - 3`
+    then
+        echo accept range... passed.
+        passed=`echo $passed accept-ran`
+    else
+        echo accept range... failed.
+        echo expected `expr $count - 3` changes remaining, but $current changes remain.
+        failed=`echo $fialed accept-ran`
     fi
 fi
 
@@ -70,14 +149,30 @@ then
     if test `expr $count - 1` -eq $current
     then
         echo postpone... passed.
-        passed=`echo $passed postpone`
+        passed=`echo $passed postpone-num`
     else
         echo postpone... failed.
         echo pre-postpone number of changes: $count
         echo post-postpone number of changes: $current
-        failed=`echo $failed postpone`
+        failed=`echo $failed postpone-num`
     fi
     count=$current
+fi
+
+if test $current -gt 0
+then
+    count=$current
+    python3 driver.py --postpone 1-3 >/dev/null 2>&1
+    current=`python3 driver.py --showall  | grep "Number of changes shown : [0-9]*" | grep -o [0-9][0-9]*`
+    if test $current -eq `expr $count - 3`
+    then
+        echo postpone range... passed.
+        passed=`echo $passed postpone-num`
+    else
+        echo postpone range... failed.
+        echo expected `expr $count - 3` changes remaining, but $current changes remain.
+        failed=`echo $fialed postpone-num`
+    fi
 fi
 
 if test $count -gt 0
@@ -87,14 +182,30 @@ then
     if test `expr $count - 1` -eq $current
     then
         echo deny... passed.
-        passed=`echo $passed deny`
+        passed=`echo $passed deny-num`
     else
         echo deny... failed.
         echo pre-deny number of changes: $count
         echo post-deny number of changes: $current
-        failed=`echo $failed deny`
+        failed=`echo $failed deny-num`
     fi
     count=$current
+fi
+
+if test $current -gt 0
+then
+    count=$current
+    python3 driver.py --deny 1-3 >/dev/null 2>&1
+    current=`python3 driver.py --showall  | grep "Number of changes shown : [0-9]*" | grep -o [0-9][0-9]*`
+    if test $current -eq `expr $count - 3`
+    then
+        echo deny range... passed.
+        passed=`echo $passed deny-ran`
+    else
+        echo deny range... failed.
+        echo expected `expr $count - 3` changes remaining, but $current changes remain.
+        failed=`echo $fialed deny-ran`
+    fi
 fi
 
 if test $count -gt 0
