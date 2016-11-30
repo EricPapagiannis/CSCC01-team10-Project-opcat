@@ -22,9 +22,9 @@ def main():
 
     # flags that do expect a parameter (--output file.txt for example)
     # similar to shortOPT
-    shortARG = "opsntdr"
+    shortARG = "sntdr"
     # similar to longOTP
-    longARG = ["output", "planet", "shownumber", "accept", "accept2", "deny",
+    longARG = ["shownumber", "accept", "accept2", "deny",
                "showrange", "postpone", "setautoupdate", "showlatest",
                "setrepo"]
 
@@ -40,8 +40,6 @@ def main():
         usage()
         sys.exit(2)
 
-    output = None
-    planet = None
     show_parameter = None
     show_range_flag = False
     show_range_parameter = None
@@ -92,16 +90,9 @@ def main():
         elif o in ("-" + shortOPT[1], "--" + longOPT[1]):
             update_flag = True
 
-        # output
-        elif o in ("-" + shortARG[0], "--" + longARG[0]):
-            output = a
-
-        # planet
-        elif o in ("-" + shortARG[1], "--" + longARG[1]):
-            planet = a
 
         # shownumber
-        elif o in ("-" + shortARG[2], "--" + longARG[2]):
+        elif o in ("-" + shortARG[0], "--" + longARG[0]):
             show_flag = True
             show_parameter = int(a)
 
@@ -111,7 +102,7 @@ def main():
             all_flag = True
 
         # accept
-        elif o in ("-" + shortARG[3], "--" + longARG[3]):
+        elif o in ("-" + shortARG[1], "--" + longARG[1]):
             if ("-" in str(a)):
                 accept_flag = 2
                 accept_marker = str(a).split("-")
@@ -120,7 +111,7 @@ def main():
                 accept_marker = [int(a)]
 
         # accept2
-        elif o in ("-" + shortARG[4], "--" + longARG[4]):
+        elif o in ("-" + shortARG[2], "--" + longARG[2]):
             if ("-" in str(a)):
                 accept2_flag = 2
                 accept2_marker = str(a).split("-")
@@ -137,7 +128,7 @@ def main():
             accept_all2_flag = True
 
         # deny
-        elif o in ("-" + shortARG[5], "--" + longARG[5]):
+        elif o in ("-" + shortARG[3], "--" + longARG[3]):
             if ("-" in str(a)):
                 # a range was specified
                 deny_flag = 2
@@ -156,13 +147,13 @@ def main():
             status()
 
         # showrange
-        elif o in ("-" + shortARG[6], "--" + longARG[6]):
+        elif o in ("-" + shortARG[4], "--" + longARG[4]):
             show_flag = True
             show_range_flag = True
             show_range_parameter = a
 
         # postpone
-        elif o in ("--" + longARG[7]):
+        elif o in ("--" + longARG[5]):
             if ("-" in str(a)):
                 # a range was specified
                 postpone_flag = 2
@@ -185,17 +176,17 @@ def main():
             stopautoupdate_flag = True
 
         # setautoupdate
-        elif o in ("--" + longARG[8]):
+        elif o in ("--" + longARG[6]):
             setautoupdate_flag = True
             autoupdate_interval = int(a)
 
         # showlatest
-        elif o in ("--" + longARG[9]):
+        elif o in ("--" + longARG[7]):
             showlastest_flag = True
             showlastest_marker = int(a)
 
         # set repo
-        elif o in ("--" + longARG[10]):
+        elif o in ("--" + longARG[8]):
             setrepo_flag = True
             repo_marker = str(a)
 
