@@ -400,19 +400,3 @@ class UnitConverter:
             # call dat function doe
             result = nasafunc[field](data)
         return result
-
-
-if __name__ == "__main__":
-    planets = buildListPlanets("exoplanetEU_csv",
-                               ["mass", "radius", "period", "semimajoraxis",
-                                "discoveryyear", "lastupdate",
-                                "discoverymethod", "eccentricity"], "eu")
-    for i in planets:
-        print(str(i))
-    print("<<<<<EU\n\n\n\n\n\nNASA>>>>>>")
-    planets = buildListPlanets("nasa_csv",
-                               ["mass", "radius", "eccentricity", "period",
-                                "lastupdate", "discoverymethod"], "nasa")
-    print(len(planets))
-    for i in planets:
-        print(str(i))

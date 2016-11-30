@@ -24,7 +24,7 @@ class apiGet():
         try:
             outFile = open(self.saveTo, "w")
             outFile.write(output)
-            outFile.close
+            outFile.close()
         except:
             raise CannotSaveFileException(self.saveTo)
 
