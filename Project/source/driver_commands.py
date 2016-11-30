@@ -431,7 +431,7 @@ def showlastest(n):
         i = 0
         while i < n:
             print("\nShowing number : " + str(newChanges[i]._index + 1) + "\n")
-            print(newChanges[i].fancyStr())
+            print(str(newChanges[i]))
             print()
             i += 1
     else:
