@@ -18,7 +18,7 @@ def main():
     # log opts are phrases, add onto longOPT to include
     longOPT = ["help", "update", "showall", "acceptall", "acceptall2",
                "denyall", "status", "postponeall", "clearblacklist",
-               "stopautoupdate", "clearrepo"]
+               "stopautoupdate", "clearrepo", "fullreset"]
 
     # flags that do expect a parameter (--output file.txt for example)
     # similar to shortOPT
@@ -59,6 +59,7 @@ def main():
     clearrepo_flag = False
     setrepo_flag = False
     repo_marker = None
+    fullreset_flag = False
 
     # 0 for off, 1 for single select, 2 for range select
     show_flag = 0
@@ -195,14 +196,18 @@ def main():
             setrepo_flag = True
             repo_marker = str(a)
 
-            # clear repo
+        # clear repo
         elif o in ("--" + longOPT[10]):
             clearrepo_flag = True
+
+        # fullreset
+        elif o in ("--" + longOPT[11]):
+            fullreset_flag = True
 
         else:
             usage()
             assert False, "unhandled option"
-            
+
     # show all
     if (show_all_flag):
         show_all()
@@ -393,6 +398,10 @@ def main():
     # clearrepo
     if (clearrepo_flag):
         clearrepo()
+
+    # fullreset
+    if (fullreset_flag):
+        fullreset()
 
 
 if __name__ == "__main__":
