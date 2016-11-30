@@ -15,6 +15,16 @@ def getLink():
     return STORAGE.config_get("repo_url")
 
 
+def getNextBranchNumber():
+    branch_number = STORAGE.config_get("branch_number")
+    STORAGE.config_set("branch_number", branch_number + 1)
+    return branch_number
+
+
+def getCurrentBranchNumber():
+    return STORAGE.config_get("branch_number") - 1
+
+
 def initGit():
     ''' () -> None
     Does any initialization to use github with strategy 1
@@ -27,8 +37,8 @@ def initGit():
           getLink()],
          cwd=direc)
     call(["git", "push", "--set-upstream", "origin", "master"], cwd=direc)
+    call(["git", "checkout", "master"], cwd=direc)
     return link
-
 
 def initGit2():
     ''' () -> None
@@ -36,14 +46,16 @@ def initGit2():
     '''
     # change to actual later
     global link
+    branch = "OPCAT" + str(getNextBranchNumber())
     call(["git", "--bare", "clone", getLink()], cwd="github")
     link = getLink().split('/')[-1][0:-4]
     call(["git", "remote", "add", "upstream",
           getLink()],
          cwd=direc)
     call(["git", "push", "--set-upstream", "origin", "master"], cwd=direc)
-    call(["git", "checkout", "-b", "OPCAT"], cwd=direc)
-    call(["git", "push", "upstream", "OPCAT"], cwd=direc)
+    call(["git", "checkout", "master"], cwd=direc)
+    call(["git", "checkout", "-b", branch], cwd=direc)
+    call(["git", "push", "upstream", branch], cwd=direc)
     return link
 
 
@@ -51,16 +63,17 @@ def finalizeGit2():
     """ () -> None
     Does any final commands to use github with strategy 2
     """
+    branch = "OPCAT" + str(getCurrentBranchNumber())
     print("Performing cleanup...")
     call(["python3", "cleanup.py"], cwd="github")
     call(["git", "add", "systems"], cwd=direc)
     call(["git", "commit", "-m", "Cleanup"], cwd=direc)
     print("...Cleanup complete")
 
-    call(["git", "push", "upstream", "OPCAT"], cwd=direc)
+    call(["git", "push", "upstream", branch], cwd=direc)
 
     # pull-request
-    call(["hub", "pull-request", "-f", "-h", "OPCAT", "-m",
+    call(["hub", "pull-request", "-f", "-h", branch, "-m",
           "Compiled modifications"], cwd=direc)
 
 
@@ -115,12 +128,13 @@ def modifyXML(proposedChange, n, mode=False):
     """
     # case if proposed change is modification
     if isinstance(proposedChange, PC.Modification):
-        branch = "opcat" + str(n)
         path = "github/open_exoplanet_catalogue/systems/" + \
                proposedChange.getSystemName() + ".xml"
+        path2 = "systems/" + proposedChange.getSystemName() + ".xml"
         oec = ET.parse(path)
         # apply strategy 2
         if mode:
+            branch = "opcat" + str(getCurrentBranchNumber())
             # if the proposed change is a star, modify the star fields
             if proposedChange.getOECType() == "Star":
                 # modify
@@ -131,13 +145,14 @@ def modifyXML(proposedChange, n, mode=False):
                 # modify
                 modifyPlanet(oec, proposedChange)
                 # commit
-            path2 = "systems/" + proposedChange.getSystemName() + ".xml"
             call(["git", "add", path2], cwd=direc)
             commitMessage = str(proposedChange)
             call(["git", "commit", "-m", commitMessage], cwd=direc)
         # apply strategy 1
         else:
+            branch = "opcat" + str(getNextBranchNumber())
             # if the proposed change is a star, modify the star fields
+            call(["git", "checkout", "master"], cwd=direc)
             call(["git", "checkout", "-b", branch], cwd=direc)
             call(["git", "push", "upstream", branch], cwd=direc)
             # modify
@@ -153,11 +168,10 @@ def modifyXML(proposedChange, n, mode=False):
             call(["git", "add", path2], cwd=direc)
             commitMessage = str(proposedChange)
 
-            call(["git", "commit", "-m", commitMessage], cwd=direc)
+            call(["git", "commit", "-m", commitMessage, path2], cwd=direc)
             print("Performing cleanup...")
             call(["python3", "cleanup.py"], cwd="github")
-            call(["git", "add", "systems"], cwd=direc)
-            call(["git", "commit", "-m", "Cleanup"], cwd=direc)
+            call(["git", "commit", "-m", "Cleanup", path2], cwd=direc)
             print("...Cleanup complete")
             call(["git", "push", "upstream", branch], cwd=direc)
             # pull-request

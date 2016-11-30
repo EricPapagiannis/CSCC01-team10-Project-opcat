@@ -47,12 +47,16 @@ def status():
 
     unpack_changes()
     last_update = STORAGE.config_get("last_update")
+    repo_url = STORAGE.config_get("repo_url")
+
     num_changes = len(CHANGES)
     if last_update == "Never":
         print("Last Update: Never" + "\n")
+        print("Repo: " + repo_url)
     else:
         print("\nLast Update: " + str(last_update))
         print("Number of proposed changes stored : " + str(num_changes) + "\n")
+        print("Repo: " + repo_url)
 
 
 def usage():
@@ -163,7 +167,7 @@ def accept(n, strategy):
 
     if len(CHANGES) == 0:
         unpack_changes()
-    if n < len(CHANGES) and n >= 0:
+    if n <= len(CHANGES) and n > 0:
         if (strategy == 1):
             GIT.modifyXML(CHANGES[n], n)
         else:
@@ -225,7 +229,7 @@ def deny_range(start, end):
     validRange = 0 <= start <= len(CHANGES) and 0 <= end <= len(CHANGES)
     if (bothInts and validRange):
         black_list = STORAGE.config_get("black_list")
-        for i in range(end - 1, start - 1, -1):
+        for i in range(end, start - 1, -1):
             black_list.append(CHANGES.pop(i - 1))
             # update the blacklist
         STORAGE.config_set("black_list", black_list)

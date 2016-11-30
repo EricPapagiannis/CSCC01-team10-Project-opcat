@@ -85,7 +85,7 @@ class TestStorageManager(unittest.TestCase):
         resultList = list(retrieved.keys())
 
         answer = ['black_list', 'last_update', 'auto_update_settings',
-                  'repo_url']
+                  'repo_url', 'branch_number']
         self.assertTrue(
             len(resultList) == len(answer) and all(
                 resultList.count(i) == answer.count(i) for i in resultList))
