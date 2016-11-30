@@ -104,13 +104,13 @@ def config_set(key, val):
     calls clean_config_file() to reset it to default state.
     '''
     reset = False
-    with open(CONFIG_PATH, "rb") as File:
-        try:
+    try:
+        with open(CONFIG_PATH, "rb") as File:
             config_dict = pickle.load(File, encoding=ENCODING)
-        # if the storage file is unreadable, reset the file to default state
-        except EOFError:
-            reset = True
-            config_dict = None
+    # if the storage file is unreadable, reset the file to default state
+    except (EOFError, FileNotFoundError) as e:
+        reset = True
+        config_dict = None
     if reset:
         clean_config_file()
         with open(CONFIG_PATH, "rb") as File:
