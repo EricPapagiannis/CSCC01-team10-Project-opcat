@@ -24,7 +24,7 @@ def main():
     # similar to shortOPT
     shortARG = "sntdr"
     # similar to longOTP
-    longARG = ["shownumber", "accept", "accept2", "deny",
+    longARG = ["show", "accept", "accept2", "deny",
                "showrange", "postpone", "setautoupdate", "showlatest",
                "setrepo"]
 
@@ -40,11 +40,8 @@ def main():
         usage()
         sys.exit(2)
 
-    show_parameter = None
-    show_range_flag = False
-    show_range_parameter = None
+    show_all_flag = False
     update_flag = False
-    show_flag = False
     all_flag = False
     accept_all_flag = False
     accept_all2_flag = False
@@ -64,6 +61,8 @@ def main():
     repo_marker = None
 
     # 0 for off, 1 for single select, 2 for range select
+    show_flag = 0
+    # 0 for off, 1 for single select, 2 for range select
     deny_flag = 0
     # 0 for off, 1 for single select, 2 for range select
     postpone_flag = 0
@@ -71,6 +70,8 @@ def main():
     accept_flag = 0
     # 0 for off, 1 for single select, 2 for range select
     accept2_flag = 0
+    # list 1 element if single, 2 elements if range
+    show_marker = None
     # list 1 element if single, 2 elements if range
     deny_marker = None
     # list 1 element if single, 2 elements if range
@@ -91,15 +92,19 @@ def main():
             update_flag = True
 
 
-        # shownumber
+        # show
         elif o in ("-" + shortARG[0], "--" + longARG[0]):
-            show_flag = True
-            show_parameter = int(a)
+            if ("-" in str(a)):
+                show_flag = 2
+                show_marker = str(a).split("-")
+            else:
+                show_flag = 1
+                show_marker = [int(a)]
+
 
         # showall
         elif o in ("-" + shortOPT[2], "--" + longOPT[2]):
-            show_flag = True
-            all_flag = True
+            show_all_flag = True
 
         # accept
         elif o in ("-" + shortARG[1], "--" + longARG[1]):
@@ -197,38 +202,40 @@ def main():
         else:
             usage()
             assert False, "unhandled option"
+            
+    # show all
+    if (show_all_flag):
+        show_all()
+       
 
-    if (show_flag):
-        if ((all_flag) and (show_parameter)):
-            print_help()
-            return 1
-        elif (all_flag):
-            show_all()
-        elif show_range_flag:
-            try:
-                startend = show_range_parameter.split("-")
-                if startend[0].lower() == "s":
-                    start = "s"
-                elif startend[0].lower() == "e":
-                    start = "e"
-                else:
-                    start = int(startend[0])
-                if startend[1].lower() == "e":
-                    end = "e"
-                elif startend[1].lower() == "s":
-                    end = "s"
-                else:
-                    end = int(startend[1])
-                show_range(start, end)
+    # show
+    if (show_flag == 2):
+        try:
+            startend = show_marker
+            if startend[0].lower() == "s":
+                start = "s"
+            elif startend[0].lower() == "e":
+                start = "e"
+            else:
+                start = int(startend[0])
+            if startend[1].lower() == "e":
+                end = "e"
+            elif startend[1].lower() == "s":
+                end = "s"
+            else:
+                end = int(startend[1])
+            show_range(start, end)
+        except:
+            print("Invalid Range.")
 
-            except:
-                print("Invalid Range.")
-        else:
-            try:
-                show_parameter = int(show_parameter)
-                show_number(show_parameter)
-            except ValueError:
-                print("Invalid Parameter to shownumber.")
+
+    # show
+    if (show_flag == 1):
+        try:
+            show_number(int(show_marker[0]))
+        except ValueError:
+            print("Invalid Parameter to shownumber.")
+
 
     # update
     if (update_flag):
