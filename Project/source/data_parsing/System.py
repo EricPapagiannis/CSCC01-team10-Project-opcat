@@ -15,4 +15,4 @@ class System(PlanetaryObject):
         self.nameToStar = dict()
         self.otherNamesSystem = []
         self.errors = dict()
-        self.lastupdate = ""
+        self.lastupdate = "00/00/00"

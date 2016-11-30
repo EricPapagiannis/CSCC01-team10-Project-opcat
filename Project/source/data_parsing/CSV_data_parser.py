@@ -11,12 +11,13 @@ eu = {"name": "name", "mass": "mass", "radius": "radius",
       "eccentricity": "eccentricity", "discoverymethod": "detection_type",
       "discoveryyear": "discovered",
       "nameStar": "star_name", "impactparameter": 'impact_parameter',
-      'transittime': 'tzero_vr', 'lastupdate':'updated'}
+      'transittime': 'tzero_vr', 'lastupdate': 'updated'}
 nasa = {"name": "pl_hostname", "radius": "pl_radj",
         "eccentricity": "pl_orbeccen", "period": "pl_orbper",
         "discoverymethod": "pl_discmethod", "mass": "pl_bmassj",
         "nameStar": "pl_hostname",
-        'semimajoraxis': 'pl_orbsmax', 'inclination': 'pl_orbincl', 'lastupdate':'rowupdate'}
+        'semimajoraxis': 'pl_orbsmax', 'inclination': 'pl_orbincl',
+        'lastupdate': 'rowupdate'}
 
 euerror = {"perioderrorplus": "orbital_period_error_max",
            "perioderrorminus": "orbital_period_error_min",
@@ -53,13 +54,13 @@ eustar = {"name": "name", 'rightascension': 'ra', 'declination': 'dec',
           'radius': 'star_radius', 'magV': 'mag_v', 'magB': '', 'magI': 'mag_i',
           'magJ': 'mag_j', 'magH': 'mag_h', 'magK': 'mag_k',
           'temperature': 'star_teff', 'metallicity': 'star_metallicity',
-          'spectraltype': 'star_sp_type'}
+          'spectraltype': 'star_sp_type', 'lastupdate': 'updated'}
 nasastar = {"name": "pl_hostname", 'rightascension': 'ra_str',
             'declination': 'dec_str',
             'distance': 'st_dist', 'name': 'pl_hostname', 'mass': 'st_mass',
             'radius': 'st_rad', 'magV': 'st_optmag', 'magB': '', 'magJ': '',
             'magH': '', 'magK': '', 'temperature': 'st_teff', 'metallicity': '',
-            'spectraltype': ''}
+            'spectraltype': '', 'lastupdate': 'rowupdate'}
 
 # discovery method correction to xml
 discoveryCorrection = {"Radial Velocity": "RV", "Primary Transit": "transit",
@@ -113,7 +114,7 @@ def buildPlanet(line, heads, wanted, source, errors=None):
     planet = Planet(_name)
     for i in _data_field:
         try:
-            if(i != 'lastupdate'):
+            if (i != 'lastupdate'):
                 # we get the indexed field from line, fix the value and add it to planet
                 planet.addVal(i, _fixVal(i, line[_data_field[i]], source))
             else:
@@ -287,7 +288,11 @@ def buildStar(line, heads, source, errors=None):
     star = Star(_name)
     for i in _data_field:
         try:
-            star.addVal(i, _fixVal(i, line[_data_field[i]], source))
+            if (i != 'lastupdate'):
+                # we get the indexed field from line, fix the value and add it to planet
+                star.addVal(i, _fixVal(i, line[_data_field[i]], source))
+            else:
+                star.lastupdate = _fixVal(i, line[_data_field[i]], source)
         except KeyError:
             star.addVal(i, '')
     for i in _error_field:

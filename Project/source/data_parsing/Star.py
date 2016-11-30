@@ -23,5 +23,4 @@ class Star(PlanetaryObject):
         self.otherNamesStar = []
         self.otherNamesSystem = []
         self.errors = dict()
-        self.lastupdate = ""
-
+        self.lastupdate = "00/00/00"

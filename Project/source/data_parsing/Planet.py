@@ -1,5 +1,7 @@
-from data_parsing.PlanetaryObject import * 
-#from PlanetaryObject import *
+from data_parsing.PlanetaryObject import *
+
+
+# from PlanetaryObject import *
 
 class Planet(PlanetaryObject):
     def __init__(self, name):
@@ -16,4 +18,4 @@ class Planet(PlanetaryObject):
         self.starObjectNamesToStar = dict()
         self.otherNamesPlanet = []
         self.errors = dict()
-        self.lastupdate = ""
+        self.lastupdate = "00/00/00"

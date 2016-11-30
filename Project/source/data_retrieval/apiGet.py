@@ -1,5 +1,6 @@
 import requests
 
+
 class apiGet():
     def __init__(self, baseURL, saveTo):
         self.baseURL = baseURL
@@ -26,7 +27,7 @@ class apiGet():
             outFile.close
         except:
             raise CannotSaveFileException(self.saveTo)
-    
+
     def getTextFromAPI(self, parameters):
         '''(String) -> String
         Retrieves using GET with specified paramters
@@ -41,7 +42,7 @@ class apiGet():
             output = res.text
             return output
         else:
-            raise CannotRetrieveDataException(fullURL) 
+            raise CannotRetrieveDataException(fullURL)
 
 
 class CannotRetrieveDataException(Exception):

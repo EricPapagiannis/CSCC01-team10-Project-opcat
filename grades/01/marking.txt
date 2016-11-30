@@ -1,7 +1,8 @@
 CSCC01 -- Deliverable 1 -- Marking Guidelines
 
+Total: 43/50
 
-1) Introduce the team:      5/10
+1) Introduce the team:      8/10
 
   team's name present: 1
 
@@ -20,7 +21,6 @@ CSCC01 -- Deliverable 1 -- Marking Guidelines
     makes good use of each member's background: 2
 
 ==== Comments ====
-Team goal is missing (-3)
 Team strength is vague and does not address each member's background (-2)
 ===================
 
@@ -44,7 +44,7 @@ The PDF document quality id descent
 Consistency could have been improved (-2)
 ===================
 
-3) Team agreement:      6/10
+3) Team agreement:      7/10
 
     methods of communication, including wait time for replies, clearly stated:  2
     meeting times arranged:  2
@@ -54,7 +54,6 @@ Consistency could have been improved (-2)
 
 ==== Comments ====
 - No signature
-- Methods of communication are inefficient (-1)
 - No details about the use of version control beyond "having meaningful log messages" (-1)
 - Division of work is not addressed beyond "work is evenly divided". (-1)
 - No contingency plan beyond "make efforts among ourselves". (-1)

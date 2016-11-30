@@ -141,16 +141,14 @@ class Comparator():
                                      main_dictionary["planetDC"][
                                          planet][field][1])
                     )
-        '''
-        for star in main_dictionary["starC"]:
-            for field in main_dictionary["starC"][star]:
+        for field in main_dictionary["starC"]:
+            if ((main_dictionary["starC"][field][0] != "N/A") and (
+                        main_dictionary["starC"][field][0] != "")):
                 result_dict.append(
                     Modification(self.origin,
-                                 self.obj2, field,
-                                 main_dictionary["starC"][star][field][0],
-                                 main_dictionary["starC"][star][field][1])
-                )
-        '''
+                                 self.obj2, self.obj1, field,
+                                 main_dictionary["starC"][field][0],
+                                 main_dictionary["starC"][field][1]))
         for planet in main_dictionary["planetA"]:
             result_dict.append(Addition(self.origin, main_dictionary["planetA"][
                 planet]))
@@ -222,18 +220,41 @@ class Comparator():
 
             for planet in self.obj1.planetObjects:
                 # if (planet in self.obj2.planetObjects):
-                if (planet.name in self.obj2.nameToPlanet):
-                    # create comparartor instance on planets
-                    planetCompare = Comparator(planet,
-                                               self.obj2.nameToPlanet[
-                                                   planet.name], self.origin)
-                    # get dictionary of new planet data for that planet
-                    newPlanetsData[planet.name] = planetCompare.sqlJoin(
-                        True)
-                    # get dictionary of changed planet data for that planet
-                    planetsDataChange[planet.name] = \
-                        planetCompare.innerJoinDiff()
-                else:
+                found = 0
+                for planetName in self.obj2.nameToPlanet:
+                    cleanName = ''.join(
+                        ch for ch in planet.name if
+                        ch.isalnum()).lower()
+                    if (planet.name == planetName):
+                        # create comparartor instance on planets
+                        planetCompare = Comparator(planet,
+                                                   self.obj2.nameToPlanet[
+                                                       planet.name],
+                                                   self.origin)
+                        # get dictionary of new planet data for that planet
+                        newPlanetsData[planet.name] = planetCompare.sqlJoin(
+                            True)
+                        # get dictionary of changed planet data for that planet
+                        planetsDataChange[planet.name] = \
+                            planetCompare.innerJoinDiff()
+                        found = 1
+                    elif (cleanName == ''.join(
+                            ch for ch in planetName if
+                            ch.isalnum()).lower()):
+                        # create comparartor instance on planets
+                        planetCompare = Comparator(planet,
+                                                   self.obj2.nameToPlanet[
+                                                       cleanName],
+                                                   self.origin)
+                        # get dictionary of new planet data for that planet
+                        newPlanetsData[cleanName] = planetCompare.sqlJoin(
+                            True)
+                        # get dictionary of changed planet data for that planet
+                        planetsDataChange[cleanName] = \
+                            planetCompare.innerJoinDiff()
+                        found = 1
+
+                if found == 0:
                     planetsAddition[planet.name] = planet
 
             # generates output

@@ -1,12 +1,12 @@
 class PlanetaryObject:
     def __init__(self, name=None):
-        if isinstance(name, str):
-            self.data[name] = self._fixStr(name)
+        self.data = dict()
         self.name = self._fixStr(name)
         if name is None:
-            self.data = dict()
+            pass
         else:
-            self.data = {"name" + self.__class__.__name__, name}
+            self.data["name" + self.__class__.__name__] = None
+            self.data[name] = None
 
     def __str__(self):
         '''
@@ -37,6 +37,9 @@ class PlanetaryObject:
         return s
 
     def addVal(self, name, val):
+        '''(str, Object) -> None
+        Adds a key value pair to the database in the planetary object
+        '''
         if isinstance(name, str):
             name = self._fixStr(name)
 
@@ -49,6 +52,11 @@ class PlanetaryObject:
             self.data[name] = val
 
     def addValList(self, name, val):
+        '''(str, Object) -> None
+        Similiar to addVal, except the value in this case is made into
+        a list first, if it's not already a list, then stored in the 
+        database
+        '''
         if isinstance(name, str):
             name = self._fixStr(name)
 
@@ -62,6 +70,11 @@ class PlanetaryObject:
         return self
 
     def addToValList(self, name, val):
+        '''(str, Object) -> None
+        adds a new object to a key value pair, with a key assumption
+        being the value in the key value pair is a list. It's appended to the
+        end of that last.
+        '''
         if isinstance(name, str):
             name = self._fixStr(name)
         if isinstance(val, str):
@@ -72,9 +85,22 @@ class PlanetaryObject:
         return self
 
     def getData(self):
+        '''() -> Dict of Objects
+        Returns all the data kept in the planetary object as a dictionary
+        '''
         return self.data
 
+    def getName(self):
+        '''() -> String
+        returns the object's name
+        '''
+        return self.name
+
     def getVal(self, name):
+        '''(Str) -> Object
+        Given a key, returns the object kept at that key, 
+        assuming the key exists
+        '''
         return self.data[name]
 
     def _fixVal(self, val):

@@ -3,10 +3,26 @@ import xml.etree.ElementTree as ET
 import data_comparison.proposed_change as PC
 import os
 import datetime
+import storage_manager.storage_manager as STORAGE
 
 # 'static' vars
 files = []
 direc = "github/open_exoplanet_catalogue"
+link = STORAGE.config_get("repo_url")
+
+
+def getLink():
+    return STORAGE.config_get("repo_url")
+
+
+def getNextBranchNumber():
+    branch_number = STORAGE.config_get("branch_number")
+    STORAGE.config_set("branch_number", branch_number + 1)
+    return branch_number
+
+
+def getCurrentBranchNumber():
+    return STORAGE.config_get("branch_number") - 1
 
 
 def initGit():
@@ -14,50 +30,51 @@ def initGit():
     Does any initialization to use github with strategy 1
     '''
     # change to actual repository later
-    link = 'https://github.com/EricPapagiannis/open_exoplanet_catalogue.git'
-    call(["git", "--bare", "clone", link], cwd="github")
-    link = link.split('/')[-1][0:-4]
+    global link
+    call(["git", "--bare", "clone", getLink()], cwd="github")
+    link = getLink().split('/')[-1][0:-4]
     call(["git", "remote", "add", "upstream",
-          "https://github.com/EricPapagiannis/open_exoplanet_catalogue.git"],
+          getLink()],
          cwd=direc)
     call(["git", "push", "--set-upstream", "origin", "master"], cwd=direc)
+    call(["git", "checkout", "master"], cwd=direc)
     return link
-
 
 def initGit2():
     ''' () -> None
     Does any initialization to use github with strategy 1
     '''
     # change to actual later
-    link = 'https://github.com/EricPapagiannis/open_exoplanet_catalogue.git'
-    call(["git", "--bare", "clone", link], cwd="github")
-    link = link.split('/')[-1][0:-4]
+    global link
+    branch = "OPCAT" + str(getNextBranchNumber())
+    call(["git", "--bare", "clone", getLink()], cwd="github")
+    link = getLink().split('/')[-1][0:-4]
     call(["git", "remote", "add", "upstream",
-          "https://github.com/EricPapagiannis/open_exoplanet_catalogue.git"],
+          getLink()],
          cwd=direc)
     call(["git", "push", "--set-upstream", "origin", "master"], cwd=direc)
-    call(["git", "checkout", "-b", "OPCAT"], cwd=direc)
-    call(["git", "push", "upstream", "OPCAT"], cwd=direc)
+    call(["git", "checkout", "master"], cwd=direc)
+    call(["git", "checkout", "-b", branch], cwd=direc)
+    call(["git", "push", "upstream", branch], cwd=direc)
     return link
-
 
 
 def finalizeGit2():
     """ () -> None
     Does any final commands to use github with strategy 2
     """
+    branch = "OPCAT" + str(getCurrentBranchNumber())
     print("Performing cleanup...")
     call(["python3", "cleanup.py"], cwd="github")
     call(["git", "add", "systems"], cwd=direc)
     call(["git", "commit", "-m", "Cleanup"], cwd=direc)
     print("...Cleanup complete")
 
-    call(["git", "push", "upstream", "OPCAT"], cwd=direc)
+    call(["git", "push", "upstream", branch], cwd=direc)
 
     # pull-request
-    call(["hub", "pull-request", "-f", "-h", "OPCAT", "-m",
+    call(["hub", "pull-request", "-f", "-h", branch, "-m",
           "Compiled modifications"], cwd=direc)
-
 
 
 def saveDirName(direc):
@@ -111,12 +128,13 @@ def modifyXML(proposedChange, n, mode=False):
     """
     # case if proposed change is modification
     if isinstance(proposedChange, PC.Modification):
-        branch = "opcat" + str(n)
         path = "github/open_exoplanet_catalogue/systems/" + \
                proposedChange.getSystemName() + ".xml"
+        path2 = "systems/" + proposedChange.getSystemName() + ".xml"
         oec = ET.parse(path)
         # apply strategy 2
         if mode:
+            branch = "opcat" + str(getCurrentBranchNumber())
             # if the proposed change is a star, modify the star fields
             if proposedChange.getOECType() == "Star":
                 # modify
@@ -127,13 +145,14 @@ def modifyXML(proposedChange, n, mode=False):
                 # modify
                 modifyPlanet(oec, proposedChange)
                 # commit
-            path2 = "systems/" + proposedChange.getSystemName() + ".xml"
             call(["git", "add", path2], cwd=direc)
             commitMessage = str(proposedChange)
             call(["git", "commit", "-m", commitMessage], cwd=direc)
         # apply strategy 1
         else:
+            branch = "opcat" + str(getNextBranchNumber())
             # if the proposed change is a star, modify the star fields
+            call(["git", "checkout", "master"], cwd=direc)
             call(["git", "checkout", "-b", branch], cwd=direc)
             call(["git", "push", "upstream", branch], cwd=direc)
             # modify
@@ -149,11 +168,10 @@ def modifyXML(proposedChange, n, mode=False):
             call(["git", "add", path2], cwd=direc)
             commitMessage = str(proposedChange)
 
-            call(["git", "commit", "-m", commitMessage], cwd=direc)
+            call(["git", "commit", "-m", commitMessage, path2], cwd=direc)
             print("Performing cleanup...")
             call(["python3", "cleanup.py"], cwd="github")
-            call(["git", "add", "systems"], cwd=direc)
-            call(["git", "commit", "-m", "Cleanup"], cwd=direc)
+            call(["git", "commit", "-m", "Cleanup", path2], cwd=direc)
             print("...Cleanup complete")
             call(["git", "push", "upstream", branch], cwd=direc)
             # pull-request
@@ -213,17 +231,21 @@ def modifyPlanet(oec, proposedChange):
     child = specificPlanetXML.find(".//" + str(proposedChange.field_modified))
     child.text = str(proposedChange.value_in_origin_catalogue)
     if proposedChange.origin_upper != "N/A" and proposedChange.upper_attrib_name != "N/A":
-        if proposedChange.OEC_upper != "N/A" and float(proposedChange.OEC_upper) != float(proposedChange.origin_upper):
+        if proposedChange.OEC_upper != "N/A" and float(
+                proposedChange.OEC_upper) != float(proposedChange.origin_upper):
             child.attrib[
                 proposedChange.upper_attrib_name] = proposedChange.origin_upper
         elif proposedChange.OEC_upper == "N/A":
-            child.attrib[proposedChange.upper_attrib_name] = proposedChange.origin_upper
+            child.attrib[
+                proposedChange.upper_attrib_name] = proposedChange.origin_upper
     if proposedChange.origin_lower != "N/A" and proposedChange.lower_attrib_name != "N/A":
-        if proposedChange.OEC_lower != "N/A" and float(proposedChange.OEC_lower) != float(proposedChange.origin_lower):
+        if proposedChange.OEC_lower != "N/A" and float(
+                proposedChange.OEC_lower) != float(proposedChange.origin_lower):
             child.attrib[
                 proposedChange.lower_attrib_name] = proposedChange.origin_lower
         elif proposedChange.OEC_lower == "N/A":
-            child.attrib[proposedChange.lower_attrib_name] = proposedChange.origin_lower
+            child.attrib[
+                proposedChange.lower_attrib_name] = proposedChange.origin_lower
     oec.write(path)
     modifyDateToCurrent(oec, proposedChange)
 

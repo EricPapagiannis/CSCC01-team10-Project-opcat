@@ -1,9 +1,12 @@
 import pickle
 
+DEFAULT_REPO_URL \
+    = "https://github.com/EricPapagiannis/open_exoplanet_catalogue.git"
 MANUAL_PATH = "storage/program_data/manual"
 PROPOSED_CHANGES_PATH = "storage/program_data/CHANGES_STORAGE"
 CONFIG_PATH = "storage/program_data/program_config"
 ENCODING = "ASCII"
+
 
 def manual():
     '''
@@ -13,6 +16,7 @@ def manual():
     path is declared above.
     '''
     return read_file(MANUAL_PATH)
+
 
 def read_file(path):
     '''
@@ -54,12 +58,12 @@ def read_changes_from_memory():
     Throws EOFError if file is empty.
     Throws FileNotFoundError if file DNE.
     '''
-    with open(PROPOSED_CHANGES_PATH, "rb") as File:
-        try:
+    try:
+        with open(PROPOSED_CHANGES_PATH, "rb") as File:
             changes_list = pickle.load(File, encoding=ENCODING)
-        # if the storage file is empty, return an empty list
-        except EOFError:
-            changes_list = []
+    # if the storage file is empty, return an empty list
+    except (EOFError, FileNotFoundError) as e:
+        changes_list = []
     return changes_list
 
 
@@ -77,13 +81,16 @@ def clean_config_file():
     "auto_update_settings" -> None for never | int for number of hours between
     updates
     '''
+    global DEFAULT_REPO_URL
     content = {}
     # set the required fields to their default value
     content["last_update"] = "Never"
     content["black_list"] = []
     content["auto_update_settings"] = None
+    content["repo_url"] = DEFAULT_REPO_URL
+    content["branch_number"] = 1
     with open(CONFIG_PATH, "wb") as File:
-        pickle.dump(content, File)    
+        pickle.dump(content, File)
 
 
 def config_set(key, val):
@@ -97,13 +104,13 @@ def config_set(key, val):
     calls clean_config_file() to reset it to default state.
     '''
     reset = False
-    with open(CONFIG_PATH, "rb") as File:
-        try:
+    try:
+        with open(CONFIG_PATH, "rb") as File:
             config_dict = pickle.load(File, encoding=ENCODING)
-        # if the storage file is unreadable, reset the file to default state
-        except EOFError:
-            reset = True
-            config_dict = None
+    # if the storage file is unreadable, reset the file to default state
+    except (EOFError, FileNotFoundError) as e:
+        reset = True
+        config_dict = None
     if reset:
         clean_config_file()
         with open(CONFIG_PATH, "rb") as File:
@@ -123,15 +130,15 @@ def config_get(key):
     calls clean_config_file() to reset it to default state.
     '''
     reset = False
-    with open(CONFIG_PATH, "rb") as File:
-        try:
+    try:
+        with open(CONFIG_PATH, "rb") as File:
             config_dict = pickle.load(File, encoding=ENCODING)
             result = config_dict.get(key)
-        # if the storage file is unreadable, return None, reset the file to
-        # default state
-        except EOFError:
-            result = None
-            reset = True
+    # if the storage file is unreadable, return None, reset the file to default
+    # state
+    except (EOFError, FileNotFoundError) as e:
+        result = None
+        reset = True
     if reset:
         clean_config_file()
     return result
@@ -149,7 +156,7 @@ def reset_to_default():
     clean_config_file()
 
 
-if __name__ == "__main__" :
+if __name__ == "__main__":
     MANUAL_PATH = "../" + MANUAL_PATH
     PROPOSED_CHANGES_PATH = "../" + PROPOSED_CHANGES_PATH
     CONFIG_PATH = "../" + CONFIG_PATH
