@@ -162,3 +162,11 @@ setrepo
 	arg: [str]
 
 	sets the repo for the pull requests to be sent to
+
+fullreset
+
+    no args
+
+    removes all settings entered by the user and erases all
+    proposed changes information stored in memory, reverting
+    to default program configuration; stops autoupdate
