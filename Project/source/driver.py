@@ -211,7 +211,6 @@ def main():
     # show all
     if (show_all_flag):
         show_all()
-       
 
     # show
     if (show_flag == 2):
@@ -233,14 +232,12 @@ def main():
         except:
             print("Invalid Range.")
 
-
     # show
     if (show_flag == 1):
         try:
             show_number(int(show_marker[0]))
         except ValueError:
             print("Invalid Parameter to shownumber.")
-
 
     # update
     if (update_flag):
