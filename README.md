@@ -67,7 +67,9 @@ INSTALLATION
   -  Ensure that pip (https://pypi.python.org/pypi/pip) is installed
 
   -  Ensure that Hub (https://hub.github.com/) is installed
-         - Ruby and Go are required for Hub
+	 - If you're using OS-X, hub can be installed through brew by running "brew install hub"
+	 - If you're using Linux, Either install Go and run the hub installation tips on their website, 
+	 or Install LinuxBrew(http://linuxbrew.sh/) and run "brew install hub"
 
   -  IMPORTANT: Execute "installDep.sh" found in /Project/source/
      This will install the GPL-compatible "requests" library
