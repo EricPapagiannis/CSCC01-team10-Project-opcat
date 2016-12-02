@@ -159,7 +159,7 @@ class Comparator():
     def starCompare(self):
         '''() -> Dictionary
         Comparison method for only stars
-        Will find differing data for both the star and any planets 
+        Will find differing data for both the star and any planets
         attached to the system
 
         Returns a dictionary of dictionaries

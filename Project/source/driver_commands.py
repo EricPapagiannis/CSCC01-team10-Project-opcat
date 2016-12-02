@@ -334,17 +334,20 @@ def update():
     # open exoplanet catalogue
     global CHANGES
     CHANGES = []
+    '''
     try:
         XML.downloadXML(XML_path)
     except urllib.error.URLError:
         print("No internet connection\n")
         return
+    '''
     OEC_lists = XML.buildSystemFromXML(XML_path)
     OEC_systems = OEC_lists[0]
     OEC_stars = OEC_lists[1]
     OEC_planets = OEC_lists[2]
 
-    # delete text files from previous update
+    # delete text files from previous updat
+    '''
     clean_files()
 
     # targets:
@@ -366,7 +369,7 @@ def update():
         print("exoplanet.eu is unreacheable.\n")
     except (urllib.error.URLError):
         print("No internet connection.\n")
-
+    '''
     # build the dict of stars from exoplanet.eu
     EU_stars = CSV.buildDictStarExistingField(EU_file, "eu")
     # build the dict of stars from NASA
