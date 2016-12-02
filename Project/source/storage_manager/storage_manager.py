@@ -4,6 +4,7 @@ DEFAULT_REPO_URL \
     = "https://github.com/EricPapagiannis/open_exoplanet_catalogue.git"
 MANUAL_PATH = "storage/program_data/manual"
 PROPOSED_CHANGES_PATH = "storage/program_data/CHANGES_STORAGE"
+DEMO_CHANGES_PATH = "storage/program_data/CHANGES_STORAGE_DEMO"
 CONFIG_PATH = "storage/program_data/program_config"
 ENCODING = "ASCII"
 
@@ -60,6 +61,25 @@ def read_changes_from_memory():
     '''
     try:
         with open(PROPOSED_CHANGES_PATH, "rb") as File:
+            changes_list = pickle.load(File, encoding=ENCODING)
+    # if the storage file is empty, return an empty list
+    except (EOFError, FileNotFoundError) as e:
+        changes_list = []
+    return changes_list
+
+
+def read_demo_changes_from_memory():
+    '''
+    () -> [ProposedChange]
+
+    Reads the list of proposed changes from the memory and returns it.
+    PROPOSED_CHANGES_PATH determines the path to read from.
+
+    Throws EOFError if file is empty.
+    Throws FileNotFoundError if file DNE.
+    '''
+    try:
+        with open(DEMO_CHANGES_PATH, "rb") as File:
             changes_list = pickle.load(File, encoding=ENCODING)
     # if the storage file is empty, return an empty list
     except (EOFError, FileNotFoundError) as e:

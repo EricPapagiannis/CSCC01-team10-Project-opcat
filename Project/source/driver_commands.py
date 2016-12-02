@@ -329,92 +329,24 @@ def update():
     proposed changes. Network connection required.
     Returns NoneType
     '''
-    # postpone all currently pending changes
     STORAGE.write_changes_to_memory([])
-    # open exoplanet catalogue
-    global CHANGES
-    CHANGES = []
-    '''
-    try:
-        XML.downloadXML(XML_path)
-    except urllib.error.URLError:
-        print("No internet connection\n")
-        return
-    '''
-    OEC_lists = XML.buildSystemFromXML(XML_path)
-    OEC_systems = OEC_lists[0]
-    OEC_stars = OEC_lists[1]
-    OEC_planets = OEC_lists[2]
-
-    # delete text files from previous updat
-    '''
-    clean_files()
-
-    # targets:
-    # Saves nasa database into a text file named nasa_file
-    NASA_getter = API.apiGet(NASA_link, nasa_file)
-    try:
-        NASA_getter.getFromAPI("&table=planets")
-    # NASA_getter.getFromAPI("")
-    except (TimeoutError, API.CannotRetrieveDataException) as e:
-        print("NASA archive is unreacheable.\n")
-    except (urllib.error.URLError):
-        print("No internet connection.\n")
-
-    # Saves exoplanetEU database into a text file named exo_file
-    exoplanetEU_getter = API.apiGet(exoplanetEU_link, EU_file)
-    try:
-        exoplanetEU_getter.getFromAPI("")
-    except (TimeoutError, API.CannotRetrieveDataException) as e:
-        print("exoplanet.eu is unreacheable.\n")
-    except (urllib.error.URLError):
-        print("No internet connection.\n")
-    '''
-    # build the dict of stars from exoplanet.eu
-    EU_stars = CSV.buildDictStarExistingField(EU_file, "eu")
-    # build the dict of stars from NASA
-    NASA_stars = CSV.buildDictStarExistingField(nasa_file, "nasa")
-    # build the dictionary of stars from Open Exoplanet Catalogue
-    OEC_stars = XML.buildSystemFromXML(XML_path)[4]
-
-    # clean both dictionaries
-    for d in [EU_stars, NASA_stars]:
-        for key in d:
-            if d.get(key).__class__.__name__ != "Star":
-                d.pop(key)
-    # retrieve the blacklist from memory
+    new_changes = []
+    demo_changes = STORAGE.read_demo_changes_from_memory()
     black_list = STORAGE.config_get("black_list")
-    # add chages from EU to the list (if they are not blacklisted by the user)
-    for key in EU_stars.keys():
-        if key in OEC_stars.keys():
-            Comp_object = COMP.Comparator(EU_stars.get(key),
-                                          OEC_stars.get(key), "eu")
-            LIST = Comp_object.proposedChangeStarCompare()
-            for C in LIST:
-                if (not C in black_list) and (not C in CHANGES):
-                    CHANGES.append(C)
-
-    # add chages from NASA to the list
-    for key in NASA_stars.keys():
-        if key in OEC_stars.keys():
-            Comp_object = COMP.Comparator(NASA_stars.get(key),
-                                          OEC_stars.get(key), "nasa")
-            LIST = Comp_object.proposedChangeStarCompare()
-            for C in LIST:
-                if (not C in black_list) and (not C in CHANGES):
-                    CHANGES.append(C)
-
-    # sort the list of proposed changes
-    CHANGES = PC.merge_sort_changes(CHANGES)
-    # write the list of proposed changes to memory using storage_manager
-    STORAGE.write_changes_to_memory(CHANGES)
+    for change in demo_changes:
+        if not change in black_list:
+            new_changes.append(change)
+    STORAGE.write_changes_to_memory(new_changes)
     # calculate current time
     curr_time = datetime.datetime.strftime(datetime.datetime.now(),
                                            '%Y-%m-%d %H:%M:%S')
     STORAGE.config_set("last_update", curr_time)
-    print("\nNumber of differences discovered : " + str(len(CHANGES)))
+    print("\nNumber of differences discovered : " + str(len(new_changes)))
     print("Current time : " + curr_time)
     print("Update complete.\n")
+
+
+
 
 
 def clearblacklist():
