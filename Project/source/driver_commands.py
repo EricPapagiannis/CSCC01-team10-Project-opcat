@@ -14,8 +14,7 @@ import subprocess
 import urllib
 
 # usage string
-usage_str = "usage: driver [--help] [--update] [--output string] [--planet " \
-            + "string] [--showall | --shownumber int]\n"
+usage_str = "usage: driver --command [number | range]\n"
 
 # link to NASA catalogue
 NASA_link = "http://exoplanetarchive.ipac.caltech.edu/cgi-bin/nsted\
@@ -169,9 +168,9 @@ def accept(n, strategy):
         unpack_changes()
     if n <= len(CHANGES) and n > 0:
         if (strategy == 1):
-            GIT.modifyXML(CHANGES[n], n)
+            GIT.modifyXML(CHANGES[n], n - 1)
         else:
-            GIT.modifyXML(CHANGES[n], n, mode=True)
+            GIT.modifyXML(CHANGES[n], n - 1, mode=True)
     else:
         print("Out of range.")
     print("\nAccepted: \n" + str(n))
@@ -184,8 +183,8 @@ def accept_all(strategy):
     '''
 
     unpack_changes()
-    i = 0
-    while i < len(CHANGES):
+    i = 1
+    while i <= len(CHANGES):
         accept(i, strategy)
         i += 1
 
@@ -213,6 +212,9 @@ def deny_number(n):
 
 def deny_range(start, end):
     '''(int, int) -> NoneType
+    or (str, str) -> NoneType, where str in [s,e]
+    Method for denying a range of proposed changes between start and end
+    Returns NoneType
     '''
     global CHANGES
     unpack_changes()
@@ -275,7 +277,9 @@ def postpone_number(n):
 
 def postpone_range(start, end):
     '''(int, int) -> NoneType
-    pass
+    or (str, str) -> NoneType, where str in [s,e]
+    Method for postponing a range of proposed changes between start and end
+    Returns NoneType
     '''
     global CHANGES
     unpack_changes()
@@ -432,7 +436,7 @@ def showlastest(n):
         i = 0
         while i < n:
             print("\nShowing number : " + str(newChanges[i]._index + 1) + "\n")
-            print(newChanges[i].fancyStr())
+            print(str(newChanges[i]))
             print()
             i += 1
     else:
@@ -479,9 +483,11 @@ def clearrepo():
 
 
 def accept_range(start, end, strategy):
-    '''(str, str, int)
-    start and end should be int, otherwise "s" or "e"
-    strategy should be 1 or 2
+    '''(int, int, int) -> NoneType
+    or (str, str, int) -> NoneType, where str in [s,e]
+    Method for accepting a range of proposed changes between start and end
+    where strategy designated the related strategy of accepting changes
+    Returns NoneType
     '''
     unpack_changes()
     # sort the list of proposed changes

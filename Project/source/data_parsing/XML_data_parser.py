@@ -16,7 +16,8 @@ oec = ET.parse(gzip.GzipFile(fileobj=io.BytesIO(urllib.request.urlopen(url).read
 def downloadXML(path="../storage/OEC_XML.gz"):
     ''' 
     () -> ()
-    Opens OEC.gz as a series of XML documents for reading. 
+    Assuming a valid connection, opens OEC.gz as a series of XML documents for
+    reading.
     '''
     # Write to file
     file = io.BytesIO(urllib.request.urlopen(url).read())
@@ -42,7 +43,7 @@ def buildSystemFromXML(path="../storage/OEC_XML.gz"):
     '''
     () -> ([System], [Star], [Planet], {systemName: System}, {starName: Star},
            {planetName: Planet})
-    Assuming a valid connection, parse the xml from the big xml document
+    Parse the xml from the big xml document
     that contains every system into a tuple of system objects, star objects,
     and planet objects. Each Planetary Object dictionary contains the fields
     that are present from the xml it was parsed from, no more, no less.

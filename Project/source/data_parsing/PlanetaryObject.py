@@ -117,6 +117,9 @@ class PlanetaryObject:
         return temp
 
     def _fixStr(self, val):
+        """ (str) -> str
+        Given a str, clean it and return it
+        """
         if isinstance(val, str):
             return val.replace("\"", "").strip()
         else:

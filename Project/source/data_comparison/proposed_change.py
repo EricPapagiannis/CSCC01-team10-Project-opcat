@@ -101,6 +101,10 @@ class Modification(ProposedChange):
         ProposedChange.__init__(self, origin)
 
     def __eq__(self, other):
+        """ (ProposedChange) -> bool
+        Return a comparison between the self proposed change and the other
+        proposed change
+        """
         return (
             (type(other) is type(self)) and (self.origin == other.origin) and (
                 self.OEC_object.name == other.OEC_object.name) and (
@@ -215,6 +219,9 @@ class Modification(ProposedChange):
         return s
 
     def fancyStr(self):
+        """ () -> str
+        Return a fancier, coloured version of __str__()
+        """
         s = "Proposed modification:\n\n"
         s += "Name of object modified: "
         s += self.OEC_object.name
@@ -265,7 +272,6 @@ class Modification(ProposedChange):
     def get_object_name(self):
         '''
         () -> str
-        
         Returns the name of the PlanetaryObject to which this instance of 
         proposed addition is referring.
         '''
@@ -275,8 +281,8 @@ class Modification(ProposedChange):
             return ""
 
     def getSystemName(self):
-        '''
-        () -> str
+        ''' () -> str
+        Return the system name that the oec object is in
         '''
         if self.OEC_object.__class__.__name__ != "System":
             if self.OEC_object.__class__.__name__ == "Star":
@@ -288,8 +294,8 @@ class Modification(ProposedChange):
         return sysName
 
     def getOECType(self):
-        '''
-        () -> str
+        ''' () -> str
+        Return the type of object that the oec object is
         '''
         return self.OEC_object.__class__.__name__
 
@@ -391,6 +397,10 @@ def merge_sort_changes_by_lastupdate(CHANGES):
 
 
 def sort_changes_lastupdate(changes_list):
+    """([ProposedChange]) -> [ProposedChange]
+    Given a list of proposde changes, sort it by the lastupdate field and
+    return it
+    """
     newChangesList = changes_list[:]
     for i in range(len(changes_list)):
         newChangesList[i]._index = i

@@ -52,12 +52,6 @@ class TestStorageManager(unittest.TestCase):
         self.assertEquals(retrieved[1].value_in_origin_catalogue, 10)
         self.assertEquals(retrieved[1].value_in_OEC, 15)
 
-    def test_read_changes_from_memory_file_DNE(self):
-        STORAGE.PROPOSED_CHANGES_PATH = \
-            "storage_manager_test_files/No_such_file"
-        with self.assertRaises(FileNotFoundError):
-            expected = STORAGE.read_changes_from_memory()
-
     def test_read_changes_from_memory_empty_file(self):
         STORAGE.PROPOSED_CHANGES_PATH = \
             "storage_manager_test_files/empty_file"
