@@ -1,0 +1,138 @@
+CSCC01 Deliverable 5 Marking Guide
+-----------------------------------
+
+Total: 105/110
+
+Project Management:  __________ (20/20%)
+
+  Release plan:
+    - each release corresponds to end of Sprint
+    - project fully laid out:
+      for each release date, list of user stories to implement
+    - project velocity specified and used
+    - highest priority user stories first modulo dependencies
+    - reasonable goals for each release
+
+  Product Backlog:
+    - user stories follow the correct format.
+    - user stories, together, reflect all the user requirements (from
+      all personas).
+    - user stories correspond to actual requirements (no "invented"
+      features).
+    - user stories contain enough information for devs to estimate how
+      long it would take to implement it.
+    - each user story addresses one specific requirement (no "world
+      peace" stories).
+
+  Sprint Backlog(s):
+     - user stories taken from the Product Backlog
+     - estimated costs
+     - estimated values
+
+  Sprint Plan(s):
+    - user stories divided into tasks when appropriate.
+    - each Sprint Plan contains all the necessary information:
+        who is working on which task on which day
+    - sum of costs of user stories in the sprint = project velocity
+    - good planning decisions
+
+  Use of Task Board:
+    - correct format of task boards
+    - snapshots in the begginning and end of each Sprint are provided
+
+  Use of Burndown Charts:
+    - snapshots in the begginning and end of each Sprint are provided
+    - correctness of burndown charts
+
+  Use of Repo:
+      (including good use of branching from now on!)
+
+  Use of communication tools:
+     - evidence of using communication tools of their choice effectively
+
+[comments]
+- good
+
+Design and Implementation:  __________ (45/50%)
+
+   System Design:
+      - good modular design
+      - general and easy to extend
+      - it is clear how the current implementation is going to be
+        extended should the requirements evolve
+
+   Implementation:
+     - 0 marks if it doesn't run
+     - all of the features are fully implemented
+     - quality and maturity of code
+
+[comments]
+- good design documents
+- code works and is well organized
+
+[Project]:
+-- fetching from both databases
+-- good matching algorithm
+-- CLI-based
+-- pull-requests are organized (either several commits or several branches)
+-- file diff is line sensitive
+-- very good way to query update
+-- however the project is not easily extensible by lambda users (needs to modify the code). IT would have been good to implement a plugin mechanism or config files (-5).
+
+
+Verification and Validation:  __________ (20/20%)
+
+     - quality of unit tests:
+         - good coverage
+	 - no redundancy
+     - code review activities and outcomes:
+         - each review follows a checklist (not necessarily the example one, but the same checklist for all)
+	 - each review is thorough
+	 - evidence of addressing the outcomes of the review
+	 - the video demonstrates an effective process used for the review/collection meeting
+     - validation activities and outcomes:
+          - evidence of feedback from the user
+	  - evidence of addressing feedback from the user
+
+[Comments]
+- excellent testing strategy
+- good code review
+
+Report: __________ (10/10%)
+
+  - well-presented, is easy to read and to navigate
+  - spelling and grammar
+  - looks professional
+  - quality of the README file
+
+[comment]
+- very good
+
+Interview: ________ (10/10%)
+
+1) Checkout, build, run [2]:
+
+- good
+
+2) Demo [2]:
+
+- good
+
+3) Project Management [2]:
+
+- Good
+- After meeting with Hanno, change in the product backlog starting sprint 5
+- Time at the end to refactor code and write documentation
+
+4) Code reviews [2]:
+
+- few things under review: some coding style but recommendations from previous code review well implemented
+
+5) Testing and Validation [2]:
+
+- very good
+- unit tests for code
+- bash script for story tests
+- installation tests on the vm
+
+
