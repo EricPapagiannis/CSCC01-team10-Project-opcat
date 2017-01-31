@@ -1,6 +1,6 @@
 # team10-Project
 
-An utility for updating the open exoplanet catelogue with external sources
+A utility for updating the open exoplanet catalogue from external exoplanet databases
 
 Copyright (c) 2016 [Chain Coders], All Right Reserved
 
